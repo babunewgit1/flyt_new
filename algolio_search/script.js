@@ -1088,6 +1088,17 @@ document.addEventListener("DOMContentLoaded", () => {
          closeWidget();
       };
 
+   // Mobile: close calendar when tapping the backdrop (.calendar-widget) directly
+   // On mobile, .calendar-widget is a full-screen overlay — clicking outside the
+   // inner .calendar-main closes it.
+   if (widget) {
+      widget.addEventListener("click", (e) => {
+         if (e.target === widget) {
+            closeWidget();
+         }
+      });
+   }
+
    document.addEventListener("click", (e) => {
       if (widget && widget.classList.contains("active")) {
          // Careful not to close if clicking inside widget
