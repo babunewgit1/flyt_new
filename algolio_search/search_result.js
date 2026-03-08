@@ -97,16 +97,31 @@ async function pollForAircraft(
       const aircraftCount = data.response?.aircraft?.length ?? 0;
       const matched = aircraftCount === expectedSearchResults;
 
-      if (matched || attempt >= maxAttempts) return data.response;
+      if (matched || attempt >= maxAttempts) {
+         if (data.response?.aircraft?.length === 0) {
+            const notFound = document.querySelector(".notfound");
+            if (notFound) notFound.style.display = "flex";
+            return null;
+         }
+         return data.response;
+      }
 
       await new Promise((resolve) => setTimeout(resolve, interval));
    }
+   // Scenario 2: all attempts exhausted with no aircraft
+   const notFound = document.querySelector(".notfound");
+   if (notFound) notFound.style.display = "flex";
    return null;
 }
 
 // Fires the main search API, extracts flightRequestId + expected count, then starts polling.
 async function makeApiCall() {
-   if (!getStoredData) return;
+   if (!getStoredData) {
+      console.error("No stored data found");
+      const notFound = document.querySelector(".notfound");
+      if (notFound) notFound.style.display = "flex";
+      return;
+   }
 
    // Show loader — hide both views via CSS
    const resultWrapper = document.querySelector(".api_result_display");
