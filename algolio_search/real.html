@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="en">
+   <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Document</title>
+      <script src="https://cdn.jsdelivr.net/npm/algoliasearch@4.14.3/dist/algoliasearch.umd.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@4"></script>
+      <link rel="stylesheet" href="algolio.css" />
+      <link rel="stylesheet" href="home.css" />
+   </head>
+   <body>
+      <div class="action_form one_way_search">
+         <div class="form-container">
+            <div class="form_left algolio_wrapper">
+               <div class="form_left_input eminputblock departure_block">
+                  <input
+                     class="departure_airport algolio_input"
+                     type="text"
+                     placeholder="Departure Airport "
+                  />
+                  <div class="cross_input_icon">
+                     <img
+                        src="https://cdn.prod.website-files.com/66fa75fb0d726d65d059a42d/686012f5b7640dd05888924b_x-square.png"
+                        alt=""
+                     />
+                  </div>
+                  <p class="portid" style="display: none"></p>
+                  <p class="airportshort" style="display: none"></p>
+                  <p class="airportcity" style="display: none"></p>
+                  <div class="search-results"></div>
+               </div>
+               <div class="form_left_input eminputblock arrival_block">
+                  <input
+                     class="arrival_airport algolio_input"
+                     type="text"
+                     placeholder="Arrival Airport "
+                  />
+                  <div class="cross_input_icon">
+                     <img
+                        src="https://cdn.prod.website-files.com/66fa75fb0d726d65d059a42d/686012f5b7640dd05888924b_x-square.png"
+                        alt=""
+                     />
+                  </div>
+                  <p class="portid" style="display: none"></p>
+                  <p class="airportshort" style="display: none"></p>
+                  <p class="airportcity" style="display: none"></p>
+                  <div class="search-results"></div>
+               </div>
+               <div class="form_left_input form_input_multipul">
+                  <p class="one_way_date one_way_date_placeholder">
+                     Date and time
+                  </p>
+                  <p class="one_way_time"></p>
+               </div>
+               <div class="form_input_pax_wrapper">
+                  <div class="form_input_pax_input">
+                     <span class="pax_minus">-</span>
+                     <input type="text" value="1" />
+                     <span class="pax_plus">+</span>
+                  </div>
+                  <div class="form_input_icon">
+                     <img
+                        src="https://cdn.prod.website-files.com/673728493d38fb595b0df373/68f1eb0c05beeb548f28307c_pax.png"
+                        alt="avator"
+                     />
+                  </div>
+               </div>
+               <div class="trip_submit">
+                  <button type="button">
+                     <span>Search</span>
+                     <img
+                        src="https://cdn.prod.website-files.com/673728493d38fb595b0df373/68f1ce68d69455e26961b49e_icon.png"
+                        alt="icon"
+                     />
+                  </button>
+               </div>
+            </div>
+         </div>
+      </div>
+      <!-- round trip -->
+      <div class="action_form round_trip_search">
+         <div class="form-container">
+            <div class="form_left algolio_wrapper">
+               <div class="form_left_input eminputblock departure_block">
+                  <input
+                     class="departure_airport algolio_input"
+                     type="text"
+                     placeholder="Departure Airport "
+                  />
+                  <div class="cross_input_icon">
+                     <img
+                        src="https://cdn.prod.website-files.com/66fa75fb0d726d65d059a42d/686012f5b7640dd05888924b_x-square.png"
+                        alt=""
+                     />
+                  </div>
+                  <p class="portid" style="display: none"></p>
+                  <p class="airportshort" style="display: none"></p>
+                  <p class="airportcity" style="display: none"></p>
+                  <div class="search-results"></div>
+               </div>
+               <div class="form_left_input eminputblock arrival_block">
+                  <input
+                     class="arrival_airport algolio_input"
+                     type="text"
+                     placeholder="Arrival Airport "
+                  />
+                  <div class="cross_input_icon">
+                     <img
+                        src="https://cdn.prod.website-files.com/66fa75fb0d726d65d059a42d/686012f5b7640dd05888924b_x-square.png"
+                        alt=""
+                     />
+                  </div>
+                  <p class="portid" style="display: none"></p>
+                  <p class="airportshort" style="display: none"></p>
+                  <p class="airportcity" style="display: none"></p>
+                  <div class="search-results"></div>
+               </div>
+               <div class="form_left_input form_input_multipul">
+                  <p class="round_placeholder">
+                     Departure/return date and time
+                  </p>
+                  <div class="trip_date_wrapper">
+                     <div class="round_trip_departure">
+                        <p
+                           class="roundtrip_date_placeholder round_trip_departure_date"
+                        ></p>
+                        <p class="round_trip_departure_time"></p>
+                     </div>
+                     <div class="round_trip_return">
+                        <p class="round_trip_return_date"></p>
+                        <p class="round_trip_return_time"></p>
+                     </div>
+                  </div>
+               </div>
+               <div class="form_input_pax_wrapper">
+                  <div class="form_input_pax_input">
+                     <span class="pax_minus">-</span>
+                     <input type="text" value="1" />
+                     <span class="pax_plus">+</span>
+                  </div>
+                  <div class="form_input_icon">
+                     <img
+                        src="https://cdn.prod.website-files.com/673728493d38fb595b0df373/68f1eb0c05beeb548f28307c_pax.png"
+                        alt="avator"
+                     />
+                  </div>
+               </div>
+               <div class="trip_submit">
+                  <button type="button">
+                     Search
+                     <img
+                        src="https://cdn.prod.website-files.com/673728493d38fb595b0df373/68f1ce68d69455e26961b49e_icon.png"
+                        alt="icon"
+                     />
+                  </button>
+               </div>
+            </div>
+         </div>
+      </div>
+      <!-- The Reusable Calendar Widget -->
+      <div id="calendar-widget" class="calendar-widget">
+         <div class="calendar-main">
+            <div class="months-container">
+               <!-- Left Month -->
+               <div class="month-view" id="month-left">
+                  <div class="month-header">
+                     <span class="nav-btn prev-month" title="Previous Month"
+                        ><img
+                           style="width: 50px"
+                           src="https://cdn.prod.website-files.com/673728493d38fb595b0df373/698c6973fa3181dd37a863bd_leftc.png"
+                           alt="icon"
+                     /></span>
+                     <span class="month-label">JULY 2025</span>
+                     <span
+                        class="nav-btn next-month mobile-next-month"
+                        title="Next Month"
+                        ><img
+                           style="width: 50px"
+                           src="https://cdn.prod.website-files.com/673728493d38fb595b0df373/698c6a0fd00bb4ebcdf953b9_rightc.png"
+                           alt="icon"
+                     /></span>
+                     <span class="month-spacer"></span>
+                  </div>
+                  <div class="weekdays">
+                     <div>SUN</div>
+                     <div>MON</div>
+                     <div>TUE</div>
+                     <div>WED</div>
+                     <div>THU</div>
+                     <div>FRI</div>
+                     <div>SAT</div>
+                  </div>
+                  <div class="days" id="days-left"></div>
+               </div>
+               <!-- Right Month -->
+               <div class="month-view" id="month-right">
+                  <div class="month-header">
+                     <span class="month-spacer"></span>
+                     <span class="month-label">AUGUST 2025</span>
+                     <span class="nav-btn next-month" title="Next Month"
+                        ><img
+                           style="width: 50px"
+                           src="https://cdn.prod.website-files.com/673728493d38fb595b0df373/698c6a0fd00bb4ebcdf953b9_rightc.png"
+                           alt="icon"
+                     /></span>
+                  </div>
+                  <div class="weekdays">
+                     <div>SUN</div>
+                     <div>MON</div>
+                     <div>TUE</div>
+                     <div>WED</div>
+                     <div>THU</div>
+                     <div>FRI</div>
+                     <div>SAT</div>
+                  </div>
+                  <div class="days" id="days-right"></div>
+               </div>
+            </div>
+
+            <div class="time-view">
+               <div class="time-header">TIME</div>
+               <div class="time-controls-wrapper">
+                  <!-- Departure Time -->
+                  <div class="time-section" id="time-section-dep">
+                     <div class="time-controls" id="time-controls-dep">
+                        <div class="time-display" id="time-display-dep">
+                           12:00
+                        </div>
+                        <div class="ampm-toggle" id="ampm-dep">
+                           <span class="ampm-btn active" data-val="AM">AM</span>
+                           <span class="ampm-btn" data-val="PM">PM</span>
+                        </div>
+                     </div>
+                     <!-- Independent List for Dep -->
+                     <div class="time-list-wrapper">
+                        <div
+                           class="time-list-container"
+                           id="time-list-dep"
+                        ></div>
+                     </div>
+                  </div>
+
+                  <!-- Return Time (Hidden by default) -->
+                  <div
+                     class="time-section"
+                     id="time-section-ret"
+                     style="display: none; margin-top: 15px"
+                  >
+                     <div class="time-controls" id="time-controls-ret">
+                        <div class="time-display" id="time-display-ret">
+                           12:00
+                        </div>
+                        <div class="ampm-toggle" id="ampm-ret">
+                           <span class="ampm-btn active" data-val="AM">AM</span>
+                           <span class="ampm-btn" data-val="PM">PM</span>
+                        </div>
+                     </div>
+                     <!-- Independent List for Ret -->
+                     <div class="time-list-wrapper">
+                        <div
+                           class="time-list-container"
+                           id="time-list-ret"
+                        ></div>
+                     </div>
+                  </div>
+               </div>
+
+               <div class="timeblock">
+                  <div class="mobile-footer">
+                     <button
+                        class="confirm-btn mobile-close-btn"
+                        id="close-calendar"
+                        title="Close"
+                     >
+                        <img
+                           style="width: 50px"
+                           src="https://cdn.prod.website-files.com/673728493d38fb595b0df373/698c6c08c8415a146d9d8d30_longx.png"
+                           alt="icon"
+                        />
+                     </button>
+                     <button
+                        class="confirm-btn"
+                        id="confirm-selection"
+                        title="Confirm Selection"
+                     >
+                        <img
+                           style="width: 50px"
+                           src="https://cdn.prod.website-files.com/673728493d38fb595b0df373/698c6ae3590b4d6be0a79d46_longArrow.png"
+                           alt="icon"
+                        />
+                     </button>
+                  </div>
+               </div>
+            </div>
+         </div>
+         <div class="calendar-bottom-bar">
+            <button class="clear-btn" id="clear-selection" type="button">
+               Clear
+            </button>
+         </div>
+      </div>
+      <script src="script.js"></script>
+   </body>
+</html>
