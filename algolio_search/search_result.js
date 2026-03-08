@@ -1,6 +1,47 @@
-// =============================================================================
-// FILE: search_result.js
-// =============================================================================
+/* =============================================================================
+   !search_result.js — Connects to the Aircraft Search Results Page (/aircraft)
+   =============================================================================
+   Implemented Features:
+   1. Flight Search API Integration
+      - Reads stored search data from sessionStorage ("storeData")
+      - Fires One-Way or Round Trip API calls based on trip type
+      - Polls results API every 1.5s until all aircraft data is returned (max 10 attempts)
+      - Shows/hides a loading spinner during API calls
+
+   2. Aircraft Grid View (Card Renderer)
+      - Renders one card per aircraft inside .search_aircraft_result
+      - Displays aircraft name, category, capacity, range, speed, and price
+      - Supports price sorting (Low to High / High to Low) via .price_filter_grid
+      - Arrow icon rotates to indicate sort direction
+
+   3. Aircraft Table View (Table Renderer)
+      - Groups aircraft by category (Turboprop, Light Jet, Midsize, etc.)
+      - Renders sortable table rows with price sorting support
+      - Arrow icon rotates to indicate sort direction
+
+   4. Category Dropdown Filter
+      - Highlights available/recommended/unavailable categories from API data
+      - Multi-select filtering: clicking dropdown items filters cards by category
+      - Dropdown label updates to reflect current selection
+
+   5. Grid / Table View Toggle
+      - Switches between grid and table layout using CSS class toggling
+      - Hides the grid price filter when table view is active
+
+   6. Search History & Warning Banner
+      - Calls the search history API if user is logged in (authToken cookie)
+      - Injects different HTML into .warning_inject based on search_limited status:
+          → search_limited: true  → shows "Search Limit Reached" warning with phone CTA
+          → search_limited: false → shows "X of 11 Searches Used" with quote request button
+      - Clears .warning_inject on logout or when not logged in
+      - Re-fetches search history on login without page reload (listens to userLoggedIn event)
+
+   7. Price Blur
+      - Blurs .src_card_price elements when blur_pricing === true from API
+      - Removes blur when blur_pricing === false (user has pricing access)
+      - Applies blur immediately after render using window._blurPricing flag to fix race condition
+      - Clears blur on logout
+   ============================================================================= */
 
 const getStoredData = JSON.parse(sessionStorage.getItem("storeData"));
 

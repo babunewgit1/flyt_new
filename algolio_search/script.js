@@ -1,3 +1,41 @@
+/* =============================================================================
+   !script.js — Connects to the Home Page and Aircraft Search Page
+   =============================================================================
+   Implemented Features:
+   1. Algolia Airport Search
+      - Real-time airport autocomplete using Algolia search index ("Airports")
+      - Debounced input handler to reduce unnecessary API calls
+      - Renders search result dropdown with airport name, ICAO/IATA/FAA code
+      - Handles result selection: fills input, stores portid, shortcode, cityname
+      - Clears results when clicking outside the search wrapper
+
+   2. Interactive Date & Time Calendar Widget
+      - Supports both One-Way and Round Trip modes
+      - Dual-month calendar view with month navigation (prev/next)
+      - Date selection with range highlighting for round trips
+      - Past dates and invalid return dates are disabled
+      - Departure and Return time pickers with AM/PM toggle
+      - Time dropdown list with scrollable options
+      - Confirm button validates time conflicts on same-day round trips
+      - Mobile-responsive: calendar opens as full-screen overlay on small screens
+      - Clear button resets all selections
+      - Animated open/close transitions
+
+   3. Dynamic Pricing on Calendar
+      - Fetches pricing data from external API based on route & passengers
+      - Displays estimated price per day on calendar date cells
+      - Color-coded pricing: green (standard), orange (international fee), red (peak/priority)
+      - Loading skeleton shown while pricing data is being fetched
+      - Price disclaimer shown when pricing data is available
+
+   4. Session Storage — Form Submission
+      - On Search button click, validates all required fields (airports, date, pax)
+      - Saves One-Way and Round Trip form data to sessionStorage as "storeData"
+      - Converts 12-hour time to 24-hour format and builds Unix timestamps
+      - Redirects to /aircraft page after saving data
+      - Shows toast notification if form is incomplete
+   ============================================================================= */
+
 // Initialize Algolia search
 const searchClient = algoliasearch(
    "ZSPO7HB4MN",

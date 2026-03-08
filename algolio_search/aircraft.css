@@ -1,0 +1,1619 @@
+/* =============================================================================
+   !aircraft.css — Connects to the Aircraft Search Results Page (/aircraft)
+   ============================================================================= */
+
+/*--Home.css file start-- */
+.hero:after {
+   content: "";
+   display: block;
+   width: 37%;
+   height: 110px;
+   position: absolute;
+   left: 0;
+   top: 40px;
+   background-image: url("https://cdn.prod.website-files.com/673728493d38fb595b0df373/68f1d23b15d0a283b731abba_top_shape.png");
+   background-size: 100% 100%;
+   border-radius: 6px;
+}
+
+.hero:before {
+   content: "";
+   display: block;
+   width: 37%;
+   height: 110px;
+   position: absolute;
+   left: 0;
+   top: 269px;
+   background-image: url("https://cdn.prod.website-files.com/673728493d38fb595b0df373/68f1d23bdd2152ed7ba9e2e8_bottom_weight_shape.png");
+   background-size: 100% 100%;
+   border-radius: 6px;
+}
+
+.hero_ban::after {
+   content: "";
+   display: block;
+   width: 120px;
+   height: 300px;
+   position: absolute;
+   left: 0;
+   top: 219px;
+   background-image: url("https://cdn.prod.website-files.com/673728493d38fb595b0df373/68f1d23bc24454880f08bf3d_bottom_height_shape.png");
+   background-size: 100% 100%;
+   border-radius: 0px;
+}
+
+/* code for search box start */
+.search_wrapper {
+   background-color: #fff;
+   border-radius: 6px 6px 0px 0px;
+   padding: 30px;
+   border-bottom: 1px solid #000;
+}
+
+.search_form {
+   margin-top: 25px;
+}
+
+.form_left {
+   display: grid;
+   grid-template-columns:
+      calc(23.33% - 8px) calc(23.33% - 8px) calc(23.33% - 8px)
+      calc(15% - 8px) calc(15% - 8px);
+   column-gap: 10px;
+}
+
+.search_form_retunr .form_left {
+   grid-template-columns:
+      calc(23.33% - 8px) calc(23.33% - 8px) calc(23.33% - 8px)
+      calc(15% - 8px) calc(15% - 8px);
+}
+
+.form_left input {
+   display: block;
+   width: 100%;
+   height: 54px;
+   border: 1px solid #000;
+   border-radius: 6px;
+   font-size: 16px;
+   color: #000;
+   padding-left: 20px;
+   outline: none;
+   padding-right: 50px;
+}
+
+.form_left input::placeholder {
+   opacity: 1;
+   color: #929aa4;
+}
+
+.departure_airport {
+   background-image: url("https://cdn.prod.website-files.com/673728493d38fb595b0df373/68f1ee5e765ab6f785e4ec3f_pl1.png");
+   background-repeat: no-repeat;
+   background-position: top 15px right 14px;
+   background-size: 22px;
+}
+
+.arrival_airport {
+   background-image: url("https://cdn.prod.website-files.com/673728493d38fb595b0df373/68f1ee5e52edb097853a368b_pl2.png");
+   background-repeat: no-repeat;
+   background-position: top 15px right 14px;
+   background-size: 22px;
+}
+
+.form_right {
+   display: grid;
+   grid-template-columns: 1.2fr 0.9fr 0.9fr;
+   column-gap: 10px;
+}
+
+.form_input_multipul {
+   height: 54px;
+   border: 1px solid #000;
+   border-radius: 6px;
+   padding-left: 20px;
+   padding-right: 20px;
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   justify-content: center;
+}
+
+.form_input_multipul input {
+   display: block;
+   width: 100%;
+   border: 0;
+   outline: none;
+   font-size: 16px;
+   font-weight: 500;
+}
+
+.form_input_multipul input {
+   display: block;
+   width: 100%;
+   border: 0;
+   outline: none;
+   font-size: 16px;
+   font-weight: 500;
+   padding: 0;
+   color: #000;
+   line-height: 1;
+   height: 20px;
+}
+
+.form_input_multipul input::placeholder {
+   opacity: 1;
+   color: #929aa4;
+}
+
+.form_input_pax_wrapper {
+   display: flex;
+   align-items: center;
+   border: 1px solid #000;
+   border-radius: 6px;
+   justify-content: space-between;
+   padding-left: 20px;
+   padding-right: 20px;
+   column-gap: 20px;
+}
+
+.form_input_pax_input {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   column-gap: 6px;
+   width: 100%;
+}
+
+.form_input_pax_input input {
+   width: 100%;
+   border: 0;
+   outline: none;
+   text-align: center;
+   padding: 0px 6px;
+   height: 40px;
+   pointer-events: none;
+}
+
+.form_input_pax_input span {
+   display: block;
+   width: 32px;
+   height: 32px;
+   border: 1px solid #000;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   border-radius: 50%;
+   font-size: 20px;
+   font-weight: 500;
+   cursor: pointer;
+   transition: all 0.2s ease;
+   flex: none;
+}
+
+.form_input_pax_input span:hover {
+   background-color: #000;
+   color: #fff;
+}
+
+.form_input_icon {
+   flex: none;
+   padding-left: 20px;
+   border-left: 1px solid #000;
+   padding-top: 16px;
+   padding-bottom: 16px;
+}
+
+.trip_submit button {
+   width: 100%;
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   background-color: #04142a;
+   border-radius: 6px;
+   height: 54px;
+   font-family:
+      Geom Graphic,
+      Arial,
+      sans-serif;
+   font-weight: 400;
+   text-transform: uppercase;
+   color: #fff;
+   padding-left: 35px;
+   padding-right: 20px;
+   position: relative;
+   transition: all 0.2s ease;
+}
+
+.trip_submit button:hover {
+   opacity: 0.7;
+}
+
+.trip_submit button:after {
+   content: "";
+   display: block;
+   width: 1px;
+   height: 100%;
+   position: absolute;
+   top: 0;
+   right: 55px;
+   background-color: #fff;
+}
+
+.form_input_pax_input .disabled {
+   background-color: #808080;
+   border-color: #808080;
+   color: #fff;
+}
+
+.form_input_pax_input .disabled:hover {
+   background-color: #808080;
+   border-color: #808080;
+   color: #fff;
+}
+
+@media (min-width: 1440px) {
+   .hero::after {
+      width: 37%;
+      height: 135px;
+      top: 70px;
+   }
+
+   .hero::before {
+      width: 37%;
+      height: 135px;
+      top: 382px;
+   }
+
+   .hero_ban::after {
+      width: 135px;
+      height: 343px;
+      top: 290px;
+   }
+}
+
+/* code for search box end */
+
+/* code for sponser swipper js start */
+.sponser_img_slide {
+   min-height: 100px;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+}
+
+.sponser_img_slide img {
+   flex: none;
+}
+
+/* code for sponser swipper js end */
+
+.why_fleet {
+   position: relative;
+}
+
+.why_fleet::after {
+   content: "";
+   display: block;
+   width: 1528px;
+   height: 100%;
+   position: absolute;
+   left: 50%;
+   top: 50%;
+   z-index: 99999;
+   transform: translate(-50%, -50%);
+   z-index: -1;
+   border-left: 1px solid #303a49;
+   border-right: 1px solid #303a49;
+}
+
+.hm_jet_right_slider .swiper-slide {
+   transform: scale(0.8) !important;
+   opacity: 0.5;
+   filter: grayscale(100%);
+   position: relative;
+   top: -20px;
+}
+
+.hm_jet_right_slider .swiper-slide-active {
+   transform: scale(1) !important;
+   opacity: 1;
+   filter: none;
+   top: 0;
+}
+
+.hm_jet_right_slider .swiper-slide-active .hm_jet_img img {
+   padding: 13px;
+}
+
+.hm_jet_right_slider .swiper-slide-active:after {
+   content: "";
+   display: block;
+   width: 100%;
+   height: 100%;
+   position: absolute;
+   left: 0;
+   top: 0;
+   background-image: url("https://cdn.prod.website-files.com/673728493d38fb595b0df373/68f4ec16df03f1f92f772b6a_mb.png");
+   background-size: 100% 100%;
+}
+
+.copy_icon {
+   transition: all 0.3s ease;
+}
+
+.copy_icon img {
+   transition: all 0.3s ease;
+}
+
+.copy_icon:hover {
+   background-color: #9ba1aa;
+}
+
+.copy_icon:hover img {
+   filter: brightness(0) saturate(100%) invert(8%) sepia(17%) saturate(4160%)
+      hue-rotate(187deg) brightness(98%) contrast(102%);
+}
+
+.search_form.active_search {
+   display: block;
+}
+
+.search_tab_item {
+   cursor: pointer;
+}
+
+.search_tab_item.active_search .search_tab_oval {
+   background-color: #04142a;
+}
+
+@media (min-width: 1440px) {
+   .why_fleet::after {
+      content: none;
+   }
+
+   .why_fleet_wrapper .container {
+      position: relative;
+   }
+
+   .why_fleet_wrapper .container:after {
+      content: "";
+      display: block;
+      width: 1px;
+      height: 30vh;
+      position: absolute;
+      left: 15px;
+      top: -86px;
+      background-color: #303a49;
+   }
+
+   .why_fleet_wrapper .container:before {
+      content: "";
+      display: block;
+      width: 1px;
+      height: 30vh;
+      position: absolute;
+      right: 15px;
+      top: -86px;
+      background-color: #303a49;
+   }
+}
+
+@media (min-width: 1280px) and (max-width: 1440px) {
+   .why_fleet::after {
+      width: 73rem;
+   }
+
+   .form_left {
+      grid-template-columns:
+         calc(25% - 8px) calc(25% - 8px) calc(25% - 8px)
+         calc(25% - 8px);
+      column-gap: 10px;
+   }
+
+   .form_left_input input {
+      padding-left: 10px;
+      padding-right: 35px;
+   }
+
+   .hm_access {
+      padding-top: 65px;
+      margin-top: -65px;
+   }
+
+   .departure_airport,
+   .arrival_airport {
+      background-position: top 19px right 11px;
+      background-size: 16px;
+   }
+
+   .form_input_multipul {
+      padding-left: 0px;
+      padding-right: 0px;
+   }
+
+   .form_input_multipul input {
+      padding-left: 10px;
+      padding-right: 10px;
+   }
+
+   .round_trip_search .form_left {
+      grid-template-columns:
+         calc(25% - 8px) calc(25% - 8px) calc(25% - 8px)
+         calc(25% - 8px);
+   }
+
+   .form_input_pax_wrapper {
+      padding-left: 10px;
+      padding-right: 20px;
+      column-gap: 10px;
+   }
+
+   .form_input_multipul {
+      padding-left: 10px;
+      padding-right: 10px;
+   }
+
+   .form_left {
+      row-gap: 10px;
+   }
+}
+
+@media (min-width: 992px) and (max-width: 1280px) {
+   .why_fleet::after {
+      width: 58rem;
+   }
+
+   .form_left {
+      grid-template-columns:
+         calc(25% - 8px) calc(25% - 8px) calc(25% - 8px)
+         calc(25% - 8px);
+      row-gap: 12px;
+   }
+
+   .search_form_retunr .form_left {
+      grid-template-columns:
+         calc(25% - 8px) calc(25% - 8px) calc(25% - 8px)
+         calc(25% - 8px);
+   }
+
+   .search_wrapper {
+      padding: 12px 20px;
+   }
+
+   .search_form {
+      margin-top: 10px;
+   }
+
+   .form_left input {
+      height: 46px;
+      padding-left: 10px;
+      padding-right: 30px;
+   }
+
+   .departure_airport,
+   .arrival_airport {
+      background-position: top 14px right 10px;
+      background-size: 16px;
+   }
+
+   .form_input_multipul {
+      height: 46px;
+   }
+
+   .form_input_multipul input {
+      height: 14px !important;
+   }
+
+   .form_input_pax_wrapper {
+      padding-left: 12px;
+      padding-right: 11px;
+      column-gap: 12px;
+      height: 46px;
+   }
+
+   .form_input_pax_input input {
+      height: 40px !important;
+      padding-right: 10px !important;
+   }
+
+   .form_input_icon {
+      padding-left: 19px;
+      padding-top: 11px;
+      padding-bottom: 15px;
+      height: 46px;
+      padding-right: 8px;
+   }
+
+   .trip_submit button {
+      height: 46px;
+   }
+
+   .form_input_multipul {
+      padding: 0;
+   }
+
+   .form_input_multipul {
+      padding-left: 10px;
+      padding-right: 10px;
+   }
+
+   .form_left {
+      row-gap: 10px;
+   }
+
+   .round_trip_departure_date,
+   .round_trip_departure_time,
+   .round_trip_return_date,
+   .round_trip_return_time,
+   .one_way_date,
+   .one_way_time {
+      font-size: 14px;
+      line-height: 1.2;
+   }
+}
+
+@media screen and (min-width: 768px) and (max-width: 991px) {
+   .search_heading {
+      flex-direction: column;
+      row-gap: 16px;
+   }
+
+   .search_tab_item {
+      margin-left: 0;
+      margin: 0px 14px;
+   }
+
+   .form_left,
+   .search_form_retunr .form_left {
+      grid-template-columns: 1fr 1fr;
+      row-gap: 12px;
+      column-gap: 12;
+   }
+
+   .hero:after,
+   .hero:before,
+   .hero_ban:after {
+      content: none;
+   }
+
+   .why_fleet::after {
+      width: 688px;
+   }
+
+   .sp_swipper_ctrl_dot {
+      display: none;
+   }
+
+   .hm_jet_right_slider .swiper-slide-active .hm_jet_img img {
+      padding: 7px;
+   }
+
+   .hm_ability_btn {
+      display: block;
+      position: relative;
+      top: 200px;
+   }
+
+   .search_box {
+      position: relative;
+   }
+
+   .searchDisplay {
+      transform: scale(1);
+   }
+
+   .search_box .container {
+      max-width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+   }
+
+   .search_heading_left {
+      text-align: center;
+   }
+
+   .search_wrapper {
+      border-radius: 6px;
+      border: 0;
+      position: relative;
+      padding: 0;
+   }
+
+   .search_heading,
+   .search_form {
+      padding: 30px;
+      margin-top: 0;
+   }
+
+   .search_heading {
+      border-bottom: 1px solid #8c8c8c;
+   }
+
+   .hm_ability_cross {
+      width: 16px;
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      display: inline-block;
+      cursor: pointer;
+   }
+
+   .hero_sub_heading {
+      max-width: 40rem;
+   }
+
+   .trip_submit span {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 100%;
+   }
+
+   .trip_submit img {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translate(-50%, -50%);
+   }
+}
+
+@media screen and (min-width: 576px) and (max-width: 767px) {
+   .search_heading {
+      flex-direction: column;
+      row-gap: 16px;
+   }
+
+   .search_tab_item {
+      margin-left: 0;
+      margin: 0px 14px;
+   }
+
+   .form_left,
+   .search_form_retunr .form_left {
+      grid-template-columns: 1fr;
+      row-gap: 12px;
+      column-gap: 0;
+   }
+
+   .hero:after,
+   .hero:before,
+   .hero_ban:after {
+      content: none;
+   }
+
+   .why_fleet::after {
+      content: none;
+   }
+
+   .sp_swipper_ctrl_dot {
+      display: none;
+   }
+
+   .hm_jet_right_slider .swiper-slide-active .hm_jet_img img {
+      padding: 16px;
+   }
+
+   .search_heading_left_h3 {
+      text-align: center;
+   }
+
+   .search_wrapper {
+      padding: 0;
+   }
+
+   .hm_ability_btn {
+      display: block;
+      position: relative;
+      top: 200px;
+   }
+
+   .search_box {
+      position: relative;
+   }
+
+   .searchDisplay {
+      transform: scale(1);
+   }
+
+   .search_box .container {
+      max-width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+   }
+
+   .search_heading,
+   .search_form {
+      padding: 30px;
+      margin-top: 0;
+   }
+
+   .search_heading {
+      border-bottom: 1px solid #8c8c8c;
+   }
+
+   .search_heading_left {
+      text-align: center;
+   }
+
+   .search_wrapper {
+      border-radius: 6px;
+      border: 0;
+      position: relative;
+   }
+
+   .hm_ability_cross {
+      width: 16px;
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      display: inline-block;
+      cursor: pointer;
+   }
+
+   .hero_sub_heading {
+      max-width: 40rem;
+   }
+
+   .trip_submit span {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 100%;
+   }
+
+   .trip_submit img {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translate(-50%, -50%);
+   }
+}
+
+@media screen and (max-width: 576px) {
+   .search_heading {
+      flex-direction: column;
+      row-gap: 16px;
+      margin-top: 15px;
+   }
+
+   .search_tab_item {
+      margin-left: 0;
+      margin: 0px 14px;
+   }
+
+   .hero:after,
+   .hero:before,
+   .hero_ban:after {
+      content: none;
+   }
+
+   .why_fleet::after {
+      content: none;
+   }
+
+   .sp_swipper_ctrl_dot {
+      display: none;
+   }
+
+   .hm_jet_right_slider .swiper-slide-active .hm_jet_img img {
+      padding: 11px;
+   }
+
+   .search_heading_left_h3 {
+      text-align: center;
+   }
+
+   .search_wrapper {
+      padding-left: 16px;
+      padding-right: 16px;
+   }
+
+   .form_left,
+   .search_form_retunr .form_left {
+      column-gap: 0;
+      grid-template-columns: 1fr;
+      row-gap: 12px;
+   }
+
+   .hm_ability_btn {
+      display: block;
+      position: relative;
+      top: 100px;
+   }
+
+   .search_box {
+      position: relative;
+   }
+
+   .searchDisplay {
+      transform: scale(1);
+   }
+
+   .search_box .container {
+      max-width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+   }
+
+   .search_heading_left {
+      text-align: center;
+   }
+
+   .search_wrapper {
+      border-radius: 6px;
+      border: 0;
+      position: relative;
+   }
+
+   .hm_ability_cross {
+      width: 16px;
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      display: inline-block;
+      cursor: pointer;
+   }
+
+   .hero_sub_heading {
+      max-width: 40rem;
+   }
+   .trip_submit span {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 100%;
+   }
+
+   .trip_submit img {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translate(-50%, -50%);
+   }
+   .get_app_sm {
+      margin-top: -100px;
+   }
+
+   .search_heading,
+   .search_form {
+      padding: 30px 16px;
+      margin-top: 0;
+   }
+
+   .search_heading {
+      border-bottom: 1px solid #8c8c8c;
+   }
+
+   .search_wrapper {
+      padding: 0;
+   }
+}
+
+@media (min-width: 992px) and (max-width: 1280px) {
+   .hero_sub_btn {
+      margin-top: 1.5rem;
+      margin-bottom: 60px;
+   }
+
+   .search_box {
+      margin-top: -13.5rem;
+   }
+
+   .search_para {
+      margin-top: 0rem;
+      font-size: 13px;
+   }
+}
+/*--Home.css file end-- */
+
+.src_view {
+   height: 50px;
+   cursor: pointer;
+   transition: all 0.3s ease;
+}
+
+.src_view:hover {
+   background-color: #68727f;
+}
+
+.src_view_active {
+   background-color: #68727f;
+}
+
+.src_view img {
+   transition: all 0.3s ease;
+}
+
+.src_view:hover img,
+.src_view_active img {
+   filter: brightness(0) saturate(100%) invert(99%) sepia(0%) saturate(1377%)
+      hue-rotate(19deg) brightness(111%) contrast(100%);
+}
+
+.search_aircraft_result {
+   display: grid;
+   grid-template-columns: repeat(3, 1fr);
+   gap: 30px;
+}
+
+.src_card_footer {
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   padding: 0.825rem 1.5625rem;
+}
+
+.src_card_pax,
+.src_card_price {
+   display: flex;
+   align-items: center;
+   column-gap: 6px;
+}
+
+.src_pax_icon {
+   flex: 1;
+}
+
+.src_pax_icon img {
+   display: inline-block;
+   width: 22px;
+}
+
+.src_price_arrow img {
+   display: inline-block;
+   width: 22px;
+}
+
+.src_pax_count {
+   font-size: 16px;
+   color: #04142a;
+}
+
+.at_cata_block_item {
+   padding-bottom: 0;
+}
+
+.src_type_badge.src_request_to_book {
+   border-color: #f13314;
+   color: #f13314;
+}
+
+.drp_class_selected .drp_class_item_block_check {
+   background-color: #364355;
+}
+
+/* Circle Loader */
+.src_loader {
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   padding: 80px 0;
+   grid-column: 1 / -1;
+}
+
+.src_loader_spinner {
+   width: 48px;
+   height: 48px;
+   border: 4px solid #e0e0e0;
+   border-top-color: #364355;
+   border-radius: 50%;
+   animation: src_spin 0.8s linear infinite;
+}
+
+@keyframes src_spin {
+   to {
+      transform: rotate(360deg);
+   }
+}
+
+.drp_overlay {
+   position: relative;
+}
+
+.drp_overlay:after {
+   content: "";
+   display: block;
+   width: 100%;
+   height: 100%;
+   position: absolute;
+   left: 0;
+   top: 0;
+   background-color: #04142a;
+   opacity: 30%;
+   z-index: 9999;
+}
+
+.drp_tiggerd {
+   transform: scale3d(1, 1, 1);
+}
+
+.drp_overlay img.src_arrow_img {
+   transform: rotate(180deg);
+}
+
+.drp_class_item {
+   cursor: pointer;
+}
+
+.drp_class_disabled {
+   background-color: #f7f8f8;
+   pointer-events: none;
+}
+
+.drp_class_disabled img.white_check {
+   display: none;
+}
+
+.drp_class_disabled .drp_class_item_block_check {
+   opacity: 0.6;
+}
+
+.drp_class_disabled .drop_class_item_block,
+.drp_class_disabled .drop_clas_item_seat {
+   opacity: 0.6;
+}
+
+.search_result_table {
+   display: grid;
+   grid-template-columns: repeat(3, 1fr);
+}
+
+.srt_right {
+   grid-column: span 2;
+   overflow: auto;
+}
+
+.api_result_display .search_result_table {
+   display: none;
+}
+
+.api_result_display.table_mode .search_result_table {
+   display: grid;
+}
+
+.api_result_display.table_mode .search_aircraft_result {
+   display: none;
+}
+
+.api_result_display.loading_mode .search_aircraft_result,
+.api_result_display.loading_mode .search_result_table {
+   display: none !important;
+}
+
+.srt_left_header,
+.srt_header_list {
+   color: #04142a;
+   font-size: 18px;
+   font-weight: 500;
+}
+
+.srt_right_header {
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   background-color: #e5e7e9;
+   padding: 18px 26px;
+}
+
+.srt_left_header {
+   background-color: #e5e7e9;
+   padding: 18px 26px;
+   border-radius: 6px 0px 0px 0px;
+}
+
+.srt_header_sort {
+   display: flex;
+   align-items: center;
+   column-gap: 8px;
+}
+
+.srt_sort_arrow img {
+   display: inline-block;
+   width: 14px;
+}
+
+.srt_header_sort strong {
+   cursor: pointer;
+}
+
+.srt_right_header {
+   border-radius: 0px 6px 0px 0px;
+}
+
+.srt_left {
+   border-right: 1px solid #cdd0d4;
+}
+
+.srt_cat_cell {
+   display: flex;
+   align-items: center;
+   column-gap: 20px;
+   padding: 20px 26px;
+   border-bottom: 1px solid #cdd0d4;
+}
+
+.srt_cat_img img {
+   display: block;
+   width: 126px;
+}
+
+.srt_cat_img {
+   width: 160px;
+   height: 80px;
+   border: 1px solid #cdd0d4;
+   border-radius: 6px;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+}
+
+.srt_cat_name {
+   font-size: 20px;
+   color: #04142a;
+   font-weight: 500;
+}
+
+.srt_aircraft_card {
+   display: flex;
+   align-items: center;
+   column-gap: 20px;
+   min-width: 380px;
+}
+
+.srt_card_img img {
+   width: 160px;
+   display: block;
+   border-radius: 6px;
+   border-radius: 6px;
+}
+
+.srt_card_badge {
+   font-size: 13px;
+   color: #2d95ed;
+   border-radius: 6px;
+   border: 1px solid #2d95ed;
+   display: inline-block;
+   font-weight: 500;
+   padding: 2px 13px;
+   letter-spacing: 0.5px;
+}
+
+.srt_card_model {
+   text-transform: uppercase;
+   font-family:
+      Geom Graphic,
+      Arial,
+      sans-serif;
+   font-size: 16px;
+   font-weight: 600;
+   color: #04142a;
+   margin: 10px 0px;
+}
+
+.srt_card_pax img,
+.srt_card_price img {
+   display: inline-block;
+   width: 24px;
+   margin-right: 2px;
+}
+
+.srt_card_pax,
+.srt_card_price {
+   display: inline-block;
+   color: #04142a;
+   font-weight: 500;
+}
+
+.srt_card_info {
+   display: flex;
+   align-items: center;
+   column-gap: 16px;
+}
+
+.srt_list_row {
+   padding: 15px 26px;
+   border-bottom: 1px solid #cdd0d4;
+   display: flex;
+   column-gap: 50px;
+}
+
+.srt_no_aircraft {
+   color: #9ca3ad;
+   font-size: 14px;
+   font-weight: 400;
+   margin: 0;
+}
+
+.srt_list_row_empty {
+   min-height: 121px;
+   display: flex;
+   align-items: center;
+}
+
+.srt_request_book {
+   color: #f13314;
+   border-color: #f13314;
+}
+
+.srt_cat_cell {
+   position: relative;
+}
+
+.frelated_icon {
+   display: inline-block;
+   width: 16px;
+   position: absolute;
+   left: 0;
+   top: 0;
+}
+
+.false_wraning,
+.true_wraning {
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   padding: 30px 20px 30px 36px;
+   column-gap: 30px;
+}
+
+.sc_war_button {
+   min-width: 365px;
+}
+
+.sc_war_button img.telephone_icon {
+   display: inline-block;
+   width: 25px;
+}
+
+.sc_war_button .telephn_number {
+   font-size: 24px;
+   color: #fff;
+   text-transform: uppercase;
+   font-family:
+      Geom Graphic,
+      Arial,
+      sans-serif;
+   font-weight: 600;
+}
+
+.true_warning_text {
+   max-width: 785px;
+}
+
+.telnumber {
+   display: inline-flex;
+   align-items: center;
+   column-gap: 10px;
+}
+
+.src_price_value {
+   user-select: none;
+}
+
+@media screen and (min-width: 992px) and (max-width: 1280px) {
+   .sc_warning {
+      margin-top: 1rem;
+   }
+
+   .sc_war_button {
+      margin-top: 0;
+   }
+}
+
+@media screen and (min-width: 768px) and (max-width: 991px) {
+   .drp_class {
+      width: 100%;
+      inset: 7.5rem 0% auto;
+   }
+
+   .drp_class_heading {
+      padding: 1.2rem 1rem;
+   }
+
+   .drp_class_croxx {
+      width: 1rem;
+   }
+
+   .drp_class_item {
+      padding: 1rem;
+   }
+
+   .price_filter_grid {
+      padding: 1rem 1rem;
+      margin-top: 12px;
+   }
+
+   .search_aircraft_result {
+      margin-top: 1rem;
+      margin-bottom: 1rem;
+   }
+
+   .search_aircraft_result {
+      grid-template-columns: repeat(2, 1fr);
+   }
+
+   .srt_left {
+      display: none;
+   }
+
+   .api_result_display.table_mode .search_result_table {
+      display: block;
+   }
+
+   .srt_right {
+      border-left: 1px solid #e5e7e9;
+      border-right: 1px solid #e5e7e9;
+   }
+
+   .srt_right_header {
+      border-radius: 0;
+   }
+
+   .srt_list_row_empty {
+      display: none !important;
+   }
+
+   .search_result_table {
+      margin-top: 1rem;
+      margin-bottom: 1rem;
+   }
+
+   .srt_list_row {
+      padding: 10px;
+      border-bottom: 1px solid #cdd0d4;
+      display: flex;
+      flex-direction: column;
+      row-gap: 25px;
+   }
+
+   .srt_right_header {
+      padding: 15px 10px;
+   }
+
+   .sc_warning {
+      margin-top: 1.5rem;
+   }
+
+   .false_wraning,
+   .true_wraning {
+      padding: 20px;
+      flex-direction: column;
+   }
+
+   .src_common_model {
+      left: -120px !important;
+   }
+}
+
+@media screen and (min-width: 576px) and (max-width: 767px) {
+   .drp_class {
+      width: 100%;
+      inset: 7.5rem 0% auto;
+   }
+
+   .drp_class_heading {
+      padding: 1.2rem 1rem;
+   }
+
+   .drp_class_croxx {
+      width: 1rem;
+   }
+
+   .drp_class_item {
+      padding: 1rem;
+   }
+
+   .price_filter_grid {
+      padding: 1rem 1rem;
+      margin-top: 12px;
+   }
+
+   .search_aircraft_result {
+      margin-top: 1rem;
+      margin-bottom: 1rem;
+   }
+
+   .search_aircraft_result {
+      grid-template-columns: repeat(1, 1fr);
+   }
+
+   .srt_left {
+      display: none;
+   }
+
+   .api_result_display.table_mode .search_result_table {
+      display: block;
+   }
+
+   .srt_right {
+      border-left: 1px solid #e5e7e9;
+      border-right: 1px solid #e5e7e9;
+   }
+
+   .srt_right_header {
+      border-radius: 0;
+   }
+
+   .srt_list_row_empty {
+      display: none !important;
+   }
+
+   .search_result_table {
+      margin-top: 1rem;
+      margin-bottom: 1rem;
+   }
+
+   .srt_list_row {
+      padding: 10px;
+      border-bottom: 1px solid #cdd0d4;
+      display: flex;
+      flex-direction: column;
+      row-gap: 25px;
+   }
+
+   .srt_aircraft_card {
+      min-width: 100%;
+   }
+
+   .srt_right_header {
+      padding: 15px 10px;
+   }
+
+   .sc_warning {
+      margin-top: 1.5rem;
+   }
+
+   .false_wraning,
+   .true_wraning {
+      padding: 20px;
+      flex-direction: column;
+   }
+
+   .sc_war_button .telephn_number {
+      font-size: 18px;
+   }
+
+   .sc_war_button img.telephone_icon {
+      width: 18px;
+   }
+}
+
+@media screen and (max-width: 576px) {
+   .drp_class {
+      width: 100%;
+   }
+
+   .drp_class_heading {
+      padding: 1.2rem 1rem;
+   }
+
+   .drp_class_croxx {
+      width: 1rem;
+   }
+
+   .drp_class_item {
+      padding: 1rem;
+   }
+
+   .search_aircraft_result {
+      margin-top: 1rem;
+      margin-bottom: 1rem;
+   }
+
+   .search_aircraft_result {
+      grid-template-columns: repeat(1, 1fr);
+   }
+
+   .search_aircraft_result {
+      gap: 20px;
+   }
+
+   .src_view {
+      width: 2.5rem;
+      height: 2.8rem;
+   }
+
+   .srt_left {
+      display: none;
+   }
+
+   .api_result_display.table_mode .search_result_table {
+      display: block;
+   }
+
+   .srt_right {
+      border-left: 1px solid #e5e7e9;
+      border-right: 1px solid #e5e7e9;
+   }
+
+   .srt_right_header {
+      border-radius: 0;
+   }
+
+   .srt_list_row_empty {
+      display: none !important;
+   }
+
+   .search_result_table {
+      margin-top: 1rem;
+      margin-bottom: 1rem;
+   }
+
+   .srt_list_row {
+      padding: 10px;
+      border-bottom: 1px solid #cdd0d4;
+      display: flex;
+      flex-direction: column;
+      row-gap: 25px;
+   }
+
+   .srt_aircraft_card {
+      min-width: 100%;
+   }
+
+   .srt_card_info {
+      column-gap: 10px;
+      flex-direction: column;
+      row-gap: 0.3rem;
+      align-items: flex-start;
+   }
+
+   .srt_aircraft_card {
+      display: grid;
+      grid-template-columns: 100px 1fr;
+      column-gap: 10px;
+   }
+
+   .srt_right_header {
+      padding: 15px 10px;
+   }
+
+   .sc_warning {
+      margin-top: 1.5rem;
+   }
+
+   .sc_war_button {
+      min-width: auto;
+   }
+
+   .false_wraning,
+   .true_wraning {
+      padding: 20px;
+      flex-direction: column;
+   }
+
+   .sc_war_button .telephn_number {
+      font-size: 18px;
+   }
+
+   .sc_war_button img.telephone_icon {
+      width: 18px;
+   }
+
+   .sc_war_left {
+      flex-direction: row;
+      text-align: left;
+   }
+
+   .sc_war_left_icon_pic.sc_icon_info {
+      width: 2rem;
+   }
+
+   .false_wraning,
+   .true_wraning {
+      padding: 15px;
+   }
+
+   .src_common_model {
+      width: 15rem;
+   }
+}
