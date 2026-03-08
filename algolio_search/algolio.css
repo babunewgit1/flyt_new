@@ -1504,7 +1504,7 @@ p.uniqueid {
    }
 
    .ampm-btn {
-      padding: 0 20px;
+      padding: 0 15px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -1624,7 +1624,7 @@ p.uniqueid {
       opacity: 1;
       padding-top: 0;
       padding-top: 10px;
-      margin-top: -6px;
+      margin-top: -4px;
    }
 
    .calendar-bottom-bar {
