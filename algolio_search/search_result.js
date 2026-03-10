@@ -153,6 +153,9 @@ async function makeApiCall() {
    const apiUrl = isOneWay ? ONE_WAY_API : ROUND_TRIP_API;
    let requestBody;
 
+   const currency_code =
+      JSON.parse(sessionStorage.getItem("currency"))?.api_currency || "USD";
+
    if (isOneWay) {
       const timestamp = ensureValidTimestamp(
          getStoredData.timeStamp,
@@ -166,6 +169,7 @@ async function makeApiCall() {
          pax: getStoredData.pax,
          date_as_text: getStoredData.dateAsText,
          time_as_text: getStoredData.timeAsText,
+         currency_code,
       };
    } else {
       const depTimestamp = ensureValidTimestamp(
@@ -191,6 +195,7 @@ async function makeApiCall() {
          Ret_date_as_text: getStoredData.returnDateAsText,
          Dep_time_as_text: getStoredData.timeAsText,
          Ret_time_as_text: getStoredData.timeAsTextReturn,
+         currency_code,
       };
    }
 
@@ -203,6 +208,18 @@ async function makeApiCall() {
 
    const data = await response.json();
    console.log("Step 1 - Main API Response:", data.response);
+
+   // Guard: if API response is undefined or malformed, show not found
+   if (!data.response) {
+      console.error("Main API returned undefined response.");
+      const notFound = document.querySelector(".notfound");
+      if (notFound) notFound.style.display = "flex";
+      const resultWrapper = document.querySelector(".api_result_display");
+      if (resultWrapper) resultWrapper.classList.remove("loading_mode");
+      const mainLoader = document.querySelector(".src_loader_main");
+      if (mainLoader) mainLoader.remove();
+      return;
+   }
 
    const flightRequestId = data.response.flightrequest;
    const expectedSearchResults = data.response["Expected Search Results"];
