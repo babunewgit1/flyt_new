@@ -480,12 +480,13 @@ function renderAircraftTable(aircraft, sortDirection = "asc") {
    `;
    rightCol.appendChild(rightHeader);
 
-   // Sort click handler
+   // Sort click handler — re-applies the active dropdown filter after re-rendering
    rightHeader
       .querySelector(".srt_header_sort")
       .addEventListener("click", () => {
          const newDirection = sortDirection === "asc" ? "desc" : "asc";
          renderAircraftTable(table._aircraftData, newDirection);
+         reapplyActiveFilter();
       });
 
    // Aircraft rows (one per category, aligned with left cells)
@@ -619,6 +620,41 @@ function highlightMatchingDropdownItems(aircraft) {
 
    // Update the dropdown label to reflect auto-selected items
    updateDropdownLabel(dropdownItems);
+}
+
+// Re-reads the currently selected dropdown items and re-applies show/hide to
+// table rows and category cells. Called after sort re-renders the table DOM.
+function reapplyActiveFilter() {
+   const dropdownItems = document.querySelectorAll(
+      ".drp_class_item[data-filter-text]",
+   );
+   const selectedCategories = [];
+   dropdownItems.forEach((di) => {
+      if (di.classList.contains("drp_class_selected")) {
+         selectedCategories.push(
+            (di.getAttribute("data-filter-text") || "").trim().toLowerCase(),
+         );
+      }
+   });
+
+   const tableRows = document.querySelectorAll(".srt_list_row[data-category]");
+   const catCells = document.querySelectorAll(".srt_cat_cell[data-category]");
+
+   if (selectedCategories.length === 0) {
+      tableRows.forEach((row) => (row.style.display = ""));
+      catCells.forEach((cell) => (cell.style.display = ""));
+   } else {
+      tableRows.forEach((row) => {
+         const rowCat = (row.dataset.category || "").trim().toLowerCase();
+         row.style.display = selectedCategories.includes(rowCat) ? "" : "none";
+      });
+      catCells.forEach((cell) => {
+         const cellCat = (cell.dataset.category || "").trim().toLowerCase();
+         cell.style.display = selectedCategories.includes(cellCat)
+            ? ""
+            : "none";
+      });
+   }
 }
 
 // Click handler: multi-select dropdown items to filter aircraft cards by category.
