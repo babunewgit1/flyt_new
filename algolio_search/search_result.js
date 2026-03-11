@@ -176,7 +176,7 @@ async function makeApiCall() {
          pax: getStoredData.pax,
          date_as_text: getStoredData.dateAsText,
          time_as_text: getStoredData.timeAsText,
-         // currency_code,
+         currency_code,
       };
    } else {
       const depTimestamp = ensureValidTimestamp(
@@ -202,7 +202,7 @@ async function makeApiCall() {
          Ret_date_as_text: getStoredData.returnDateAsText,
          Dep_time_as_text: getStoredData.timeAsText,
          Ret_time_as_text: getStoredData.timeAsTextReturn,
-         // currency_code,
+         currency_code,
       };
    }
 
