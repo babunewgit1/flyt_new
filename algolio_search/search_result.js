@@ -52,6 +52,13 @@ const ROUND_TRIP_API =
 const POLL_API =
    "https://operators-dashboard.bubbleapps.io/api/1.1/wf/webflow_return_data_flyt";
 
+// Maps currency_text from the API to the correct display symbol.
+const CURRENCY_SYMBOLS = {
+   usd: "$",
+   eur: "\u20ac",
+   cad: "C$",
+};
+
 // Converts "3:30 PM" → "15:30:00" for building API timestamps.
 function to24HourTime(timeStr) {
    if (!timeStr) return "00:00:00";
@@ -314,9 +321,12 @@ function renderAircraftResults(aircraft, sortDirection = "asc") {
             : item.aircraft_image_image
          : "";
 
-      // Format price with commas, 2 decimal places
+      // Format price using currency_text from this item
+      const currencySymbol =
+         CURRENCY_SYMBOLS[(item.currency_text || "").toLowerCase()] || "$";
       const price = item.price_number
-         ? "$" + Math.round(Number(item.price_number)).toLocaleString()
+         ? currencySymbol +
+           Math.round(Number(item.price_number)).toLocaleString()
          : "";
 
       const card = document.createElement("div");
@@ -503,8 +513,12 @@ function renderAircraftTable(aircraft, sortDirection = "asc") {
                : item.aircraft_image_image
             : "";
 
+         // Format price using currency_text from this item
+         const currencySymbol =
+            CURRENCY_SYMBOLS[(item.currency_text || "").toLowerCase()] || "$";
          const price = item.price_number
-            ? "$" + Math.round(Number(item.price_number)).toLocaleString()
+            ? currencySymbol +
+              Math.round(Number(item.price_number)).toLocaleString()
             : "";
 
          const isRequestToBook =
