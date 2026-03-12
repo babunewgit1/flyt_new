@@ -366,6 +366,12 @@
    background-color: #04142a;
 }
 
+@media (min-width: 1400px) and (max-width: 1465px) {
+   .hero_heading {
+      font-size: 2.5rem !important;
+   }
+}
+
 @media (min-width: 1440px) {
    .why_fleet::after {
       content: none;
@@ -395,6 +401,12 @@
       right: 15px;
       top: -86px;
       background-color: #303a49;
+   }
+
+   .form_left {
+      grid-template-columns:
+         calc(23.33% - 8px) calc(23.33% - 8px) calc(23.33% - 8px)
+         calc(15% - 8px) calc(15% - 8px) !important;
    }
 }
 
