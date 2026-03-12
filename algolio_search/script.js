@@ -1331,7 +1331,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
                sessionStorage.setItem("storeData", JSON.stringify(storeData));
                sessionStorage.setItem("scrollToResult", "true");
-               console.log("object");
                window.location.href = `/aircraft`;
             } else {
                window.toast.error("Please fill up the form properly");
