@@ -3,6 +3,10 @@
    ============================================================================= */
 
 /*--Home.css file start-- */
+html {
+   scroll-behavior: smooth;
+}
+
 .hero:after {
    content: "";
    display: block;
