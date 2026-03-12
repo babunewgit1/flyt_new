@@ -940,6 +940,7 @@ document.addEventListener("DOMContentLoaded", () => {
    if (sessionStorage.getItem("scrollToResult") === "true") {
       sessionStorage.removeItem("scrollToResult");
       const section = document.querySelector(".sc_result");
+      console.log("scrollToResult flag found, section:", section);
       if (section) {
          section.scrollIntoView({ behavior: "smooth", block: "start" });
       }
