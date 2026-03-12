@@ -1330,7 +1330,8 @@ document.addEventListener("DOMContentLoaded", function () {
                };
 
                sessionStorage.setItem("storeData", JSON.stringify(storeData));
-               window.location.href = `/aircraft#sc_result`;
+               sessionStorage.setItem("scrollToResult", "true");
+               window.location.href = `/aircraft`;
             } else {
                window.toast.error("Please fill up the form properly");
             }
@@ -1488,7 +1489,8 @@ document.addEventListener("DOMContentLoaded", function () {
                   full_return_arrival_airport_name,
                };
                sessionStorage.setItem("storeData", JSON.stringify(storeData));
-               window.location.href = `/aircraft#sc_result`;
+               sessionStorage.setItem("scrollToResult", "true");
+               window.location.href = `/aircraft`;
             } else {
                window.toast.error("Please fill up the form properly");
             }
