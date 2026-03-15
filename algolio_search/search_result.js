@@ -581,8 +581,8 @@ function highlightMatchingDropdownItems(aircraft) {
       if (!categoryMap[cat]) {
          categoryMap[cat] = { recommended: false };
       }
-      if (item.is_recommended__boolean === true) {
-         categoryMap[cat].recommended = true;
+      if (item.is_recommended__boolean === false) {
+         categoryMap[cat].recommended = false;
       }
    });
 
