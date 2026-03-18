@@ -306,7 +306,7 @@ function redirectToBooking(item) {
 
    // Condition 1: Has ID and booking type is INSTANT BOOKING
    if (id && isInstant) {
-      window.location.href = `/instant_book?id=${encodeURIComponent(id)}`;
+      window.location.href = `/ad_instant_booking?id=${encodeURIComponent(id)}`;
    }
 
    // Condition 2: Has ID and booking type is NOT INSTANT BOOKING
