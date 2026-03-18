@@ -293,6 +293,29 @@ async function makeApiCall() {
 }
 
 // =============================================================================
+// BOOKING REDIRECT HELPER
+// Redirects to instant_book or late_book page based on type_text and _id.
+// =============================================================================
+
+function redirectToBooking(item) {
+   const id = item._id || "";
+   const isInstant =
+      (item.type_text || "").trim().toUpperCase() === "INSTANT BOOKING";
+   const isNotInstant =
+      (item.type_text || "").trim().toUpperCase() !== "INSTANT BOOKING";
+
+   // Condition 1: Has ID and booking type is INSTANT BOOKING
+   if (id && isInstant) {
+      window.location.href = `/instant_book?id=${encodeURIComponent(id)}`;
+   }
+
+   // Condition 2: Has ID and booking type is NOT INSTANT BOOKING
+   if (id && isNotInstant) {
+      window.location.href = `/late_book?id=${encodeURIComponent(id)}`;
+   }
+}
+
+// =============================================================================
 // AIRCRAFT RESULTS RENDERER
 // Generates one card per aircraft inside .search_aircraft_result.
 // =============================================================================
@@ -366,6 +389,9 @@ function renderAircraftResults(aircraft, sortDirection = "asc") {
         <img class="at_cata_block_list_flogo" src="https://cdn.prod.website-files.com/673728493d38fb595b0df373/690c9beeaacf18341a56ca94_f_sm.webp" alt="f_sm_icon" />
       </div>
     `;
+
+      // Click → redirect to booking page
+      card.addEventListener("click", () => redirectToBooking(item));
 
       container.appendChild(card);
    });
@@ -548,6 +574,9 @@ function renderAircraftTable(aircraft, sortDirection = "asc") {
                </div>
             </div>
          `;
+         // Click → redirect to booking page
+         card.addEventListener("click", () => redirectToBooking(item));
+
          listRow.appendChild(card);
       });
 
