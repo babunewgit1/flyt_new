@@ -86,6 +86,1366 @@
    transform: translate(-50%, -50%);
 }
 
-.adi_heading {
+.adi_heading_block {
    padding-top: 80px;
 }
+
+.adi_main_wrapper {
+   padding-top: 60px;
+}
+
+.adi_main_grid {
+   display: grid;
+   grid-template-columns: 1.25fr 0.75fr;
+   column-gap: 30px;
+}
+
+/* Main route map */
+.adi_map_iframe {
+   height: 350px;
+}
+
+/* Airport mini-maps */
+.adi_airport_mini_map {
+   height: 180px;
+}
+
+.adi_swiper_prev {
+   position: absolute;
+   left: 30px;
+   bottom: 30px;
+   z-index: 90;
+}
+
+.adi_swiper_next {
+   position: absolute;
+   right: 30px;
+   bottom: 30px;
+   z-index: 90;
+}
+
+.adi_swiper_prev span,
+.adi_swiper_next span {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   width: 46px;
+   height: 46px;
+   border: 1px solid #04142a;
+   border-radius: 50%;
+   transform: all 0.2s ease;
+   cursor: pointer;
+}
+
+.adi_swiper_prev span:hover,
+.adi_swiper_next span:hover {
+   background-color: #04142a;
+}
+
+.adi_swiper_prev span img,
+.adi_swiper_next span img {
+   display: inline-block;
+   width: 12px;
+   filter: brightness(0) saturate(100%) invert(9%) sepia(7%) saturate(7094%)
+      hue-rotate(179deg) brightness(93%) contrast(104%);
+}
+
+.adi_swiper_prev span:hover img,
+.adi_swiper_next span:hover img {
+   filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(7494%)
+      hue-rotate(62deg) brightness(102%) contrast(97%);
+}
+
+.adi_info_card {
+   display: grid;
+   grid-template-columns: 1fr 200px;
+   align-items: flex-end;
+}
+
+.adi_info_card_left {
+   padding: 25px;
+}
+
+.adi_type_badge {
+   color: #2d95ed;
+   letter-spacing: 0.0625rem;
+   text-transform: uppercase;
+   border: 1px solid #2d95ed;
+   border-radius: 0.375rem;
+   padding: 0.25rem 0.75rem;
+   font-size: 0.875rem;
+   font-weight: 500;
+   display: inline-block;
+   font-size: 0.875rem;
+   font-weight: 500;
+}
+
+.adi_info_model {
+   text-transform: uppercase;
+   margin-top: 0.9rem;
+   margin-bottom: 0.5rem;
+   font-family:
+      Geom Graphic,
+      Arial,
+      sans-serif;
+   font-size: 1.25rem;
+   font-weight: 600;
+   line-height: 1.4375rem;
+}
+
+.adi_info_similar {
+   color: #68727f;
+   font-size: 0.9rem;
+   line-height: 1.1rem;
+}
+
+.adi_info_stat {
+   display: flex;
+   align-items: center;
+   column-gap: 6px;
+   justify-content: flex-end;
+}
+
+.adi_info_stat img {
+   display: inline-block;
+   width: 20px;
+}
+
+.adi_info_stat span {
+   font-size: 18px;
+   color: #04142a;
+}
+
+.adi_info_price {
+   display: flex;
+   align-items: center;
+   column-gap: 10px;
+   margin-top: 14px;
+}
+
+.adi_info_price span {
+   display: inline-block;
+   font-size: 24px;
+   color: #04142a;
+}
+
+.adi_info_card_right {
+   padding: 25px;
+}
+
+.adi_info_card {
+   border-bottom: 1px solid #dfdede;
+}
+
+.adi_main_left {
+   border-right: 1px solid #dfdede;
+   border-top: 1px solid #dfdede;
+   border-radius: 0px 0px 6px 0px;
+}
+
+.adi_itinerary {
+   padding: 25px;
+   border-bottom: 1px solid #dfdede;
+}
+
+.adi_section_title {
+   text-transform: uppercase;
+   font-family:
+      Geom Graphic,
+      Arial,
+      sans-serif;
+   font-size: 1.25rem;
+   font-weight: 600;
+   line-height: 1.4375rem;
+}
+
+.adi_itin_dates_row {
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   margin-top: 16px;
+}
+
+.adi_itin_date_block span {
+   display: block;
+   font-size: 18px;
+   color: #04142a;
+   margin: 10px 0px;
+}
+
+.adi_eft_badge {
+   background-color: #68727f;
+   border-radius: 5px;
+   color: #fff;
+   font-size: 18px;
+   padding: 8px 22px;
+}
+
+.adi_itin_route_row {
+   margin-top: 20px;
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   position: relative;
+   z-index: 999;
+}
+
+.adi_itin_route_row:after {
+   content: "";
+   display: block;
+   width: 100%;
+   position: absolute;
+   left: 0;
+   top: 11px;
+   height: 2px;
+   border-top: 2px dotted #a0a6ae;
+   z-index: -1;
+}
+
+.adi_route_line_wrap img {
+   display: inline-block;
+   width: 25px;
+}
+
+.adi_icao_code {
+   background-color: #fff;
+   text-transform: uppercase;
+   font-family:
+      Geom Graphic,
+      Arial,
+      sans-serif;
+   font-size: 1.25rem;
+   font-weight: 600;
+   line-height: 1.4375rem;
+   padding-right: 5px;
+}
+
+.adi_icao_right {
+   padding-right: 0;
+   padding-left: 5px;
+}
+
+.adi_itin_airports_row {
+   display: flex;
+   justify-content: space-between;
+   margin-top: 10px;
+}
+
+.adi_itin_airport > p {
+   font-size: 18px;
+   color: #04142a;
+   margin: 8px 0px;
+}
+
+.adi_itin_date_block_right,
+.adi_itin_airport_right {
+   text-align: right;
+}
+
+.adi_airports_section {
+   padding: 25px;
+   border-bottom: 1px solid #dfdede;
+}
+
+.adi_airports_grid {
+   margin-top: 20px;
+   display: grid;
+   grid-template-columns: repeat(2, 1fr);
+   column-gap: 100px;
+}
+
+.adi_airport_img_wrap {
+   border-radius: 5px;
+   overflow: hidden;
+}
+
+.adi_airport_code {
+   background-color: #fff;
+   text-transform: uppercase;
+   font-family:
+      Geom Graphic,
+      Arial,
+      sans-serif;
+   font-size: 1.25rem;
+   font-weight: 600;
+}
+
+.adi_airport_footer {
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   margin-top: 10px;
+}
+
+.adi_map_link {
+   display: inline-block;
+   font-size: 18px;
+   font-weight: 500;
+   color: #04142a;
+   text-decoration: underline;
+   transition: all 0.2s ease;
+}
+
+.adi_map_link:hover {
+   opacity: 0.7;
+}
+
+.adi_passengers_row {
+   padding: 30px 25px;
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+}
+
+.adi_passengers_label {
+   text-transform: uppercase;
+   font-family:
+      Geom Graphic,
+      Arial,
+      sans-serif;
+   font-size: 1.25rem;
+   font-weight: 600;
+   line-height: 1.4375rem;
+}
+
+.adi_edit_pax_btn {
+   background-color: transparent;
+   padding: 0;
+}
+
+.adi_carbon_card {
+   background-color: #68727f;
+   padding: 35px 45px;
+   border-radius: 0px 0px 6px 6px;
+}
+
+.adi_carbon_top {
+   display: grid;
+   grid-template-columns: 80px 1fr 120px;
+   column-gap: 30px;
+}
+
+.adi_carbon_title {
+   text-transform: uppercase;
+   font-family:
+      Geom Graphic,
+      Arial,
+      sans-serif;
+   font-size: 1.25rem;
+   font-weight: 600;
+   line-height: 1.4375rem;
+   color: #fff;
+}
+
+.adi_carbon_desc {
+   color: #e5e7e9;
+   font-size: 17px;
+   margin: 20px 0px;
+   line-height: 1.6;
+}
+
+/* Toggle Switch */
+.adi_toggle_switch {
+   position: relative;
+   display: inline-block;
+   width: 52px;
+   height: 28px;
+   flex-shrink: 0;
+   margin-top: 2px;
+   margin-left: auto;
+}
+
+.adi_toggle_switch input {
+   opacity: 0;
+   width: 0;
+   height: 0;
+}
+
+.adi_toggle_slider {
+   position: absolute;
+   inset: 0;
+   background-color: #e5e7e9;
+   border-radius: 28px;
+   cursor: pointer;
+   transition: 0.3s;
+}
+
+.adi_toggle_slider::before {
+   content: "";
+   position: absolute;
+   width: 22px;
+   height: 22px;
+   left: 3px;
+   bottom: 3px;
+   background-color: #68727f;
+   border-radius: 50%;
+   transition: 0.3s;
+}
+
+.adi_toggle_switch input:checked + .adi_toggle_slider {
+   background-color: #e5e7e9;
+}
+
+.adi_toggle_switch input:checked + .adi_toggle_slider::before {
+   transform: translateX(24px);
+}
+
+.adi_map_iframe {
+   display: block;
+   width: 100%;
+   height: 526px;
+}
+
+.adi_map_wrapper {
+   border: 1px solid #dfdede;
+   border-right: 0;
+   border-bottom: 0;
+}
+
+.adi_estimate_card {
+   padding-top: 25px;
+   padding-bottom: 12px;
+   border: 1px solid #dfdede;
+   border-radius: 0px 0px 6px 6px;
+   padding-bottom: 16px;
+}
+
+.adi_estimate_title {
+   text-transform: uppercase;
+   font-family:
+      Geom Graphic,
+      Arial,
+      sans-serif;
+   font-size: 1.25rem;
+   font-weight: 600;
+   line-height: 1.4375rem;
+   padding-left: 25px;
+   padding-right: 25px;
+}
+
+.adi_estimate_row {
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   margin: 12px 0px;
+   padding-left: 25px;
+   padding-right: 25px;
+}
+
+.adi_estimate_row span {
+   display: inline-block;
+   font-size: 18px;
+   color: #04142a;
+}
+
+.adi_estimate_subtotal_row {
+   background-color: #e5e7e9;
+   padding: 12px 25px;
+   margin-top: 22px;
+   margin-bottom: 16px;
+}
+
+.adi_estimate_subtotal_row strong {
+   font-weight: 600;
+}
+
+.adi_main_right {
+   border-radius: 2px 2px 0px 0px;
+   overflow: hidden;
+}
+
+.trip_submit button {
+   width: 100%;
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   background-color: #04142a;
+   border-radius: 6px;
+   height: 54px;
+   font-family:
+      Geom Graphic,
+      Arial,
+      sans-serif;
+   font-weight: 400;
+   text-transform: uppercase;
+   color: #fff;
+   padding-left: 35px;
+   padding-right: 20px;
+   position: relative;
+   transition: all 0.2s ease;
+}
+
+.trip_submit button::after {
+   content: "";
+   display: block;
+   width: 1px;
+   height: 100%;
+   position: absolute;
+   top: 0;
+   right: 55px;
+   background-color: #fff;
+}
+
+.trip_submit {
+   max-width: 360px;
+   margin: auto;
+}
+
+.trip_submit button:hover {
+   opacity: 0.7;
+}
+
+.adi_main_wrapper {
+   padding-bottom: 80px;
+}
+
+.adj_card {
+   background-color: #364355;
+   border-radius: 6px;
+   position: relative;
+}
+
+.adj_card_img {
+   display: block;
+   width: 100%;
+   border-radius: 6px;
+}
+
+.adj_card_img_wrap {
+   padding: 12px;
+}
+
+.adj_flogo {
+   display: inline-block;
+   width: 18px;
+   position: absolute;
+   left: 0;
+   top: 0;
+}
+
+.adj_card_cnt {
+   padding: 20px;
+   padding-top: 5px;
+   border-bottom: 1px solid #68717f;
+   padding-bottom: 10px;
+}
+
+.adj_badge_instant {
+   color: #2d95ed;
+   letter-spacing: 0.0625rem;
+   text-transform: uppercase;
+   border: 1px solid #2d95ed;
+   border-radius: 0.375rem;
+   padding: 0.25rem 0.75rem;
+   font-size: 0.875rem;
+   font-weight: 500;
+   display: inline-block;
+}
+
+.adj_model {
+   text-transform: uppercase;
+   margin-top: 0.9rem;
+   margin-bottom: 0.5rem;
+   font-family:
+      Geom Graphic,
+      Arial,
+      sans-serif;
+   font-size: 1.25rem;
+   font-weight: 600;
+   line-height: 1.4375rem;
+   color: #f8f0f0;
+}
+
+.adj_models_text {
+   color: #cdd0d4;
+   font-size: 0.9rem;
+   line-height: 1.1rem;
+}
+
+.adj_card_footer {
+   padding: 12px 20px;
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+}
+
+.adj_stat_icon {
+   display: inline-block;
+   width: 25px;
+   margin-right: 6px;
+}
+
+.adj_stat span {
+   display: inline-block;
+   font-size: 16px;
+   color: #cdd0d4;
+}
+
+.adj_badge_request {
+   color: #f13314 !important;
+   border: 1px solid #f13314 !important;
+   letter-spacing: 0.0625rem;
+   text-transform: uppercase;
+   border-radius: 0.375rem;
+   padding: 0.25rem 0.75rem;
+   font-size: 0.875rem;
+   font-weight: 500;
+   display: inline-block;
+}
+
+.adj_sl_icon {
+   width: 45px;
+   height: 45px;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   border: 1px solid #ffffff;
+   border-radius: 50%;
+   cursor: pointer;
+   transition: all 0.3s ease;
+}
+
+.adj_sl_icon:hover {
+   background-color: #fff;
+}
+
+.adj_sl_icon img {
+   display: inline-block;
+   width: 12px;
+}
+
+.adj_sl_icon:hover img {
+   filter: brightness(0) saturate(100%) invert(5%) sepia(80%) saturate(3947%)
+      hue-rotate(197deg) brightness(79%) contrast(105%);
+}
+
+.adj_nav {
+   margin-top: 30px;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   column-gap: 20px;
+}
+
+.adj_prev.swiper-button-lock,
+.adj_next.swiper-button-lock {
+   display: none;
+}
+
+.adj_card {
+   cursor: pointer;
+   transition: all 0.3s ease;
+}
+
+.adj_card:hover {
+   opacity: 0.7;
+}
+
+.adj_card_img_wrap {
+   overflow: hidden;
+}
+
+.adj_card_img_wrap .adj_card_img {
+   transition: all 0.3s ease;
+}
+
+.adj_card:hover .adj_card_img {
+   transform: scale(1.4);
+}
+
+/* ─── Edit Passenger Modal ─────────────────────────────────── */
+.adi_pax_overlay {
+   display: none;
+   position: fixed;
+   inset: 0;
+   background: rgba(0, 0, 0, 0.45);
+   z-index: 9999;
+   align-items: center;
+   justify-content: center;
+}
+
+.adi_pax_overlay.open {
+   display: flex;
+}
+
+.adi_pax_modal {
+   background: #fff;
+   border-radius: 16px;
+   width: 480px;
+   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+   animation: adi_modal_in 0.22s ease;
+   margin-left: 10px;
+   margin-right: 10px;
+}
+
+@keyframes adi_modal_in {
+   from {
+      opacity: 0;
+      transform: scale(0.92);
+   }
+   to {
+      opacity: 1;
+      transform: scale(1);
+   }
+}
+
+.adi_pax_modal_title {
+   font-size: 22px;
+   font-weight: 600;
+   color: #04142a;
+   text-align: center;
+   padding: 16px 0px;
+   border-bottom: 1px solid #d0d7e6;
+   padding-top: 20px;
+   padding-left: 24px;
+   padding-right: 24px;
+}
+
+.passenger_edit_block {
+   padding: 24px;
+}
+
+.adi_pax_label_row {
+   position: relative;
+   z-index: 10;
+}
+
+.adi_pax_label_row:after {
+   content: "";
+   display: block;
+   width: 100%;
+   height: 1px;
+   background-color: #d0d7e6;
+   position: absolute;
+   left: 50%;
+   top: 50%;
+   transform: translate(-50%, -50%);
+   z-index: -1;
+}
+
+.adi_pax_label_row {
+   text-align: center;
+}
+
+.adi_pax_label_row span {
+   display: inline-block;
+   text-transform: uppercase;
+   font-size: 18px;
+   font-weight: 600;
+   color: #6a6c76;
+   letter-spacing: 1px;
+   background-color: #fff;
+   padding-left: 12px;
+   padding-right: 12px;
+}
+
+.adi_pax_counter {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   column-gap: 10px;
+}
+
+#adi_pax_minus,
+#adi_pax_plus,
+.adi_pax_count_val {
+   width: 45px;
+   height: 38px;
+   border: 1px solid #6a6c76;
+   border-radius: 6px;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   background: #f4f4f4;
+   font-size: 30px;
+   color: #04142a;
+   padding: 10px;
+   transition: all 0.2s ease;
+}
+
+#adi_pax_minus:hover,
+#adi_pax_plus:hover,
+.adi_pax_cancel_btn:hover {
+   background-color: #04142a;
+   border-color: #04142a;
+   color: #fff;
+}
+
+.adi_pax_count_val {
+   font-size: 20px;
+   width: 80px;
+   background-color: transparent;
+}
+
+.adi_pax_counter {
+   margin-top: 24px;
+}
+
+.adi_pax_modal_footer {
+   border-top: 1px solid #d0d7e6;
+   padding: 16px 24px;
+   display: grid;
+   grid-template-columns: repeat(2, 1fr);
+   column-gap: 10px;
+}
+
+.adi_pax_cancel_btn,
+.adi_pax_save_btn {
+   border: 1px solid #6a6c76;
+   border-radius: 6px;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   background: #f4f4f4;
+   font-size: 18px;
+   color: #04142a;
+   padding: 12px 10px;
+   transition: all 0.2s ease;
+   font-weight: 600;
+}
+
+.adi_pax_save_btn {
+   background-color: #04142a;
+   border-color: #04142a;
+   color: #fff;
+}
+
+.adi_pax_save_btn:hover {
+   opacity: 0.7;
+}
+
+.adi_port_card_heading {
+   font-size: 16px;
+   color: #68727f;
+   margin-bottom: 6px;
+   display: none;
+}
+
+/* ====================================
+      Responsive Code Start
+==================================== */
+@media screen and (min-width: 992px) and (max-width: 1280px) {
+   .adi_main_grid {
+      display: grid;
+      grid-template-columns: 60% calc(40% - 20px);
+      column-gap: 20px;
+   }
+
+   .adi_map_iframe {
+      height: 318px;
+   }
+
+   .trip_submit {
+      max-width: 285px;
+   }
+
+   .adi_airports_grid {
+      column-gap: 20px;
+   }
+
+   .adi_airport_code {
+      font-size: 16px;
+   }
+
+   .adi_map_link {
+      font-size: 15px;
+   }
+
+   .adi_carbon_card {
+      padding: 25px 16px;
+   }
+
+   .adi_carbon_top {
+      grid-template-columns: 80px 1fr 55px;
+      column-gap: 20px;
+   }
+}
+
+@media screen and (min-width: 768px) and (max-width: 991px) {
+   .adi_heading_block {
+      padding-top: 3rem;
+   }
+
+   .adi_heading_content p.adi_heading_para {
+      margin-top: 10px;
+   }
+
+   .adi_heading_arrow {
+      width: 40px;
+      height: 40px;
+   }
+
+   .adi_heading_arrow {
+      left: -5px;
+      top: -6px;
+      transform: none;
+   }
+
+   .adi_heading_arrow img {
+      width: 16px;
+   }
+
+   .adi_heading_h2 {
+      padding-left: 40px;
+      padding-right: 40px;
+   }
+
+   .adi_main_grid {
+      display: block;
+   }
+
+   .adi_main_wrapper {
+      padding-top: 20px;
+   }
+
+   .adi_main_left {
+      border: 0;
+      border-radius: 0;
+   }
+
+   .adi_swiper_prev span,
+   .adi_swiper_next span {
+      width: 34px;
+      height: 34px;
+   }
+
+   .adi_swiper_prev span img,
+   .adi_swiper_next span img {
+      display: inline-block;
+      width: 7px;
+   }
+
+   .adi_swiper_prev {
+      left: 16px;
+      bottom: 16px;
+   }
+
+   .adi_swiper_next {
+      right: 16px;
+      bottom: 16px;
+   }
+
+   .adi_info_card_left,
+   .adi_info_card_right {
+      padding: 0;
+   }
+
+   .adi_info_card {
+      display: block;
+   }
+
+   .adi_info_stat {
+      justify-content: flex-start;
+      margin-top: 0px;
+   }
+
+   .adi_info_card_right {
+      display: flex;
+      align-items: center;
+      column-gap: 25px;
+      margin-top: 22px;
+   }
+
+   .adi_info_card {
+      padding-top: 25px;
+      padding-bottom: 25px;
+   }
+
+   .adi_itinerary,
+   .adi_airports_section,
+   .adi_passengers_row {
+      padding-left: 0;
+      padding-right: 0;
+   }
+
+   .adi_section_title {
+      text-align: center;
+   }
+
+   .adi_eft_badge {
+      font-size: 16px;
+      padding: 6px 14px;
+   }
+
+   .adi_itin_date_block span,
+   .adi_itin_airport > p {
+      font-size: 16px;
+      margin: 6px 0px;
+   }
+
+   .adi_itin_dates_row {
+      column-gap: 16px;
+      margin-top: 15px;
+   }
+
+   .adi_itin_route_row {
+      margin-top: 15px;
+   }
+
+   .adi_itin_airports_row {
+      margin-top: 6px;
+   }
+
+   .adi_port_card_heading {
+      display: block;
+   }
+
+   .adi_airports_grid {
+      margin-top: 15px;
+      grid-template-columns: repeat(2, 1fr);
+      column-gap: 10px;
+   }
+
+   .adi_airport_mini_map {
+      height: 170px;
+   }
+
+   .adi_airport_footer {
+      flex-direction: column;
+      gap: 0px;
+      margin-top: 6px;
+      align-items: flex-start;
+      justify-content: flex-start;
+   }
+
+   .adi_airport_code {
+      font-size: 16px;
+   }
+
+   .adi_map_link {
+      font-size: 14px;
+   }
+
+   .adi_passengers_label {
+      font-size: 16px;
+   }
+
+   .adi_passengers_row {
+      align-items: flex-start;
+   }
+
+   .adi_carbon_card {
+      padding: 16px;
+   }
+
+   .adi_carbon_top {
+      display: grid;
+      grid-template-columns: 1fr 55px;
+      grid-template-rows: auto auto;
+      column-gap: 30px;
+      row-gap: 16px;
+   }
+
+   .adi_carbon_icon_wrap {
+      grid-column: 1 / -1;
+   }
+
+   .adi_carbon_content {
+      grid-column: 1 / 2;
+   }
+
+   .adi_toggle_switch {
+      grid-column: 2 / 3;
+   }
+
+   .adi_carbon_icon_wrap > img {
+      display: block;
+      width: 80px;
+   }
+
+   .btnc_link {
+      grid-template-columns: minmax(150px, 1fr) minmax(50px, 50px);
+   }
+
+   .adi_carbon_desc {
+      font-size: 15px;
+      margin: 14px 0px;
+      line-height: 1.4;
+   }
+
+   .adi_map_wrapper {
+      margin-top: 20px;
+   }
+
+   .adi_map_iframe {
+      height: 350px;
+   }
+
+   .adi_estimate_card {
+      border-top: 0px;
+   }
+
+   .adi_estimate_title {
+      padding-left: 20px;
+      padding-right: 20px;
+      text-align: center;
+   }
+
+   .adi_estimate_row {
+      margin: 8px 0px;
+      padding-left: 20px;
+      padding-right: 20px;
+   }
+
+   .adi_estimate_subtotal_row {
+      padding-left: 20px;
+      padding-right: 20px;
+   }
+
+   .trip_submit {
+      margin-top: 20px;
+   }
+
+   .adi_eft_badge {
+      white-space: nowrap;
+   }
+}
+
+@media screen and (max-width: 767px) {
+   .adi_heading_block {
+      padding-top: 3rem;
+   }
+
+   .adi_heading_content p.adi_heading_para {
+      margin-top: 10px;
+   }
+
+   .adi_heading_arrow {
+      width: 40px;
+      height: 40px;
+   }
+
+   .adi_heading_arrow {
+      left: -5px;
+      top: -6px;
+      transform: none;
+   }
+
+   .adi_heading_arrow img {
+      width: 16px;
+   }
+
+   .adi_heading_h2 {
+      padding-left: 40px;
+      padding-right: 40px;
+   }
+
+   .adi_main_grid {
+      display: block;
+   }
+
+   .adi_main_wrapper {
+      padding-top: 20px;
+   }
+
+   .adi_main_left {
+      border: 0;
+      border-radius: 0;
+   }
+
+   .adi_swiper_prev span,
+   .adi_swiper_next span {
+      width: 34px;
+      height: 34px;
+   }
+
+   .adi_swiper_prev span img,
+   .adi_swiper_next span img {
+      display: inline-block;
+      width: 7px;
+   }
+
+   .adi_swiper_prev {
+      left: 16px;
+      bottom: 16px;
+   }
+
+   .adi_swiper_next {
+      right: 16px;
+      bottom: 16px;
+   }
+
+   .adi_info_card_left,
+   .adi_info_card_right {
+      padding: 0;
+   }
+
+   .adi_info_card {
+      display: block;
+   }
+
+   .adi_info_stat {
+      justify-content: flex-start;
+      margin-top: 0px;
+   }
+
+   .adi_info_card_right {
+      display: flex;
+      align-items: center;
+      column-gap: 25px;
+      margin-top: 22px;
+   }
+
+   .adi_info_card {
+      padding-top: 25px;
+      padding-bottom: 25px;
+   }
+
+   .adi_itinerary,
+   .adi_airports_section,
+   .adi_passengers_row {
+      padding-left: 0;
+      padding-right: 0;
+   }
+
+   .adi_section_title {
+      text-align: center;
+   }
+
+   .adi_eft_badge {
+      font-size: 16px;
+      padding: 6px 14px;
+   }
+
+   .adi_itin_date_block span,
+   .adi_itin_airport > p {
+      font-size: 16px;
+      margin: 6px 0px;
+   }
+
+   .adi_itin_dates_row {
+      column-gap: 16px;
+      margin-top: 15px;
+   }
+
+   .adi_itin_route_row {
+      margin-top: 15px;
+   }
+
+   .adi_itin_airports_row {
+      margin-top: 6px;
+   }
+
+   .adi_port_card_heading {
+      display: block;
+   }
+
+   .adi_airports_grid {
+      margin-top: 15px;
+      grid-template-columns: repeat(2, 1fr);
+      column-gap: 10px;
+   }
+
+   .adi_airport_mini_map {
+      height: 170px;
+   }
+
+   .adi_airport_footer {
+      flex-direction: column;
+      gap: 0px;
+      margin-top: 6px;
+      align-items: flex-start;
+      justify-content: flex-start;
+   }
+
+   .adi_airport_code {
+      font-size: 16px;
+   }
+
+   .adi_map_link {
+      font-size: 14px;
+   }
+
+   .adi_passengers_label {
+      font-size: 16px;
+   }
+
+   .adi_passengers_label span {
+      display: block;
+   }
+
+   .adi_passengers_row {
+      align-items: flex-start;
+   }
+
+   .adi_carbon_card {
+      padding: 16px;
+   }
+
+   .adi_carbon_top {
+      display: grid;
+      grid-template-columns: 1fr 55px;
+      grid-template-rows: auto auto;
+      column-gap: 30px;
+      row-gap: 16px;
+   }
+
+   .adi_carbon_icon_wrap {
+      grid-column: 1 / -1;
+   }
+
+   .adi_carbon_content {
+      grid-column: 1 / 2;
+   }
+
+   .adi_toggle_switch {
+      grid-column: 2 / 3;
+   }
+
+   .adi_carbon_icon_wrap > img {
+      display: block;
+      width: 80px;
+   }
+
+   .btnc_link {
+      grid-template-columns: minmax(150px, 1fr) minmax(50px, 50px);
+   }
+
+   .adi_carbon_desc {
+      font-size: 15px;
+      margin: 14px 0px;
+      line-height: 1.4;
+   }
+
+   .adi_map_wrapper {
+      margin-top: 20px;
+   }
+
+   .adi_map_iframe {
+      height: 350px;
+   }
+
+   .adi_estimate_card {
+      border-top: 0px;
+   }
+
+   .adi_estimate_title {
+      padding-left: 20px;
+      padding-right: 20px;
+      text-align: center;
+   }
+
+   .adi_estimate_row {
+      margin: 8px 0px;
+      padding-left: 20px;
+      padding-right: 20px;
+   }
+
+   .adi_estimate_subtotal_row {
+      padding-left: 20px;
+      padding-right: 20px;
+   }
+
+   .trip_submit {
+      max-width: 280px;
+      margin-top: 20px;
+   }
+
+   .adi_eft_badge {
+      white-space: nowrap;
+   }
+}
+
+/* ====================================
+      Responsive Code End
+==================================== */
