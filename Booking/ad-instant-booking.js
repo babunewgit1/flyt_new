@@ -394,7 +394,7 @@ function renderMainSection(responseData) {
                   <span class="adi_estimate_value" id="adi_subtotal_val"><strong>${currencySymbol}${formatPrice(subtotal)}</strong></span>
                </div>
                <div class="pc_checkout trip_submit">
-                  <div id="w-node-_0a19b2cd-9b93-3c1d-bbd6-a41fe53ed149-e53ed149" data-wf--btn--variant="black" class="btn_common w-variant-717a8abf-6071-4cd8-7483-e0b5d36c316c yeash"><a href="/memberships" class="btnc_link w-inline-block"><p class="btnc_text">See Membership Options See Membership Options</p><div class="btnc_icon_wrap"><img loading="lazy" src="https://cdn.prod.website-files.com/673728493d38fb595b0df373/68f1ce68d69455e26961b49e_45d32b1e5e78559aa8e96f0801193e00_icon.png" alt="logo" class="btnc_icon"></div></a></div>
+                  <div id="w-node-_0a19b2cd-9b93-3c1d-bbd6-a41fe53ed149-e53ed149" data-wf--btn--variant="black" class="btn_common w-variant-717a8abf-6071-4cd8-7483-e0b5d36c316c yeash"><a href="#" class="btnc_link w-inline-block"><p class="btnc_text">Proceed To Checkout</p><div class="btnc_icon_wrap"><img loading="lazy" src="https://cdn.prod.website-files.com/673728493d38fb595b0df373/68f1ce68d69455e26961b49e_45d32b1e5e78559aa8e96f0801193e00_icon.png" alt="logo" class="btnc_icon"></div></a></div>
                </div>
             </div>
 
