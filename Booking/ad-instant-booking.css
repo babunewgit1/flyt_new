@@ -1,10 +1,3 @@
-.nav_bar {
-   background: url("https://cdn.prod.website-files.com/673728493d38fb595b0df373/69ba42b35a4485e5d290fd0e_menu_bg.png");
-   background-repeat: no-repeat;
-   background-position: center;
-   background-size: cover;
-}
-
 .adi_page_loader {
    position: fixed;
    inset: 0;
