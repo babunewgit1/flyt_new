@@ -163,7 +163,7 @@ function renderHeading(detail) {
 
    headingWrapper.innerHTML = `
       <div class="adi_heading_arrow">
-         <a href="/aircraft"><img src="https://cdn.prod.website-files.com/673728493d38fb595b0df373/69c37498460e7320906ec1a3_arrow_right.png" alt="" /></a>
+         <a href="/aircraft#sc_result"><img src="https://cdn.prod.website-files.com/673728493d38fb595b0df373/69c37498460e7320906ec1a3_arrow_right.png" alt="" /></a>
       </div>
       <div class="adi_heading_content">
          <h2 data-wf--white_heading_h2--variant="black_version" class="hm_sponser_h2 adi_heading_h2 w-variant-c97c5271-25fa-0785-e5a2-babd61f625cd">${detail.model_text || ""}</h2>
