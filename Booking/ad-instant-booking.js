@@ -198,11 +198,85 @@ function renderMainSection(responseData) {
    // Use top-level values directly — no calculation needed
    const charter = responseData.price || 0;
    const carbon = responseData.carbon_offset || 0;
+
+   // Adjustment fees from API
+   const interchangeRate = responseData.interchange_rate || 0;
+   const interchangeFee = responseData.interchange_fee || 0;
+   const priorityPercent = responseData.priority_booking_percent || 0;
+   const priorityWindow = responseData.priority_booking_window || 0;
+   const priorityFee = responseData.priority_booking_fee || 0;
+   const peakPercent = responseData.peak_day_percent || 0;
+   const peakFee = responseData.peak_travel_fee || 0;
+   const intlPercent = responseData.international_fee_percent || 0;
+   const intlFee = responseData.international_fee || 0;
+   const tailPremium = responseData.tail_selection_premium || 0;
    const subtotal = responseData.subtotal || 0;
 
    // Dynamic currency symbol from aircraft_detail.currency_text — same as search_result.js
    const currencySymbol =
       CURRENCY_SYMBOLS[(d.currency_text || "").toLowerCase()] || "$";
+
+   // Build adjustment rows (only show rows IF applicable)
+   let adjRows = `
+                <div class="adi_estimate_row adi_adj_row">
+                   <span class="adi_estimate_label">Minimum + Taxi Time</span>
+                   <span class="adi_estimate_value adi_adj_included">INCLUDED</span>
+                </div>`;
+
+   if (interchangeFee > 0) {
+      adjRows += `
+                <div class="adi_estimate_row adi_adj_row">
+                   <div class="adi_adj_label_wrap">
+                      <span class="adi_estimate_label">Interchange</span>
+                      <span class="adi_adj_badge">Midsize Upgrade (${interchangeRate}x)</span>
+                   </div>
+                   <span class="adi_estimate_value">${currencySymbol}${formatPrice(interchangeFee)}</span>
+                </div>`;
+   }
+
+   if (priorityFee > 0) {
+      adjRows += `
+                <div class="adi_estimate_row adi_adj_row">
+                   <div class="adi_adj_label_wrap">
+                      <span class="adi_estimate_label">Priority Booking</span>
+                      <span class="adi_adj_badge">Within ${priorityWindow} hours (+${priorityPercent}%)</span>
+                   </div>
+                   <span class="adi_estimate_value">${currencySymbol}${formatPrice(priorityFee)}</span>
+                </div>`;
+   }
+
+   if (peakFee > 0) {
+      adjRows += `
+                <div class="adi_estimate_row adi_adj_row">
+                   <div class="adi_adj_label_wrap">
+                      <span class="adi_estimate_label">Peak Travel</span>
+                      <span class="adi_adj_badge">High-demand date (+${peakPercent}%)</span>
+                   </div>
+                   <span class="adi_estimate_value">${currencySymbol}${formatPrice(peakFee)}</span>
+                </div>`;
+   }
+
+   if (intlFee > 0) {
+      adjRows += `
+                <div class="adi_estimate_row adi_adj_row">
+                   <div class="adi_adj_label_wrap">
+                      <span class="adi_estimate_label">International</span>
+                      <span class="adi_adj_badge">Cross-border ops (+${intlPercent}%)</span>
+                   </div>
+                   <span class="adi_estimate_value">${currencySymbol}${formatPrice(intlFee)}</span>
+                </div>`;
+   }
+
+   if (tailPremium > 0) {
+      adjRows += `
+                <div class="adi_estimate_row adi_adj_row">
+                   <div class="adi_adj_label_wrap">
+                      <span class="adi_estimate_label">Tail Selection</span>
+                      <span class="adi_adj_badge">Specific aircraft requested</span>
+                   </div>
+                   <span class="adi_estimate_value">${currencySymbol}${formatPrice(tailPremium)}</span>
+                </div>`;
+   }
 
    // First leg coordinates for the map
    const firstLeg = legs[0] || {};
@@ -381,11 +455,13 @@ function renderMainSection(responseData) {
             <div class="adi_estimate_card">
                <h4 class="adi_estimate_title">FLIGHT ESTIMATE</h4>
                <div class="adi_estimate_row">
-                  <span class="adi_estimate_label">Charter price:</span>
+                  <span class="adi_estimate_label">Charter price</span>
                   <span class="adi_estimate_value">${currencySymbol}${formatPrice(charter)}</span>
                </div>
+               <div class="adi_estimate_divider"></div>
+               ${adjRows}
                <div class="adi_estimate_row">
-                  <span class="adi_estimate_label">Carbon offset:</span>
+                  <span class="adi_estimate_label">Carbon offset</span>
                   <span class="adi_estimate_value" id="adi_carbon_estimate_val">${currencySymbol}${formatPrice(carbon)}</span>
                </div>
                <div class="adi_estimate_divider"></div>
@@ -394,7 +470,7 @@ function renderMainSection(responseData) {
                   <span class="adi_estimate_value" id="adi_subtotal_val"><strong>${currencySymbol}${formatPrice(subtotal)}</strong></span>
                </div>
                <div class="pc_checkout trip_submit">
-                  <div id="w-node-_0a19b2cd-9b93-3c1d-bbd6-a41fe53ed149-e53ed149" data-wf--btn--variant="black" class="btn_common w-variant-717a8abf-6071-4cd8-7483-e0b5d36c316c yeash"><a href="#" class="btnc_link w-inline-block"><p class="btnc_text">Proceed To Checkout</p><div class="btnc_icon_wrap"><img loading="lazy" src="https://cdn.prod.website-files.com/673728493d38fb595b0df373/68f1ce68d69455e26961b49e_45d32b1e5e78559aa8e96f0801193e00_icon.png" alt="logo" class="btnc_icon"></div></a></div>
+                  <div id="w-node-_0a19b2cd-9b93-3c1d-bbd6-a41fe53ed149-e53ed149" data-wf--btn--variant="black" class="btn_common button_redirect w-variant-717a8abf-6071-4cd8-7483-e0b5d36c316c yeash"><a href="#" class="btnc_link w-inline-block"><p class="btnc_text">Proceed To Checkout</p><div class="btnc_icon_wrap"><img loading="lazy" src="https://cdn.prod.website-files.com/673728493d38fb595b0df373/68f1ce68d69455e26961b49e_45d32b1e5e78559aa8e96f0801193e00_icon.png" alt="logo" class="btnc_icon"></div></a></div>
                </div>
             </div>
 
@@ -435,17 +511,19 @@ function renderMainSection(responseData) {
             // Toggle OFF — exclude carbon offset
             carbonTitleEl.textContent = `CARBON OFFSET ${currencySymbol}0`;
             carbonEstimateEl.textContent = `${currencySymbol}0`;
-            subtotalEl.innerHTML = `<strong>${currencySymbol}${formatPrice(charter)}</strong>`;
+            subtotalEl.innerHTML = `<strong>${currencySymbol}${formatPrice(subtotal - carbon)}</strong>`;
          }
       });
    }
 
    // ── Checkout Button ───────────────────────────────────────────
-   const checkoutBtn = wrapper.querySelector(".trip_submit button");
+   const checkoutBtn = wrapper.querySelector(".trip_submit .button_redirect");
    if (checkoutBtn) {
       checkoutBtn.addEventListener("click", () => {
          const includeCarbon = carbonToggle ? carbonToggle.checked : true;
-         window.location.href = `/checkout?id=${encodeURIComponent(bookingId)}&carbon=${includeCarbon}`;
+         const paxSpan = document.querySelector(".adi_passengers_label span");
+         const pax = parseInt(paxSpan?.textContent) || 1;
+         window.location.href = `/checkout?id=${encodeURIComponent(bookingId)}&carbon=${includeCarbon}&pax=${pax}`;
       });
    }
 }

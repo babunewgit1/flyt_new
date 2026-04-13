@@ -916,6 +916,11 @@
    display: none;
 }
 
+.adi_estimate_row span.adi_adj_badge {
+   display: block;
+   font-size: 12px;
+}
+
 /* ====================================
       Responsive Code Start
 ==================================== */
