@@ -333,15 +333,20 @@
    pointer-events: none;
 }
 
+.iti {
+   margin-bottom: 0;
+}
+
 /* ── Modals ────────────────────────────────────────────────── */
 .co_modal_overlay {
    display: none;
    position: fixed;
    inset: 0;
    background-color: rgba(4, 20, 42, 0.55);
-   z-index: 9999;
+   z-index: 999999;
    align-items: center;
    justify-content: center;
+   overflow: hidden;
 }
 
 .co_modal_overlay.co_modal_open {
@@ -411,6 +416,8 @@
 
 #co_modal_2 {
    padding-top: 0;
+   max-height: 90vh;
+   overflow-y: auto;
 }
 
 .flying_img {
@@ -458,6 +465,34 @@
    gap: 12px;
 }
 
+/* Country select dropdown */
+.co_card_select select {
+   display: block;
+   width: 100%;
+   height: 55px;
+   background-color: #fff;
+   border: 1px solid #cdd0d4;
+   outline: none;
+   border-radius: 6px;
+   padding: 10px 15px;
+   color: #68727f;
+   font-size: 16px;
+   cursor: pointer;
+   appearance: none;
+   -webkit-appearance: none;
+   -moz-appearance: none;
+   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%2368727f' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E");
+   background-repeat: no-repeat;
+   background-position: right 15px center;
+   padding-right: 40px;
+}
+
+.co_card_input.co_card_select.co_input_error select {
+   border-color: #e05252 !important;
+   background-color: #fff8f8 !important;
+   animation: co_shake 0.35s ease;
+}
+
 .co_card_info {
    position: relative;
 }
@@ -485,9 +520,12 @@
    border: 1px solid #dadcdf;
    border-radius: 8px;
    background-color: #fff;
-   left: 76px;
-   top: -45px;
+   right: -9px;
+   bottom: calc(100% + 12px);
+   left: auto;
+   top: auto;
    opacity: 0;
+   pointer-events: none;
    transition: all 0.2s ease;
 }
 
@@ -498,10 +536,12 @@
    height: 20px;
    border-bottom: 1px solid #dadcdf;
    position: absolute;
-   left: -11px;
-   top: 50%;
+   right: 8px;
+   bottom: -11px;
+   left: auto;
+   top: auto;
    background-color: #fff;
-   transform: translateY(-50%) rotate(135deg);
+   transform: rotate(45deg);
    border-right: 1px solid #dadcdf;
    z-index: 1;
 }
@@ -514,8 +554,9 @@
 }
 
 .info_ch_box:hover .infoch_pic {
-   left: 65px;
+   bottom: calc(100% + 16px);
    opacity: 1;
+   pointer-events: auto;
 }
 
 .co_card_input.co_input_error input {
@@ -571,4 +612,55 @@
    border: 0;
    outline: none;
    padding: 0;
+}
+
+/* ── Billing fields added to Modal 2 ──────────────────────── */
+
+/* Phone field — intl-tel-input full row */
+.co_card_phone {
+   position: relative;
+}
+
+.co_card_phone .iti {
+   width: 100%;
+   display: block;
+}
+
+.co_card_phone .iti input,
+.co_card_phone .iti input[type="text"] {
+   width: 100%;
+   height: 55px;
+   background-color: #fff;
+   border: 1px solid #cdd0d4;
+   outline: none;
+   border-radius: 6px;
+   padding: 10px 15px 10px 52px;
+   color: #68727f;
+   font-size: 16px;
+}
+
+.co_card_phone input {
+   display: block;
+   width: 100%;
+   height: 55px;
+   background-color: #fff;
+   border: 1px solid #cdd0d4;
+   outline: none;
+   border-radius: 6px;
+   padding: 10px 15px;
+   color: #68727f;
+   font-size: 16px;
+}
+
+.co_card_phone input::placeholder {
+   color: #68727f;
+   opacity: 1;
+}
+
+/* Error state for phone input (non-iti fallback) */
+.co_card_input.co_input_error .iti input,
+.co_card_input.co_input_error input#co_phone {
+   border-color: #e05252 !important;
+   background-color: #fff8f8 !important;
+   animation: co_shake 0.35s ease;
 }

@@ -17,6 +17,19 @@ if (!paxParam || isNaN(parseInt(paxParam)) || parseInt(paxParam) < 1) {
    window.location.href = "/aircraft";
 }
 
+// =============================================================================
+// LOGIN GUARD — checkout requires authentication
+// =============================================================================
+const detailsPageURL = `/instant-book?id=${encodeURIComponent(bookingId)}`;
+
+(function checkLoginOnLoad() {
+   if (typeof Cookies === "undefined") return;
+   const isLoggedIn = !!Cookies.get("authToken") && !!Cookies.get("userEmail");
+   if (!isLoggedIn) {
+      window.location.href = detailsPageURL;
+   }
+})();
+
 const includeCarbon = carbonParam === "true";
 const passengerCount = parseInt(paxParam) || 1;
 
@@ -31,6 +44,239 @@ const CURRENCY_SYMBOLS = {
    eur: "€",
    cad: "C$",
 };
+
+const COUNTRIES = [
+   { code: "US", name: "United States" },
+   { code: "AF", name: "Afghanistan" },
+   { code: "AL", name: "Albania" },
+   { code: "DZ", name: "Algeria" },
+   { code: "AS", name: "American Samoa" },
+   { code: "AD", name: "Andorra" },
+   { code: "AO", name: "Angola" },
+   { code: "AI", name: "Anguilla" },
+   { code: "AG", name: "Antigua and Barbuda" },
+   { code: "AR", name: "Argentina" },
+   { code: "AM", name: "Armenia" },
+   { code: "AW", name: "Aruba" },
+   { code: "AU", name: "Australia" },
+   { code: "AT", name: "Austria" },
+   { code: "AZ", name: "Azerbaijan" },
+   { code: "BS", name: "Bahamas" },
+   { code: "BH", name: "Bahrain" },
+   { code: "BD", name: "Bangladesh" },
+   { code: "BB", name: "Barbados" },
+   { code: "BY", name: "Belarus" },
+   { code: "BE", name: "Belgium" },
+   { code: "BZ", name: "Belize" },
+   { code: "BJ", name: "Benin" },
+   { code: "BM", name: "Bermuda" },
+   { code: "BT", name: "Bhutan" },
+   { code: "BO", name: "Bolivia" },
+   { code: "BA", name: "Bosnia and Herzegovina" },
+   { code: "BW", name: "Botswana" },
+   { code: "BR", name: "Brazil" },
+   { code: "BN", name: "Brunei" },
+   { code: "BG", name: "Bulgaria" },
+   { code: "BF", name: "Burkina Faso" },
+   { code: "BI", name: "Burundi" },
+   { code: "CV", name: "Cabo Verde" },
+   { code: "KH", name: "Cambodia" },
+   { code: "CM", name: "Cameroon" },
+   { code: "CA", name: "Canada" },
+   { code: "KY", name: "Cayman Islands" },
+   { code: "CF", name: "Central African Republic" },
+   { code: "TD", name: "Chad" },
+   { code: "CL", name: "Chile" },
+   { code: "CN", name: "China" },
+   { code: "CO", name: "Colombia" },
+   { code: "KM", name: "Comoros" },
+   { code: "CG", name: "Congo" },
+   { code: "CD", name: "Congo (DRC)" },
+   { code: "CK", name: "Cook Islands" },
+   { code: "CR", name: "Costa Rica" },
+   { code: "CI", name: "Côte d'Ivoire" },
+   { code: "HR", name: "Croatia" },
+   { code: "CU", name: "Cuba" },
+   { code: "CW", name: "Curaçao" },
+   { code: "CY", name: "Cyprus" },
+   { code: "CZ", name: "Czech Republic" },
+   { code: "DK", name: "Denmark" },
+   { code: "DJ", name: "Djibouti" },
+   { code: "DM", name: "Dominica" },
+   { code: "DO", name: "Dominican Republic" },
+   { code: "EC", name: "Ecuador" },
+   { code: "EG", name: "Egypt" },
+   { code: "SV", name: "El Salvador" },
+   { code: "GQ", name: "Equatorial Guinea" },
+   { code: "ER", name: "Eritrea" },
+   { code: "EE", name: "Estonia" },
+   { code: "SZ", name: "Eswatini" },
+   { code: "ET", name: "Ethiopia" },
+   { code: "FK", name: "Falkland Islands" },
+   { code: "FO", name: "Faroe Islands" },
+   { code: "FJ", name: "Fiji" },
+   { code: "FI", name: "Finland" },
+   { code: "FR", name: "France" },
+   { code: "GF", name: "French Guiana" },
+   { code: "PF", name: "French Polynesia" },
+   { code: "GA", name: "Gabon" },
+   { code: "GM", name: "Gambia" },
+   { code: "GE", name: "Georgia" },
+   { code: "DE", name: "Germany" },
+   { code: "GH", name: "Ghana" },
+   { code: "GI", name: "Gibraltar" },
+   { code: "GR", name: "Greece" },
+   { code: "GL", name: "Greenland" },
+   { code: "GD", name: "Grenada" },
+   { code: "GP", name: "Guadeloupe" },
+   { code: "GU", name: "Guam" },
+   { code: "GT", name: "Guatemala" },
+   { code: "GG", name: "Guernsey" },
+   { code: "GN", name: "Guinea" },
+   { code: "GW", name: "Guinea-Bissau" },
+   { code: "GY", name: "Guyana" },
+   { code: "HT", name: "Haiti" },
+   { code: "HN", name: "Honduras" },
+   { code: "HK", name: "Hong Kong" },
+   { code: "HU", name: "Hungary" },
+   { code: "IS", name: "Iceland" },
+   { code: "IN", name: "India" },
+   { code: "ID", name: "Indonesia" },
+   { code: "IR", name: "Iran" },
+   { code: "IQ", name: "Iraq" },
+   { code: "IE", name: "Ireland" },
+   { code: "IM", name: "Isle of Man" },
+   { code: "IL", name: "Israel" },
+   { code: "IT", name: "Italy" },
+   { code: "JM", name: "Jamaica" },
+   { code: "JP", name: "Japan" },
+   { code: "JE", name: "Jersey" },
+   { code: "JO", name: "Jordan" },
+   { code: "KZ", name: "Kazakhstan" },
+   { code: "KE", name: "Kenya" },
+   { code: "KI", name: "Kiribati" },
+   { code: "KP", name: "North Korea" },
+   { code: "KR", name: "South Korea" },
+   { code: "KW", name: "Kuwait" },
+   { code: "KG", name: "Kyrgyzstan" },
+   { code: "LA", name: "Laos" },
+   { code: "LV", name: "Latvia" },
+   { code: "LB", name: "Lebanon" },
+   { code: "LS", name: "Lesotho" },
+   { code: "LR", name: "Liberia" },
+   { code: "LY", name: "Libya" },
+   { code: "LI", name: "Liechtenstein" },
+   { code: "LT", name: "Lithuania" },
+   { code: "LU", name: "Luxembourg" },
+   { code: "MO", name: "Macau" },
+   { code: "MG", name: "Madagascar" },
+   { code: "MW", name: "Malawi" },
+   { code: "MY", name: "Malaysia" },
+   { code: "MV", name: "Maldives" },
+   { code: "ML", name: "Mali" },
+   { code: "MT", name: "Malta" },
+   { code: "MH", name: "Marshall Islands" },
+   { code: "MQ", name: "Martinique" },
+   { code: "MR", name: "Mauritania" },
+   { code: "MU", name: "Mauritius" },
+   { code: "YT", name: "Mayotte" },
+   { code: "MX", name: "Mexico" },
+   { code: "FM", name: "Micronesia" },
+   { code: "MD", name: "Moldova" },
+   { code: "MC", name: "Monaco" },
+   { code: "MN", name: "Mongolia" },
+   { code: "ME", name: "Montenegro" },
+   { code: "MS", name: "Montserrat" },
+   { code: "MA", name: "Morocco" },
+   { code: "MZ", name: "Mozambique" },
+   { code: "MM", name: "Myanmar" },
+   { code: "NA", name: "Namibia" },
+   { code: "NR", name: "Nauru" },
+   { code: "NP", name: "Nepal" },
+   { code: "NL", name: "Netherlands" },
+   { code: "NC", name: "New Caledonia" },
+   { code: "NZ", name: "New Zealand" },
+   { code: "NI", name: "Nicaragua" },
+   { code: "NE", name: "Niger" },
+   { code: "NG", name: "Nigeria" },
+   { code: "MK", name: "North Macedonia" },
+   { code: "NO", name: "Norway" },
+   { code: "OM", name: "Oman" },
+   { code: "PK", name: "Pakistan" },
+   { code: "PW", name: "Palau" },
+   { code: "PS", name: "Palestine" },
+   { code: "PA", name: "Panama" },
+   { code: "PG", name: "Papua New Guinea" },
+   { code: "PY", name: "Paraguay" },
+   { code: "PE", name: "Peru" },
+   { code: "PH", name: "Philippines" },
+   { code: "PL", name: "Poland" },
+   { code: "PT", name: "Portugal" },
+   { code: "PR", name: "Puerto Rico" },
+   { code: "QA", name: "Qatar" },
+   { code: "RE", name: "Réunion" },
+   { code: "RO", name: "Romania" },
+   { code: "RU", name: "Russia" },
+   { code: "RW", name: "Rwanda" },
+   { code: "BL", name: "Saint Barthélemy" },
+   { code: "KN", name: "Saint Kitts and Nevis" },
+   { code: "LC", name: "Saint Lucia" },
+   { code: "MF", name: "Saint Martin" },
+   { code: "VC", name: "Saint Vincent and the Grenadines" },
+   { code: "WS", name: "Samoa" },
+   { code: "SM", name: "San Marino" },
+   { code: "ST", name: "São Tomé and Príncipe" },
+   { code: "SA", name: "Saudi Arabia" },
+   { code: "SN", name: "Senegal" },
+   { code: "RS", name: "Serbia" },
+   { code: "SC", name: "Seychelles" },
+   { code: "SL", name: "Sierra Leone" },
+   { code: "SG", name: "Singapore" },
+   { code: "SX", name: "Sint Maarten" },
+   { code: "SK", name: "Slovakia" },
+   { code: "SI", name: "Slovenia" },
+   { code: "SB", name: "Solomon Islands" },
+   { code: "SO", name: "Somalia" },
+   { code: "ZA", name: "South Africa" },
+   { code: "SS", name: "South Sudan" },
+   { code: "ES", name: "Spain" },
+   { code: "LK", name: "Sri Lanka" },
+   { code: "SD", name: "Sudan" },
+   { code: "SR", name: "Suriname" },
+   { code: "SE", name: "Sweden" },
+   { code: "CH", name: "Switzerland" },
+   { code: "SY", name: "Syria" },
+   { code: "TW", name: "Taiwan" },
+   { code: "TJ", name: "Tajikistan" },
+   { code: "TZ", name: "Tanzania" },
+   { code: "TH", name: "Thailand" },
+   { code: "TL", name: "Timor-Leste" },
+   { code: "TG", name: "Togo" },
+   { code: "TK", name: "Tokelau" },
+   { code: "TO", name: "Tonga" },
+   { code: "TT", name: "Trinidad and Tobago" },
+   { code: "TN", name: "Tunisia" },
+   { code: "TR", name: "Turkey" },
+   { code: "TM", name: "Turkmenistan" },
+   { code: "TC", name: "Turks and Caicos Islands" },
+   { code: "TV", name: "Tuvalu" },
+   { code: "UG", name: "Uganda" },
+   { code: "UA", name: "Ukraine" },
+   { code: "AE", name: "United Arab Emirates" },
+   { code: "GB", name: "United Kingdom" },
+   { code: "UY", name: "Uruguay" },
+   { code: "UZ", name: "Uzbekistan" },
+   { code: "VU", name: "Vanuatu" },
+   { code: "VA", name: "Vatican City" },
+   { code: "VE", name: "Venezuela" },
+   { code: "VN", name: "Vietnam" },
+   { code: "VG", name: "Virgin Islands (British)" },
+   { code: "VI", name: "Virgin Islands (U.S.)" },
+   { code: "WF", name: "Wallis and Futuna" },
+   { code: "YE", name: "Yemen" },
+   { code: "ZM", name: "Zambia" },
+   { code: "ZW", name: "Zimbabwe" },
+];
 
 // =============================================================================
 // HELPER FUNCTIONS — copied from ad-instant-booking.js
@@ -625,6 +871,39 @@ function setupModals() {
                            </div>
                         </div>
                      </div>
+
+                     <!-- Phone Number (full row, intl-tel-input) -->
+                     <div class="co_card_input co_card_phone">
+                        <input required id="co_phone" name="phone" type="text" placeholder="Phone Number" />
+                     </div>
+
+                     <!-- City + State (half row each) -->
+                     <div class="co_card_grp">
+                        <div class="co_card_input">
+                           <input type="text" id="co_city" placeholder="City" autocomplete="address-level2" />
+                        </div>
+                        <div class="co_card_input">
+                           <input type="text" id="co_state" placeholder="State" autocomplete="address-level1" />
+                        </div>
+                     </div>
+
+                     <!-- Zip + Country (half row each) -->
+                     <div class="co_card_grp">
+                        <div class="co_card_input">
+                           <input type="text" id="co_zip" placeholder="Zip Code" autocomplete="postal-code" inputmode="numeric" />
+                        </div>
+                        <div class="co_card_input co_card_select">
+                           <select id="co_country" autocomplete="country-name">
+                              <option value="" disabled selected>Country</option>
+                              ${COUNTRIES.map((c) => `<option value="${c.code}">${c.name}</option>`).join("")}
+                           </select>
+                        </div>
+                     </div>
+
+                     <!-- Address (full row) -->
+                     <div class="co_card_input">
+                        <input type="text" id="co_address" placeholder="Address" autocomplete="street-address" />
+                     </div>
                   </div>
                      <div class="co_modal_add_btn">
                       <div data-wf--btn--variant="black" class="btn_common button_redirect w-variant-717a8abf-6071-4cd8-7483-e0b5d36c316c yeash"><button id="co_modal_2_submit" class="btnc_link w-inline-block"><p class="btnc_text">Save This Card</p><div class="btnc_icon_wrap"><img loading="lazy" src="https://cdn.prod.website-files.com/673728493d38fb595b0df373/68f1ce68d69455e26961b49e_45d32b1e5e78559aa8e96f0801193e00_icon.png" alt="logo" class="btnc_icon"></div></button></div>
@@ -656,31 +935,42 @@ function setupModals() {
       }
    });
 
-   // Prevent clicks inside modal from bubbling to overlay
-   document
-      .getElementById("co_modal_1")
-      .addEventListener("click", (e) => e.stopPropagation());
-   document
-      .getElementById("co_modal_2")
-      .addEventListener("click", (e) => e.stopPropagation());
-
    // Close Modal 1 — only when clicking the overlay background
    document
       .getElementById("co_modal_1_close")
       .addEventListener("click", () => closeModal(modal1Overlay));
-   modal1Overlay.addEventListener("click", () => closeModal(modal1Overlay));
+   modal1Overlay.addEventListener("click", (e) => {
+      if (e.target === modal1Overlay) closeModal(modal1Overlay);
+   });
 
    // Open Modal 2 when "Add New Card" button is clicked inside Modal 1
+   let coItiInitialized = false;
    document.getElementById("co_open_modal_2").addEventListener("click", () => {
       closeModal(modal1Overlay);
       openModal(modal2Overlay);
+
+      // ── Lazy-init intl-tel-input AFTER Modal 2 is visible ────────
+      if (!coItiInitialized) {
+         coItiInitialized = true;
+         const coPhoneInput = document.getElementById("co_phone");
+         if (coPhoneInput && typeof window.intlTelInput === "function") {
+            window.coIti = window.intlTelInput(coPhoneInput, {
+               initialCountry: "us",
+               separateDialCode: true,
+               utilsScript:
+                  "https://cdn.jsdelivr.net/npm/intl-tel-input@16/build/js/utils.js",
+            });
+         }
+      }
    });
 
    // Close Modal 2 — only when clicking the overlay background
    document
       .getElementById("co_modal_2_close")
       .addEventListener("click", () => closeModal(modal2Overlay));
-   modal2Overlay.addEventListener("click", () => closeModal(modal2Overlay));
+   modal2Overlay.addEventListener("click", (e) => {
+      if (e.target === modal2Overlay) closeModal(modal2Overlay);
+   });
 
    // ── Card Form Validation & Auto-Format ─────────────────────────
    setupCardValidation();
@@ -694,6 +984,12 @@ function setupCardValidation() {
    const cardName = document.getElementById("co_card_name");
    const cardExpiry = document.getElementById("co_card_expiry");
    const cardCvv = document.getElementById("co_card_cvv");
+   const coPhone = document.getElementById("co_phone");
+   const coCity = document.getElementById("co_city");
+   const coState = document.getElementById("co_state");
+   const coZip = document.getElementById("co_zip");
+   const coCountry = document.getElementById("co_country");
+   const coAddress = document.getElementById("co_address");
    const submitBtn = document.getElementById("co_modal_2_submit");
 
    if (!cardNumber || !submitBtn) return;
@@ -717,6 +1013,16 @@ function setupCardValidation() {
       const err = wrap.querySelector(".co_field_error");
       if (err) err.remove();
    }
+
+   // Clear errors on input for billing fields
+   [coCity, coState, coZip].forEach((el) => {
+      if (el) el.addEventListener("input", () => clearError(el));
+   });
+   if (coCountry)
+      coCountry.addEventListener("change", () => clearError(coCountry));
+   if (coAddress)
+      coAddress.addEventListener("input", () => clearError(coAddress));
+   if (coPhone) coPhone.addEventListener("input", () => clearError(coPhone));
 
    // Luhn algorithm — basic card number authenticity check
    function luhnCheck(num) {
@@ -810,6 +1116,61 @@ function setupCardValidation() {
          clearError(cardCvv);
       }
 
+      // Phone
+      if (window.coIti && typeof window.coIti.isValidNumber === "function") {
+         if (!window.coIti.isValidNumber()) {
+            setError(coPhone, "Enter a valid phone number.");
+            valid = false;
+         } else {
+            clearError(coPhone);
+         }
+      } else if (coPhone && coPhone.value.trim().length < 6) {
+         setError(coPhone, "Enter a valid phone number.");
+         valid = false;
+      } else if (coPhone) {
+         clearError(coPhone);
+      }
+
+      // City
+      if (coCity && coCity.value.trim().length < 1) {
+         setError(coCity, "Enter your city.");
+         valid = false;
+      } else if (coCity) {
+         clearError(coCity);
+      }
+
+      // State
+      if (coState && coState.value.trim().length < 1) {
+         setError(coState, "Enter your state.");
+         valid = false;
+      } else if (coState) {
+         clearError(coState);
+      }
+
+      // Zip
+      if (coZip && coZip.value.trim().length < 3) {
+         setError(coZip, "Enter a valid zip code.");
+         valid = false;
+      } else if (coZip) {
+         clearError(coZip);
+      }
+
+      // Country
+      if (coCountry && coCountry.value.trim().length < 1) {
+         setError(coCountry, "Enter your country.");
+         valid = false;
+      } else if (coCountry) {
+         clearError(coCountry);
+      }
+
+      // Address
+      if (coAddress && coAddress.value.trim().length < 5) {
+         setError(coAddress, "Enter your billing address.");
+         valid = false;
+      } else if (coAddress) {
+         clearError(coAddress);
+      }
+
       return valid;
    }
 
@@ -837,4 +1198,11 @@ document.addEventListener("DOMContentLoaded", () => {
    renderHeading();
    fetchCheckoutData();
    setupModals();
+});
+
+// =============================================================================
+// LOGOUT GUARD — if user logs out while on checkout, redirect to details page
+// =============================================================================
+window.addEventListener("userLoggedOut", () => {
+   window.location.href = detailsPageURL;
 });

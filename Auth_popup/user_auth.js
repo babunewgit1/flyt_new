@@ -291,39 +291,39 @@ document.addEventListener("DOMContentLoaded", function () {
             submitBtn.disabled = true;
             submitBtn.innerText = "Please wait...";
 
-            // Verify Email & Phone
-            const verifyRes = await fetch(
-               "https://operators-dashboard.bubbleapps.io/api/1.1/wf/email_phone_verification",
-               {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({
-                     email: email,
-                     phone: internationalNumber,
-                  }),
-               },
-            );
-            const verifyData = await verifyRes.json();
-            if (verifyData.response) {
-               if (!verifyData.response.phone_valid && internationalNumber) {
-                  window.toast.error("Please enter a valid phone number.");
-                  return;
-               } else if (
-                  !verifyData.response.phone_valid &&
-                  !internationalNumber
-               ) {
-                  window.toast.error("Please enter a valid phone number.");
-                  return;
-               }
-
-               if (
-                  verifyData.response.email_status !== "DELIVERABLE" ||
-                  verifyData.response.disposable_email === true
-               ) {
-                  window.toast.error("Please enter a valid email");
-                  return;
-               }
-            }
+            // Verify Email & Phone (DISABLED)
+            // const verifyRes = await fetch(
+            //    "https://operators-dashboard.bubbleapps.io/api/1.1/wf/email_phone_verification",
+            //    {
+            //       method: "POST",
+            //       headers: { "Content-Type": "application/json" },
+            //       body: JSON.stringify({
+            //          email: email,
+            //          phone: internationalNumber,
+            //       }),
+            //    },
+            // );
+            // const verifyData = await verifyRes.json();
+            // if (verifyData.response) {
+            //    if (!verifyData.response.phone_valid && internationalNumber) {
+            //       window.toast.error("Please enter a valid phone number.");
+            //       return;
+            //    } else if (
+            //       !verifyData.response.phone_valid &&
+            //       !internationalNumber
+            //    ) {
+            //       window.toast.error("Please enter a valid phone number.");
+            //       return;
+            //    }
+            //
+            //    if (
+            //       verifyData.response.email_status !== "DELIVERABLE" ||
+            //       verifyData.response.disposable_email === true
+            //    ) {
+            //       window.toast.error("Please enter a valid email");
+            //       return;
+            //    }
+            // }
 
             // Perform Signup
             const signupRes = await fetch(
@@ -371,6 +371,8 @@ document.addEventListener("DOMContentLoaded", function () {
                }
 
                window.toast.success("Sign up Successful");
+               console.log("✅ Signup Success Response:", signupData);
+               console.log("✅ Signup User Data:", signupData.response);
                signupForm.reset();
 
                // Refresh Header UI & Close Form
@@ -470,6 +472,8 @@ document.addEventListener("DOMContentLoaded", function () {
                }
 
                window.toast.success("Login Successful!");
+               console.log("✅ Login Success Response:", data);
+               console.log("✅ Login User Data:", data.response);
                loginForm.reset();
 
                // Dispatch event to update header instantly

@@ -92,13 +92,9 @@ async function fetchAircraftDetail() {
          typeof Cookies !== "undefined" && !!Cookies.get("authToken");
       if (isLoggedIn && data.response?.blur_pricing === true) {
          // Blur both the related jet slider prices AND the main booking card prices
-         document
-            .querySelectorAll(
-               ".adj_card_price, .adi_info_price span, .adi_estimate_value",
-            )
-            .forEach((el) => {
-               el.style.filter = "blur(5px)";
-            });
+         document.querySelectorAll(".adj_card_price").forEach((el) => {
+            el.style.filter = "blur(5px)";
+         });
       }
    } catch (error) {
       console.error("Aircraft Detail Error:", error);
@@ -516,14 +512,55 @@ function renderMainSection(responseData) {
       });
    }
 
-   // ── Checkout Button ───────────────────────────────────────────
+   // ── Checkout Button (with login check) ────────────────────────
    const checkoutBtn = wrapper.querySelector(".trip_submit .button_redirect");
    if (checkoutBtn) {
-      checkoutBtn.addEventListener("click", () => {
+      checkoutBtn.addEventListener("click", (e) => {
+         e.preventDefault();
+
          const includeCarbon = carbonToggle ? carbonToggle.checked : true;
          const paxSpan = document.querySelector(".adi_passengers_label span");
          const pax = parseInt(paxSpan?.textContent) || 1;
-         window.location.href = `/checkout?id=${encodeURIComponent(bookingId)}&carbon=${includeCarbon}&pax=${pax}`;
+         const checkoutURL = `/checkout?id=${encodeURIComponent(bookingId)}&carbon=${includeCarbon}&pax=${pax}`;
+
+         // Check if user is logged in
+         const isLoggedIn =
+            typeof Cookies !== "undefined" &&
+            !!Cookies.get("authToken") &&
+            !!Cookies.get("userEmail");
+
+         if (isLoggedIn) {
+            // User is logged in → go to checkout directly
+            window.location.href = checkoutURL;
+         } else {
+            // User is NOT logged in → set callback & open login popup
+            window.onAuthSuccess = function () {
+               window.location.href = checkoutURL;
+            };
+
+            // Also listen for userLoggedIn event as backup
+            const onLoggedIn = () => {
+               window.removeEventListener("userLoggedIn", onLoggedIn);
+               if (typeof window.onAuthSuccess === "function") {
+                  const cb = window.onAuthSuccess;
+                  window.onAuthSuccess = null;
+                  setTimeout(() => {
+                     cb();
+                  }, 800);
+               }
+            };
+            window.addEventListener("userLoggedIn", onLoggedIn);
+
+            // Open login popup (defined in user_auth.js globally)
+            const loginForm = document.querySelector(".fl_auth.login_form");
+            if (loginForm) {
+               document
+                  .querySelectorAll(".fl_auth")
+                  .forEach((f) => f.classList.add("form_hide"));
+               loginForm.classList.remove("form_hide");
+               document.body.classList.add("overflow");
+            }
+         }
       });
    }
 }
@@ -874,12 +911,8 @@ window.addEventListener("userLoggedOut", () => {
 // Re-apply price blur immediately on login (no reload needed)
 window.addEventListener("userLoggedIn", () => {
    if (apiResponseData?.blur_pricing === true) {
-      document
-         .querySelectorAll(
-            ".adj_card_price, .adi_info_price span, .adi_estimate_value",
-         )
-         .forEach((el) => {
-            el.style.filter = "blur(5px)";
-         });
+      document.querySelectorAll(".adj_card_price").forEach((el) => {
+         el.style.filter = "blur(5px)";
+      });
    }
 });
