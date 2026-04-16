@@ -1347,7 +1347,7 @@ function renderSavedCards(cards) {
 
       html += `
          <label class="co_saved_card ${isDefault ? "co_saved_card_active" : ""}" data-profile-id="${profileId}" data-card-type="${type}" data-last-four="${lastFour}">
-            <input type="radio" name="saved_card" value="${profileId}"
+            <input type="radio" name="saved_card"
                class="co_saved_card_radio" ${isDefault ? "checked" : ""} />
             <span class="co_saved_card_check">
                <svg width="10" height="8" viewBox="0 0 10 8" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1358,7 +1358,11 @@ function renderSavedCards(cards) {
             <div class="co_saved_card_info">
                <p class="co_saved_card_name">${type} ending in ${lastFour}</p>
             </div>
-            ${isDefault ? '<span class="co_saved_card_default">Default</span>' : ""}
+            ${
+               isDefault
+                  ? `<span class="co_saved_card_default">Default</span>${cards.length > 1 ? ` <button class="co_saved_card_action co_remove_default" data-profile-id="${profileId}" aria-label="Remove default">Remove Default</button>` : ""}`
+                  : `<button class="co_saved_card_action co_set_default" data-profile-id="${profileId}" aria-label="Set as default">Set Default</button>`
+            }
             <button class="co_saved_card_delete" data-profile-id="${profileId}" aria-label="Delete card">
                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6h14z" stroke="#04142a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
@@ -1382,7 +1386,6 @@ function renderSavedCards(cards) {
 
    container.querySelectorAll(".co_saved_card_radio").forEach((radio) => {
       radio.addEventListener("change", () => {
-         // Update active styles
          container.querySelectorAll(".co_saved_card").forEach((el) => {
             el.classList.remove("co_saved_card_active");
          });
@@ -1392,10 +1395,155 @@ function renderSavedCards(cards) {
       });
    });
 
+   // Set Default button handler
+   container.querySelectorAll(".co_set_default").forEach((btn) => {
+      btn.addEventListener("click", async (e) => {
+         e.preventDefault();
+         e.stopPropagation();
+         const profileId = btn.dataset.profileId;
+         const original = btn.textContent;
+         btn.textContent = "Please wait...";
+         btn.disabled = true;
+         await updateDefaultCard(profileId, true);
+         btn.textContent = original;
+         btn.disabled = false;
+      });
+   });
+
+   // Remove Default button handler
+   container.querySelectorAll(".co_remove_default").forEach((btn) => {
+      btn.addEventListener("click", async (e) => {
+         e.preventDefault();
+         e.stopPropagation();
+         const profileId = btn.dataset.profileId;
+         const original = btn.textContent;
+         btn.textContent = "Please wait...";
+         btn.disabled = true;
+         await updateDefaultCard(profileId, false);
+         btn.textContent = original;
+         btn.disabled = false;
+      });
+   });
+
+   // Delete card button handler
+   container.querySelectorAll(".co_saved_card_delete").forEach((btn) => {
+      btn.addEventListener("click", async (e) => {
+         e.preventDefault();
+         e.stopPropagation();
+         const profileId = btn.dataset.profileId;
+
+         const result = await Swal.fire({
+            title: "Delete Card?",
+            text: "Are you sure you want to delete this card? This action cannot be undone.",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#e74c3c",
+            cancelButtonColor: "#6c757d",
+            confirmButtonText: "Yes, delete it",
+            cancelButtonText: "Cancel",
+            showLoaderOnConfirm: true,
+            allowOutsideClick: () => !Swal.isLoading(),
+            preConfirm: async () => {
+               return await deleteCard(profileId);
+            },
+         });
+
+         if (result.isConfirmed) {
+            if (result.value && result.value.success) {
+               window.toast.success("Card deleted successfully!");
+               fetchSavedCards();
+            } else {
+               window.toast.error(
+                  result.value?.message || "Failed to delete card.",
+               );
+            }
+         }
+      });
+   });
+
    // Set initial "Pay via" text from default/checked card
    const checkedRadio = container.querySelector(".co_saved_card_radio:checked");
    if (checkedRadio) {
       updatePayVia(checkedRadio.closest(".co_saved_card"));
+   }
+}
+
+async function deleteCard(profileId) {
+   const authToken =
+      typeof Cookies !== "undefined" ? Cookies.get("authToken") : null;
+   if (!authToken) return { success: false, message: "Not authenticated." };
+
+   try {
+      const res = await fetch(
+         `${BUBBLE_BASE_URL}/api/1.1/wf/webflow_delete_card_flyt`,
+         {
+            method: "POST",
+            headers: {
+               "Content-Type": "application/json",
+               Authorization: `Bearer ${authToken}`,
+            },
+            body: JSON.stringify({ payment_profile_id: profileId }),
+         },
+      );
+      const data = await res.json();
+      console.log("🗑️ Delete Card Response:", data);
+
+      if (res.ok && !(data.response && data.response.has_error)) {
+         return { success: true };
+      } else {
+         const message =
+            (data.response && data.response.message) ||
+            data.message ||
+            "Failed to delete card.";
+         return { success: false, message };
+      }
+   } catch (err) {
+      console.error("Delete Card Error:", err);
+      return {
+         success: false,
+         message: "Something went wrong. Please try again.",
+      };
+   }
+}
+
+async function updateDefaultCard(profileId, isDefault) {
+   const authToken =
+      typeof Cookies !== "undefined" ? Cookies.get("authToken") : null;
+   if (!authToken) return;
+
+   try {
+      const res = await fetch(
+         `${BUBBLE_BASE_URL}/api/1.1/wf/webflow_update_default_card_flyt`,
+         {
+            method: "POST",
+            headers: {
+               "Content-Type": "application/json",
+               Authorization: `Bearer ${authToken}`,
+            },
+            body: JSON.stringify({
+               payment_profile_id: profileId,
+               is_default: isDefault,
+            }),
+         },
+      );
+      const data = await res.json();
+      console.log("🔄 Update Default Card Response:", data);
+
+      if (res.ok && !(data.response && data.response.has_error)) {
+         window.toast.success(
+            isDefault ? "Default card updated!" : "Default card removed!",
+         );
+         fetchSavedCards(); // refresh list
+      } else {
+         const errMsg =
+            (data.response && data.response.message) ||
+            data.message ||
+            "Failed to update default card.";
+         window.toast.error(errMsg);
+      }
+   } catch (err) {
+      console.error("Update Default Card Error:", err);
+      window.toast.error("Something went wrong. Please try again.");
    }
 }
 

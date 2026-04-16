@@ -450,6 +450,40 @@
    opacity: 1;
 }
 
+.co_saved_card_action {
+   border: 1.5px solid #04142a;
+   background: none;
+   cursor: pointer;
+   padding: 4px 10px;
+   margin-left: 8px;
+   border-radius: 20px;
+   font-size: 12px;
+   font-weight: 600;
+   color: #04142a;
+   white-space: nowrap;
+   transition: all 0.2s ease;
+}
+
+.co_saved_card_action:hover {
+   background-color: #04142a;
+   color: #fff;
+}
+
+.co_saved_card_action:disabled {
+   opacity: 0.5;
+   cursor: not-allowed;
+}
+
+.co_remove_default {
+   border-color: #e74c3c;
+   color: #e74c3c;
+}
+
+.co_remove_default:hover {
+   background-color: #e74c3c;
+   color: #fff;
+}
+
 .iti {
    margin-bottom: 0;
 }
