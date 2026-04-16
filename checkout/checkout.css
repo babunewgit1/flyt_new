@@ -333,6 +333,122 @@
    pointer-events: none;
 }
 
+.co_pay_via_amount {
+   font-size: 22px;
+   font-weight: 700;
+   color: #04142a;
+   margin: 0 0 15px;
+}
+
+/* ── Saved Cards List ──────────────────────────────────────── */
+.co_saved_cards {
+   padding: 0 25px;
+}
+
+.co_no_cards {
+   padding: 20px 0;
+   text-align: center;
+}
+
+.co_no_cards p {
+   font-size: 15px;
+   color: #9ba1aa;
+}
+
+.co_saved_card {
+   display: flex;
+   align-items: center;
+   padding: 14px 18px;
+   border: 1.5px solid #e5e7e9;
+   border-radius: 8px;
+   margin-top: 12px;
+   cursor: pointer;
+   transition: all 0.2s ease;
+   position: relative;
+}
+
+.co_saved_card:hover {
+   border-color: #c5c9cf;
+}
+
+.co_saved_card_active {
+   background-color: #f0f7ff;
+}
+
+.co_saved_card_radio {
+   display: none;
+}
+
+.co_saved_card_check {
+   width: 22px;
+   height: 22px;
+   min-width: 22px;
+   border-radius: 50%;
+   border: 2px solid #d0d3d9;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   transition: all 0.2s ease;
+   margin-right: 14px;
+}
+
+.co_saved_card_check svg {
+   opacity: 0;
+   transition: opacity 0.2s ease;
+}
+
+.co_saved_card_active .co_saved_card_check {
+   background-color: #68727f;
+   border-color: #68727f;
+}
+
+.co_saved_card_active .co_saved_card_check svg {
+   opacity: 1;
+}
+
+.co_saved_card_logo {
+   width: 50px;
+   height: 32px;
+   object-fit: contain;
+   margin-right: 14px;
+   border-radius: 4px;
+}
+
+.co_saved_card_info {
+   flex: 1;
+}
+
+.co_saved_card_name {
+   font-size: 15px;
+   font-weight: 600;
+   color: #04142a;
+}
+
+.co_saved_card_default {
+   font-size: 12px;
+   font-weight: 600;
+   color: #fff;
+   background-color: #04142a;
+   padding: 4px 12px;
+   border-radius: 20px;
+   margin-left: 10px;
+   white-space: nowrap;
+}
+
+.co_saved_card_delete {
+   border: none;
+   background: none;
+   cursor: pointer;
+   padding: 6px;
+   margin-left: 10px;
+   opacity: 0.5;
+   transition: opacity 0.2s ease;
+}
+
+.co_saved_card_delete:hover {
+   opacity: 1;
+}
+
 .iti {
    margin-bottom: 0;
 }

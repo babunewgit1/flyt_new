@@ -39,6 +39,27 @@ const passengerCount = parseInt(paxParam) || 1;
 const CHECKOUT_API =
    "https://operators-dashboard.bubbleapps.io/api/1.1/wf/webflow_return_aircraft_detail_flyt";
 
+const BUBBLE_BASE_URL =
+   "https://operators-dashboard.bubbleapps.io/version-test";
+
+// Card logo URLs — update each URL individually when real logos are ready
+const CARD_LOGOS = {
+   visa: "https://cdn.prod.website-files.com/673728493d38fb595b0df373/69d4bb1b90c4172b491d4b24_card_visa.png",
+   mastercard:
+      "https://cdn.prod.website-files.com/673728493d38fb595b0df373/69d4bb1b90c4172b491d4b24_card_visa.png",
+   "american express":
+      "https://cdn.prod.website-files.com/673728493d38fb595b0df373/69d4bb1b90c4172b491d4b24_card_visa.png",
+   discover:
+      "https://cdn.prod.website-files.com/673728493d38fb595b0df373/69d4bb1b90c4172b491d4b24_card_visa.png",
+   jcb: "https://cdn.prod.website-files.com/673728493d38fb595b0df373/69d4bb1b90c4172b491d4b24_card_visa.png",
+   "diners club":
+      "https://cdn.prod.website-files.com/673728493d38fb595b0df373/69d4bb1b90c4172b491d4b24_card_visa.png",
+   unionpay:
+      "https://cdn.prod.website-files.com/673728493d38fb595b0df373/69d4bb1b90c4172b491d4b24_card_visa.png",
+   default:
+      "https://cdn.prod.website-files.com/673728493d38fb595b0df373/69d4bb1b90c4172b491d4b24_card_visa.png",
+};
+
 const CURRENCY_SYMBOLS = {
    usd: "$",
    eur: "€",
@@ -748,8 +769,10 @@ function renderMainSection(responseData) {
                      <p>Add new card</p>
                   </div>
                </div>
+               <div id="co_saved_cards" class="co_saved_cards"></div>
                <div class="co_payment_link">
-                  <p>Pay via: ${currencySymbol}${formatPrice(finalTotal)}</p>
+                  <p id="co_pay_via_text" style="display:none;"></p>
+                  <p id="co_pay_via_amount" class="co_pay_via_amount">${currencySymbol}${formatPrice(finalTotal)}</p>
                   <div class="co_payment_redirect">
                       <div data-wf--btn--variant="black" class="btn_common button_redirect w-variant-717a8abf-6071-4cd8-7483-e0b5d36c316c yeash"><a href="#" class="btnc_link w-inline-block"><p class="btnc_text">Book Your Flight</p><div class="btnc_icon_wrap"><img loading="lazy" src="https://cdn.prod.website-files.com/673728493d38fb595b0df373/68f1ce68d69455e26961b49e_45d32b1e5e78559aa8e96f0801193e00_icon.png" alt="logo" class="btnc_icon"></div></a></div>
                    </div>
@@ -760,6 +783,9 @@ function renderMainSection(responseData) {
 
       </div><!-- /.adi_main_grid -->
    `;
+
+   // ── Fetch saved cards (after HTML is rendered) ────────────────
+   fetchSavedCards();
 
    // ── Terms Checkbox + Payment Type Guard ───────────────────────
    const termsCheckbox = document.getElementById("terms_checkbox");
@@ -935,13 +961,16 @@ function setupModals() {
       }
    });
 
+   // Prevent clicks inside Modal 1 from reaching the overlay
+   document
+      .getElementById("co_modal_1")
+      .addEventListener("click", (e) => e.stopPropagation());
+
    // Close Modal 1 — only when clicking the overlay background
    document
       .getElementById("co_modal_1_close")
       .addEventListener("click", () => closeModal(modal1Overlay));
-   modal1Overlay.addEventListener("click", (e) => {
-      if (e.target === modal1Overlay) closeModal(modal1Overlay);
-   });
+   modal1Overlay.addEventListener("click", () => closeModal(modal1Overlay));
 
    // Open Modal 2 when "Add New Card" button is clicked inside Modal 1
    let coItiInitialized = false;
@@ -964,7 +993,6 @@ function setupModals() {
       }
    });
 
-   // Close Modal 2 — only when clicking the overlay background
    document
       .getElementById("co_modal_2_close")
       .addEventListener("click", () => closeModal(modal2Overlay));
@@ -1024,23 +1052,6 @@ function setupCardValidation() {
       coAddress.addEventListener("input", () => clearError(coAddress));
    if (coPhone) coPhone.addEventListener("input", () => clearError(coPhone));
 
-   // Luhn algorithm — basic card number authenticity check
-   function luhnCheck(num) {
-      const digits = num.replace(/\s/g, "");
-      let sum = 0;
-      let alt = false;
-      for (let i = digits.length - 1; i >= 0; i--) {
-         let n = parseInt(digits[i], 10);
-         if (alt) {
-            n *= 2;
-            if (n > 9) n -= 9;
-         }
-         sum += n;
-         alt = !alt;
-      }
-      return sum % 10 === 0;
-   }
-
    // ── auto-format: card number (groups of 4) ────────────────────
    cardNumber.addEventListener("input", () => {
       let v = cardNumber.value.replace(/\D/g, "").slice(0, 16);
@@ -1068,13 +1079,10 @@ function setupCardValidation() {
    function validateCard() {
       let valid = true;
 
-      // Card number
+      // Card number (length check only — backend validates the card)
       const rawNum = cardNumber.value.replace(/\s/g, "");
-      if (rawNum.length < 13) {
+      if (rawNum.length < 13 || rawNum.length > 16) {
          setError(cardNumber, "Enter a valid card number.");
-         valid = false;
-      } else if (!luhnCheck(rawNum)) {
-         setError(cardNumber, "Card number is invalid.");
          valid = false;
       } else {
          clearError(cardNumber);
@@ -1164,7 +1172,7 @@ function setupCardValidation() {
       }
 
       // Address
-      if (coAddress && coAddress.value.trim().length < 5) {
+      if (coAddress && coAddress.value.trim().length < 1) {
          setError(coAddress, "Enter your billing address.");
          valid = false;
       } else if (coAddress) {
@@ -1175,14 +1183,256 @@ function setupCardValidation() {
    }
 
    // ── submit handler ────────────────────────────────────────────
-   submitBtn.addEventListener("click", (e) => {
+   submitBtn.addEventListener("click", async (e) => {
       e.preventDefault();
-      if (validateCard()) {
-         // All fields are valid — proceed with booking
-         console.log("Card validated. Proceeding to book.");
-         // TODO: plug in your booking API call here
+      if (!validateCard()) return;
+
+      // ── Collect form data ───────────────────────────────────────
+      const rawCardNum = cardNumber.value.replace(/\s/g, "");
+      const expParts = cardExpiry.value.split("/");
+      const expMonth = expParts[0];
+      const currentCentury = Math.floor(new Date().getFullYear() / 100) * 100;
+      const expYear = String(currentCentury + parseInt(expParts[1], 10));
+      const cvv = cardCvv.value;
+      const fullName = cardName.value.trim();
+      const nameParts = fullName.split(" ");
+      const firstName = nameParts[0] || "";
+      const lastName =
+         nameParts.length > 1 ? nameParts.slice(1).join(" ") : " ";
+
+      const address = coAddress ? coAddress.value.trim() : "";
+      const city = coCity ? coCity.value.trim() : "";
+      const state = coState ? coState.value.trim() : "";
+      const zip = coZip ? coZip.value.trim() : "";
+      const country =
+         coCountry && coCountry.selectedIndex > 0
+            ? coCountry.options[coCountry.selectedIndex].text
+            : "";
+      let phoneNumber = "";
+      if (
+         window.coIti &&
+         typeof window.coIti.getNumber === "function" &&
+         window.coIti.isValidNumber()
+      ) {
+         const fmt =
+            window.intlTelInputUtils && window.intlTelInputUtils.numberFormat
+               ? window.intlTelInputUtils.numberFormat.E164
+               : 1;
+         phoneNumber = window.coIti.getNumber(fmt);
+      } else if (coPhone) {
+         phoneNumber = coPhone.value.trim();
+      }
+
+      // Auth token
+      const authToken =
+         typeof Cookies !== "undefined" ? Cookies.get("authToken") : null;
+      if (!authToken) {
+         window.toast.error("Please log in to save your card.");
+         return;
+      }
+
+      // ── Button loading state ────────────────────────────────────
+      const originalBtnText = submitBtn.querySelector(".btnc_text")
+         ? submitBtn.querySelector(".btnc_text").textContent
+         : "Save This Card";
+      if (submitBtn.querySelector(".btnc_text")) {
+         submitBtn.querySelector(".btnc_text").textContent = "Please wait...";
+      }
+      submitBtn.disabled = true;
+
+      // ── API call ────────────────────────────────────────────────
+      const payload = {
+         card_number: rawCardNum,
+         expiry_month: expMonth,
+         expiry_year: expYear,
+         card_code: cvv,
+         first_name: firstName,
+         last_name: lastName,
+         address: address,
+         city: city,
+         state: state,
+         zip: zip,
+         country: country,
+         phone_number: phoneNumber,
+      };
+      console.log("Save Card Payload:", payload);
+
+      try {
+         const res = await fetch(
+            `${BUBBLE_BASE_URL}/api/1.1/wf/webflow_add_card_flyt`,
+            {
+               method: "POST",
+               headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${authToken}`,
+               },
+               body: JSON.stringify(payload),
+            },
+         );
+
+         const data = await res.json();
+         console.log("✅ Save Card Response:", data);
+
+         if (res.ok && !(data.response && data.response.has_error)) {
+            window.toast.success("Card saved successfully!");
+            cardNumber.value = "";
+            cardName.value = "";
+            cardExpiry.value = "";
+            cardCvv.value = "";
+            if (coPhone) coPhone.value = "";
+            if (coCity) coCity.value = "";
+            if (coState) coState.value = "";
+            if (coZip) coZip.value = "";
+            if (coCountry) coCountry.value = "";
+            if (coAddress) coAddress.value = "";
+
+            const modal2Overlay = document.getElementById("co_modal_2_overlay");
+            if (modal2Overlay) {
+               modal2Overlay.classList.remove("co_modal_open");
+               document.body.style.overflow = "";
+            }
+
+            // Refresh saved cards list
+            fetchSavedCards();
+         } else {
+            const errMsg =
+               (data.response && data.response.message) ||
+               data.message ||
+               "Failed to save card. Please try again.";
+            window.toast.error(errMsg);
+         }
+      } catch (err) {
+         console.error("Save Card Error:", err);
+         window.toast.error("Something went wrong. Please try again.");
+      } finally {
+         if (submitBtn.querySelector(".btnc_text")) {
+            submitBtn.querySelector(".btnc_text").textContent = originalBtnText;
+         }
+         submitBtn.disabled = false;
       }
    });
+}
+
+// =============================================================================
+// SAVED CARDS — Fetch & Render
+// =============================================================================
+function getCardLogo(cardType) {
+   if (cardType) {
+      const key = cardType.toLowerCase();
+      if (CARD_LOGOS[key]) return { logo: CARD_LOGOS[key], type: cardType };
+   }
+   // cardType is null — use generic logo
+   return { logo: CARD_LOGOS.default, type: "Card" };
+}
+
+function renderSavedCards(cards) {
+   const container = document.getElementById("co_saved_cards");
+   if (!container) return;
+
+   if (!cards || cards.length === 0) {
+      container.innerHTML = `<div class="co_no_cards"><p>No saved cards</p></div>`;
+      return;
+   }
+
+   let html = "";
+   cards.forEach((card, index) => {
+      const profileId = card["_api_c2_customerPaymentProfileId"] || "";
+      const lastFour = (
+         card["_api_c2_payment.creditCard.cardNumber"] || ""
+      ).replace(/X/g, "");
+      const cardType = card["_api_c2_payment.creditCard.cardType"] || null;
+      const issuer = card["_api_c2_payment.creditCard.issuerNumber"] || "";
+      const isDefault = card["_api_c2_defaultPaymentProfile"] === true;
+      const { logo, type } = getCardLogo(cardType);
+
+      html += `
+         <label class="co_saved_card ${isDefault ? "co_saved_card_active" : ""}" data-profile-id="${profileId}" data-card-type="${type}" data-last-four="${lastFour}">
+            <input type="radio" name="saved_card" value="${profileId}"
+               class="co_saved_card_radio" ${isDefault ? "checked" : ""} />
+            <span class="co_saved_card_check">
+               <svg width="10" height="8" viewBox="0 0 10 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+               </svg>
+            </span>
+            <img class="co_saved_card_logo" src="${logo}" alt="${type}" />
+            <div class="co_saved_card_info">
+               <p class="co_saved_card_name">${type} ending in ${lastFour}</p>
+            </div>
+            ${isDefault ? '<span class="co_saved_card_default">Default</span>' : ""}
+            <button class="co_saved_card_delete" data-profile-id="${profileId}" aria-label="Delete card">
+               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6h14z" stroke="#04142a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+               </svg>
+            </button>
+         </label>`;
+   });
+
+   container.innerHTML = html;
+
+   // Card selection handler — update "Pay via" text
+   function updatePayVia(cardEl) {
+      const type = cardEl.dataset.cardType || "Card";
+      const last4 = cardEl.dataset.lastFour || "";
+      const payVia = document.getElementById("co_pay_via_text");
+      if (payVia) {
+         payVia.textContent = `Pay via: ${type} **** **** **** ${last4}`;
+         payVia.style.display = "block";
+      }
+   }
+
+   container.querySelectorAll(".co_saved_card_radio").forEach((radio) => {
+      radio.addEventListener("change", () => {
+         // Update active styles
+         container.querySelectorAll(".co_saved_card").forEach((el) => {
+            el.classList.remove("co_saved_card_active");
+         });
+         const cardEl = radio.closest(".co_saved_card");
+         cardEl.classList.add("co_saved_card_active");
+         updatePayVia(cardEl);
+      });
+   });
+
+   // Set initial "Pay via" text from default/checked card
+   const checkedRadio = container.querySelector(".co_saved_card_radio:checked");
+   if (checkedRadio) {
+      updatePayVia(checkedRadio.closest(".co_saved_card"));
+   }
+}
+
+async function fetchSavedCards() {
+   const authToken =
+      typeof Cookies !== "undefined" ? Cookies.get("authToken") : null;
+   if (!authToken) return;
+
+   const container = document.getElementById("co_saved_cards");
+   if (!container) return;
+
+   // Show loading state
+   container.innerHTML = `<div class="co_no_cards"><p>Loading cards...</p></div>`;
+
+   try {
+      const res = await fetch(
+         `${BUBBLE_BASE_URL}/api/1.1/wf/webflow_get_cards_flyt`,
+         {
+            method: "POST",
+            headers: {
+               "Content-Type": "application/json",
+               Authorization: `Bearer ${authToken}`,
+            },
+         },
+      );
+      const data = await res.json();
+      console.log("📥 Get Cards Response:", data);
+
+      if (res.ok && data.response && data.response.payment_methods) {
+         renderSavedCards(data.response.payment_methods);
+      } else {
+         renderSavedCards([]);
+      }
+   } catch (err) {
+      console.error("Get Cards Error:", err);
+      renderSavedCards([]);
+   }
 }
 
 // =============================================================================
