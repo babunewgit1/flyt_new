@@ -990,11 +990,6 @@ p.uniqueid {
    body.datepicker-open {
       overflow: hidden;
    }
-
-   .desktop_login,
-   .logout_desktop {
-      display: none !important;
-   }
 }
 
 @media screen and (min-width: 576px) and (max-width: 767px) {
@@ -1316,11 +1311,6 @@ p.uniqueid {
    body.datepicker-open {
       overflow: hidden;
    }
-
-   .desktop_login,
-   .logout_desktop {
-      display: none !important;
-   }
 }
 
 @media screen and (max-width: 576px) {
@@ -1640,11 +1630,6 @@ p.uniqueid {
 
    .calendar-widget.active {
       display: flex;
-   }
-
-   .desktop_login,
-   .logout_desktop {
-      display: none !important;
    }
 }
 

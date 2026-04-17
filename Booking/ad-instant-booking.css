@@ -959,6 +959,21 @@
       grid-template-columns: 80px 1fr 55px;
       column-gap: 20px;
    }
+
+   .adi_heading_content p.adi_heading_para {
+      padding-left: 140px;
+      padding-right: 140px;
+   }
+
+   .adi_estimate_title,
+   .adi_estimate_row {
+      padding-left: 16px;
+      padding-right: 16px;
+   }
+
+   .adi_estimate_row span {
+      font-size: 15px;
+   }
 }
 
 @media screen and (min-width: 768px) and (max-width: 991px) {
@@ -996,6 +1011,7 @@
 
    .adi_main_wrapper {
       padding-top: 20px;
+      padding-bottom: 40px;
    }
 
    .adi_main_left {
@@ -1165,6 +1181,11 @@
 
    .adi_map_wrapper {
       margin-top: 20px;
+      border: 0;
+   }
+
+   .adi_estimate_card {
+      border: 0;
    }
 
    .adi_map_iframe {
@@ -1183,8 +1204,8 @@
 
    .adi_estimate_row {
       margin: 8px 0px;
-      padding-left: 20px;
-      padding-right: 20px;
+      padding-left: 0px;
+      padding-right: 0px;
    }
 
    .adi_estimate_subtotal_row {
@@ -1454,6 +1475,10 @@
 
    .adi_estimate_row span {
       font-size: 15px;
+   }
+
+   .adi_estimate_card {
+      border: 0;
    }
 }
 

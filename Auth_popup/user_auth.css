@@ -246,7 +246,7 @@
 
 /* code for toast notification */
 .notyf {
-   z-index: 9999999;
+   z-index: 999999999;
 }
 
 .notyf__toast {
@@ -289,5 +289,12 @@
 
    .show_pass {
       width: 22px;
+   }
+}
+
+@media screen and (max-width: 991px) {
+   .desktop_login,
+   .logout_desktop {
+      display: none !important;
    }
 }

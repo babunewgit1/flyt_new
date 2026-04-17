@@ -538,6 +538,7 @@
    padding-top: 0;
    max-height: 90vh;
    overflow-y: auto;
+   overflow-x: hidden;
 }
 
 .flying_img {
@@ -788,16 +789,201 @@
       Responsive Code Start
 ==================================== */
 
-@media screen and (min-width: 992px) and (max-width: 1200px) {
+@media screen and (min-width: 1280px) and (max-width: 1440px) {
+   .co_saved_card {
+      flex-wrap: wrap;
+      padding: 12px 14px;
+      align-items: center;
+   }
+
+   .co_saved_card_check,
+   .co_saved_card_logo,
+   .co_saved_card_info {
+      order: 1;
+   }
+
+   .co_saved_card_info {
+      flex: 1;
+      min-width: 0;
+   }
+
+   .co_saved_card::after {
+      content: "";
+      flex-basis: 100%;
+      order: 5;
+      height: 0;
+   }
+
+   .co_saved_card_default,
+   .co_saved_card_action,
+   .co_saved_card_delete {
+      order: 10;
+   }
+
+   .co_saved_card_default,
+   .co_set_default {
+      margin-left: 40px;
+   }
+
+   .co_saved_card_default {
+      margin-left: 40px;
+   }
+
+   .co_saved_card_default,
+   .co_saved_card_action,
+   .co_saved_card_delete {
+      margin-top: 10px;
+   }
+}
+
+@media screen and (min-width: 992px) and (max-width: 1280px) {
+   .co_member_top {
+      padding: 16px;
+   }
+
+   .co_member_top {
+      grid-template-columns: 1fr;
+      gap: 30px;
+   }
+
+   .comt_left img {
+      width: 80px;
+   }
+
+   .comt_right > p {
+      font-size: 15px;
+      line-height: 1.4;
+      margin-top: 16px;
+   }
+
+   .co_member_bottom {
+      padding: 16px;
+   }
+
+   .co_payment_cardblock {
+      padding: 16px;
+   }
+
+   .co_addcard {
+      padding: 16px;
+   }
+
+   .co_addcard p {
+      font-size: 16px;
+   }
+
+   .co_saved_cards {
+      padding-left: 16px;
+      padding-right: 16px;
+   }
+
+   .co_saved_card {
+      flex-wrap: wrap;
+      padding: 12px 14px;
+      align-items: center;
+   }
+
+   .co_saved_card_check,
+   .co_saved_card_logo,
+   .co_saved_card_info {
+      order: 1;
+   }
+
+   .co_saved_card_info {
+      flex: 1;
+      min-width: 0;
+   }
+
+   .co_saved_card::after {
+      content: "";
+      flex-basis: 100%;
+      order: 5;
+      height: 0;
+   }
+
+   .co_saved_card_default,
+   .co_saved_card_action,
+   .co_saved_card_delete {
+      order: 10;
+   }
+
+   .co_saved_card_default,
+   .co_set_default {
+      margin-left: 40px;
+   }
+
+   .co_saved_card_default {
+      margin-left: 40px;
+   }
+
+   .co_saved_card_default,
+   .co_saved_card_action,
+   .co_saved_card_delete {
+      margin-top: 10px;
+   }
 }
 
 @media screen and (min-width: 768px) and (max-width: 991px) {
+   .terms {
+      padding-left: 0;
+      padding-right: 0;
+      max-width: 100%;
+   }
+
+   .adi_section_title {
+      text-align: left;
+   }
+
+   .terms .term_para:last-of-type {
+      margin-bottom: 0;
+   }
+
+   .co_member_top {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 25px;
+   }
+
+   .comt_left img {
+      width: 100px;
+   }
+
+   .co_member_top,
+   .co_member_bottom {
+      padding: 16px;
+   }
+
+   .comb_check_item {
+      max-width: 100%;
+   }
+
+   .co_payment {
+      border-left: 0;
+   }
+
+   .co_payment_cardblock {
+      padding-left: 0;
+      padding-right: 0;
+   }
+
+   .co_payblock {
+      border: 0;
+   }
+
+   .co_saved_cards {
+      padding: 0;
+   }
+
+   .co_modal,
+   #co_modal_2 {
+      max-height: 100vh;
+      height: 100vh;
+      padding-left: 16px;
+      padding-right: 16px;
+   }
 }
 
-@media screen and (min-width: 576px) and (max-width: 767px) {
-}
-
-@media screen and (max-width: 576px) {
+@media screen and (max-width: 767px) {
    .co_main_left_wrapper {
       border-right: 0;
       border-radius: 0px;
@@ -967,8 +1153,11 @@
       padding-right: 16px;
    }
 
-   .iti-mobile .iti--container {
-      z-index: 999999;
+   .co_card_input input,
+   .co_card_phone .iti input,
+   .co_card_phone .iti input[type="text"],
+   .co_card_select select {
+      height: 48px;
    }
 }
 
