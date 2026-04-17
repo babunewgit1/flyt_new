@@ -454,7 +454,7 @@ function renderMainSection(responseData) {
       taxRows += `
                <div class="adi_estimate_row">
                   <span class="adi_estimate_label">${fullLabel}</span>
-                  <span class="adi_estimate_value">${amtStr}</span>
+                  <span class="adi_estimate_value">${currencySymbol}${formatPrice(amtNum)}</span>
                </div>`;
    }
 
@@ -661,12 +661,6 @@ function renderMainSection(responseData) {
                   <div class="comb_heading">
                      <div class="comb_heading_left">
                         <p>Become a member:</p>
-                     </div>
-                     <div class="comb_heading_right">
-                        <label class="adi_toggle_switch co_toggle_switch">
-                           <input type="checkbox" />
-                           <span class="adi_toggle_slider"></span>
-                        </label>
                      </div>
                   </div>
                   <div class="comb_check_list">

@@ -118,41 +118,10 @@
    margin-top: 25px;
 }
 
-.comb_heading {
-   display: flex;
-   align-items: center;
-   justify-content: space-between;
-}
-
 .comb_heading_left p {
    font-size: 19px;
    font-weight: 600;
    color: #fff;
-}
-
-.co_toggle_switch {
-   margin: 0;
-}
-
-.co_toggle_switch .adi_toggle_slider {
-   border: 2px solid #9ba1aa;
-   background-color: transparent;
-}
-
-.co_toggle_switch .adi_toggle_slider::before {
-   background-color: #e5e7e9;
-}
-
-.co_toggle_switch .adi_toggle_slider::before {
-   bottom: 1px;
-}
-
-.co_toggle_switch input:checked + .adi_toggle_slider {
-   background-color: transparent;
-}
-
-.co_toggle_switch input:checked + .adi_toggle_slider::before {
-   transform: translateX(20px);
 }
 
 .co_member_bottom {
@@ -808,10 +777,201 @@
    opacity: 1;
 }
 
-/* Error state for phone input (non-iti fallback) */
 .co_card_input.co_input_error .iti input,
 .co_card_input.co_input_error input#co_phone {
    border-color: #e05252 !important;
    background-color: #fff8f8 !important;
    animation: co_shake 0.35s ease;
 }
+
+/* ====================================
+      Responsive Code Start
+==================================== */
+
+@media screen and (min-width: 992px) and (max-width: 1200px) {
+}
+
+@media screen and (min-width: 768px) and (max-width: 991px) {
+}
+
+@media screen and (min-width: 576px) and (max-width: 767px) {
+}
+
+@media screen and (max-width: 576px) {
+   .co_main_left_wrapper {
+      border-right: 0;
+      border-radius: 0px;
+   }
+
+   .terms {
+      max-width: 100%;
+      padding-left: 0;
+      padding-right: 0;
+      text-align: center;
+   }
+
+   .terms .term_para:last-of-type {
+      margin-bottom: 0;
+   }
+
+   .term_para_main,
+   .term_para_blod {
+      font-size: 15px;
+      line-height: 1.4 !important;
+   }
+
+   .term_para {
+      margin-bottom: 15px;
+   }
+
+   .adi_main_right {
+      margin-top: 20px;
+   }
+
+   .co_member_top {
+      padding: 25px 16px;
+      border-bottom: 1px solid #9ba1aa;
+   }
+
+   .co_member_top {
+      grid-template-columns: 1fr;
+      gap: 20px;
+   }
+
+   .comt_left img {
+      width: 60px;
+      display: block;
+      margin: auto;
+   }
+
+   .comt_right > p {
+      font-size: 15px;
+      color: #e5e7e9;
+      line-height: 1.4;
+      margin-top: 15px;
+   }
+
+   .comt_right {
+      text-align: center;
+   }
+
+   .co_member_bottom {
+      padding: 25px 16px;
+   }
+
+   .comb_heading_left {
+      text-align: center;
+   }
+
+   .checkbox {
+      padding-left: 16px;
+      padding-right: 16px;
+   }
+
+   .co_checkbox_text {
+      font-size: 16px;
+   }
+
+   .comb_check_item {
+      max-width: 100%;
+      margin-top: 16px;
+   }
+
+   .comb_check_item_para p {
+      font-size: 15px;
+      line-height: 1.4;
+   }
+
+   .adi_estimate_card,
+   .co_payment,
+   .co_payblock {
+      border: 0;
+   }
+
+   .co_payblock {
+      padding-bottom: 0;
+   }
+
+   .co_payment_cardblock {
+      padding-left: 0;
+      padding-right: 0;
+   }
+
+   .co_payment_desc {
+      font-size: 15px;
+      line-height: 1.4;
+   }
+
+   .co_addcard {
+      padding: 14px 16px;
+   }
+
+   .co_addcard p {
+      font-size: 15px;
+   }
+
+   .co_saved_cards {
+      padding: 0;
+   }
+
+   .co_saved_card {
+      flex-wrap: wrap;
+      padding: 12px 14px;
+      align-items: center;
+   }
+
+   .co_saved_card_check,
+   .co_saved_card_logo,
+   .co_saved_card_info {
+      order: 1;
+   }
+
+   .co_saved_card_info {
+      flex: 1;
+      min-width: 0;
+   }
+
+   .co_saved_card::after {
+      content: "";
+      flex-basis: 100%;
+      order: 5;
+      height: 0;
+   }
+
+   .co_saved_card_default,
+   .co_saved_card_action,
+   .co_saved_card_delete {
+      order: 10;
+   }
+
+   .co_saved_card_default,
+   .co_set_default {
+      margin-left: 40px;
+   }
+
+   .co_saved_card_default {
+      margin-left: 40px;
+   }
+
+   .co_saved_card_default,
+   .co_saved_card_action,
+   .co_saved_card_delete {
+      margin-top: 10px;
+   }
+
+   .co_modal,
+   #co_modal_2 {
+      max-height: 100vh;
+      height: 100vh;
+      padding-left: 16px;
+      padding-right: 16px;
+   }
+
+   .iti-mobile .iti--container {
+      z-index: 999999;
+   }
+}
+
+/* ====================================
+      Responsive Code end
+==================================== */

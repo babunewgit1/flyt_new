@@ -1236,6 +1236,7 @@
 
    .adi_main_wrapper {
       padding-top: 20px;
+      padding-bottom: 40px;
    }
 
    .adi_main_left {
@@ -1425,15 +1426,16 @@
    }
 
    .adi_estimate_title {
-      padding-left: 20px;
-      padding-right: 20px;
+      padding-left: 0px;
+      padding-right: 0px;
       text-align: center;
+      margin-bottom: 20px;
    }
 
    .adi_estimate_row {
       margin: 8px 0px;
-      padding-left: 20px;
-      padding-right: 20px;
+      padding-left: 0px;
+      padding-right: 0px;
    }
 
    .adi_estimate_subtotal_row {
@@ -1448,6 +1450,10 @@
 
    .adi_eft_badge {
       white-space: nowrap;
+   }
+
+   .adi_estimate_row span {
+      font-size: 15px;
    }
 }
 
