@@ -42,6 +42,9 @@ const CHECKOUT_API =
 const BUBBLE_BASE_URL =
    "https://operators-dashboard.bubbleapps.io/version-test";
 
+// Global store for responseData so bookFlight() can access .quote
+let checkoutData = null;
+
 // Card logo URLs — update each URL individually when real logos are ready
 const CARD_LOGOS = {
    visa: "https://cdn.prod.website-files.com/673728493d38fb595b0df373/69d4bb1b90c4172b491d4b24_card_visa.png",
@@ -390,6 +393,7 @@ async function fetchCheckoutData() {
 
       console.log(data.response);
 
+      checkoutData = data.response; // store globally for book button
       renderMainSection(data.response);
    } catch (error) {
       console.error("Checkout Fetch Error:", error);
@@ -414,6 +418,17 @@ function renderHeading() {
          <p data-wf--global_para--variant="black_color" class="whole_para adi_heading_para w-variant-124bf981-d164-97ae-531d-77453bb396cb">Our checkout is 100% secure and encrypted. Your personal and payment details are safe with us.</p>
       </div>
    `;
+}
+
+// =============================================================================
+// SHARED VALIDATION — used by both updateBookBtn() and bookFlight()
+// =============================================================================
+function isValid() {
+   const termsAccepted = document.getElementById("terms_checkbox")?.checked;
+   const paymentSelected = document.querySelector(
+      "input[name='payment_type']:checked",
+   );
+   return !!(termsAccepted && paymentSelected);
 }
 
 // =============================================================================
@@ -788,14 +803,6 @@ function renderMainSection(responseData) {
       "input[name='payment_type']",
    );
 
-   function isValid() {
-      const termsAccepted = termsCheckbox?.checked;
-      const paymentSelected = document.querySelector(
-         "input[name='payment_type']:checked",
-      );
-      return termsAccepted && paymentSelected;
-   }
-
    function updateBookBtn() {
       if (!bookBtn) return;
       if (isValid()) {
@@ -809,9 +816,8 @@ function renderMainSection(responseData) {
 
    if (bookBtn) {
       bookBtn.addEventListener("click", (e) => {
-         if (!isValid()) {
-            e.preventDefault();
-         }
+         e.preventDefault();
+         bookFlight();
       });
    }
 
@@ -1598,3 +1604,127 @@ document.addEventListener("DOMContentLoaded", () => {
 window.addEventListener("userLoggedOut", () => {
    window.location.href = detailsPageURL;
 });
+
+// =============================================================================
+// BOOK FLIGHT — POST to webflow_book_now_with_card_flyt
+// =============================================================================
+async function bookFlight() {
+   // ── 1 & 2. Validate terms + payment type (shared guard) ──
+   if (!isValid()) {
+      if (!document.getElementById("terms_checkbox")?.checked) {
+         window.toast.error("Please accept the terms and conditions.");
+      } else {
+         window.toast.error("Please select your payment method.");
+      }
+      return;
+   }
+
+   const wirePayment =
+      document.querySelector("input[name='payment_type']:checked")?.value ===
+      "wire"
+         ? "yes"
+         : "no";
+
+   // ── 3. Validate a saved card is selected ──
+   const allCardRadios = document.querySelectorAll(".co_saved_card_radio");
+   if (allCardRadios.length === 0) {
+      window.toast.error("Please add a card to continue.");
+      return;
+   }
+
+   const selectedCardRadio = document.querySelector(
+      ".co_saved_card_radio:checked",
+   );
+   if (!selectedCardRadio) {
+      window.toast.error("Please select a saved card to proceed.");
+      return;
+   }
+
+   // ── 4. Get required data ──
+   const profileId =
+      selectedCardRadio.closest(".co_saved_card")?.dataset.profileId;
+   if (!profileId) {
+      window.toast.error("Could not read card details. Please try again.");
+      return;
+   }
+
+   const quote = checkoutData?.quote;
+   if (!quote) {
+      window.toast.error(
+         "Booking data not loaded. Please refresh and try again.",
+      );
+      return;
+   }
+
+   const authToken =
+      typeof Cookies !== "undefined" ? Cookies.get("authToken") : null;
+   if (!authToken) {
+      window.toast.error("You are not logged in. Please log in and try again.");
+      return;
+   }
+
+   // ── 5. Disable button + loading state ──
+   const bookBtnText = document.querySelector(
+      ".co_payment_redirect .btnc_text",
+   );
+   const bookBtn = document.querySelector(".co_payment_redirect .yeash");
+   const originalText = bookBtnText
+      ? bookBtnText.textContent
+      : "Book Your Flight";
+   if (bookBtnText) bookBtnText.textContent = "Please wait...";
+   if (bookBtn) bookBtn.style.pointerEvents = "none";
+
+   await new Promise((resolve) => setTimeout(resolve, 50));
+
+   let bookingSuccess = false;
+
+   try {
+      const res = await fetch(
+         `${BUBBLE_BASE_URL}/api/1.1/wf/webflow_book_now_with_card_flyt`,
+         {
+            method: "POST",
+            headers: {
+               "Content-Type": "application/json",
+               Authorization: `Bearer ${authToken}`,
+            },
+            body: JSON.stringify({
+               quote: quote,
+               payment_profile_id: profileId,
+               wire_payment: wirePayment,
+            }),
+         },
+      );
+
+      const data = await res.json();
+      console.log("✈️ Book Flight Response:", data);
+
+      if (res.ok && data.response && !data.response.has_error) {
+         // ── Success — keep button locked until redirect ──
+         bookingSuccess = true;
+         if (bookBtnText) bookBtnText.textContent = "Redirecting...";
+         const successMsg =
+            data.response.message ||
+            "Your flight has been booked successfully.";
+         window.toast.success(successMsg);
+         setTimeout(() => {
+            window.location.href = "/booking-confirm";
+         }, 800);
+      } else {
+         // ── Error from API ──
+         const errMsg =
+            (data.response && data.response.message) ||
+            data.message ||
+            "Booking failed. Please try again.";
+         window.toast.error(errMsg);
+      }
+   } catch (err) {
+      console.error("Book Flight Error:", err);
+      window.toast.error("Something went wrong. Please try again.");
+   } finally {
+      // Only restore button on failure — success keeps it locked until redirect
+      if (!bookingSuccess) {
+         if (bookBtn) bookBtn.style.pointerEvents = "";
+         if (bookBtnText) bookBtnText.textContent = originalText;
+      }
+   }
+}
