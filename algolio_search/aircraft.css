@@ -1038,22 +1038,11 @@
    color: #2d95ed;
    border-radius: 0.375rem;
    padding: 0.25rem 0.75rem;
-   transition: all 0.2s ease;
-}
-
-.src_aircraft_card:hover .src_type_badge {
-   background-color: #2d95ed;
-   color: #fff;
 }
 
 .src_type_badge.src_request_to_book {
    border-color: #f13314 !important;
    color: #f13314 !important;
-}
-
-.src_aircraft_card:hover .src_type_badge.src_request_to_book {
-   background-color: #f13314 !important;
-   color: #fff !important;
 }
 
 .drp_class_selected .drp_class_item_block_check {
