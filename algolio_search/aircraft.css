@@ -1052,8 +1052,8 @@
 }
 
 .src_aircraft_card:hover .src_type_badge.src_request_to_book {
-   background-color: #f13314;
-   color: #fff;
+   background-color: #f13314 !important;
+   color: #fff !important;
 }
 
 .drp_class_selected .drp_class_item_block_check {
