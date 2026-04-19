@@ -1033,11 +1033,16 @@
    padding: 0;
 }
 
-.src_type_badge.src_request_to_book {
-   border: 1px solid #f13314;
-   color: #f13314;
+.src_type_badge {
+   border: 1px solid #2d95ed;
+   color: #2d95ed;
    border-radius: 0.375rem;
    padding: 0.25rem 0.75rem;
+}
+
+.src_type_badge.src_request_to_book {
+   border-color: #f13314 !important;
+   color: #f13314 !important;
 }
 
 .drp_class_selected .drp_class_item_block_check {
