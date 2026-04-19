@@ -1707,7 +1707,7 @@ async function bookFlight() {
             "Your flight has been booked successfully.";
          window.toast.success(successMsg);
          setTimeout(() => {
-            window.location.href = "/booking-confirm";
+            window.location.href = "/booking-confirmed";
          }, 800);
       } else {
          // ── Error from API ──
