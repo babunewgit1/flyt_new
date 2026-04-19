@@ -364,7 +364,7 @@ function renderAircraftResults(aircraft, sortDirection = "asc") {
         
         <div class="src_card_body at_cata_block_heading">
             <div class="src_card_type at_cata_block_hpara">
-               <span class="src_type_badge${item.type_text === "Request To Book" ? " src_request_to_book" : ""}">${item.type_text || ""}</span>
+               <span class="src_type_badge${(item.type_text || "").trim().toUpperCase() === "REQUEST TO BOOK" ? " src_request_to_book" : ""}">${item.type_text || ""}</span>
             </div>
 
             <div class="src_card_model">
