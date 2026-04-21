@@ -294,7 +294,7 @@ async function makeApiCall() {
 
 // =============================================================================
 // BOOKING REDIRECT HELPER
-// Redirects to instant_book or late_book page based on type_text and _id.
+// Redirects to instant_book or request-to-book page based on type_text and _id.
 // =============================================================================
 
 function redirectToBooking(item) {
@@ -311,7 +311,7 @@ function redirectToBooking(item) {
 
    // Condition 2: Has ID and booking type is NOT INSTANT BOOKING
    if (id && isNotInstant) {
-      window.location.href = `/late_book?id=${encodeURIComponent(id)}`;
+      window.location.href = `/request-to-book?id=${encodeURIComponent(id)}`;
    }
 }
 
