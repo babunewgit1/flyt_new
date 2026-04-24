@@ -350,9 +350,6 @@ function renderMainSection(responseData) {
       const tICAO = leg.mobile_app_to_airport_icao_code_text || "";
       const tLat = leg.mobile_app_to_latitude_number || 0;
       const tLng = leg.mobile_app_to_longitude_number || 0;
-      const mapFromLink = `https://www.google.com/maps?q=${fLat},${fLng}`;
-      const mapToLink = `https://www.google.com/maps?q=${tLat},${tLng}`;
-
       airportMapData.push({ id: "adi_mini_map_from", lat: fLat, lng: fLng });
       airportMapData.push({ id: "adi_mini_map_to", lat: tLat, lng: tLng });
 
@@ -362,7 +359,7 @@ function renderMainSection(responseData) {
             <div class="adi_airport_img_wrap"><div id="adi_mini_map_from" class="adi_airport_mini_map"></div></div>
             <div class="adi_airport_footer">
                <span class="adi_airport_code">${fICAO}</span>
-               <a href="${mapFromLink}" target="_blank" class="adi_map_link">Show on the map</a>
+               <button class="adi_map_link adi_show_map_btn" data-lat="${fLat}" data-lng="${fLng}" data-icao="${fICAO}" data-label="Departure Airport">Show on the map</button>
             </div>
          </div>
          <div class="adi_airport_card">
@@ -370,7 +367,7 @@ function renderMainSection(responseData) {
             <div class="adi_airport_img_wrap"><div id="adi_mini_map_to" class="adi_airport_mini_map"></div></div>
             <div class="adi_airport_footer">
                <span class="adi_airport_code">${tICAO}</span>
-               <a href="${mapToLink}" target="_blank" class="adi_map_link">Show on the map</a>
+               <button class="adi_map_link adi_show_map_btn" data-lat="${tLat}" data-lng="${tLng}" data-icao="${tICAO}" data-label="Arrival Airport">Show on the map</button>
             </div>
          </div>`;
    })();
@@ -810,6 +807,99 @@ function initAirportMiniMaps(mapsData) {
    });
 }
 
+// =============================================================================
+// AIRPORT MAP POPUP — Leaflet satellite (single marker)
+// =============================================================================
+let _adiMapPopup = null;
+
+function openAdiMapPopup(lat, lng, icao, title) {
+   if (typeof L === "undefined") return;
+
+   if (!document.getElementById("adi_map_popup_overlay")) {
+      document.body.insertAdjacentHTML(
+         "beforeend",
+         `
+         <div class="adi_airport_map_overlay" id="adi_map_popup_overlay">
+            <div class="adi_airport_map_modal">
+               <div class="adi_airport_map_header">
+                  <h4 class="adi_airport_map_title" id="adi_map_popup_title"></h4>
+                  <button class="adi_airport_map_close" id="adi_map_popup_close" aria-label="Close">
+                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M1 1L15 15M15 1L1 15" stroke="#04142a" stroke-width="2" stroke-linecap="round"/></svg>
+                  </button>
+               </div>
+               <div id="adi_map_popup_container" class="adi_airport_map_container"></div>
+            </div>
+         </div>`,
+      );
+
+      document
+         .getElementById("adi_map_popup_close")
+         .addEventListener("click", closeAdiMapPopup);
+      document
+         .getElementById("adi_map_popup_overlay")
+         .addEventListener("click", (e) => {
+            if (e.target.id === "adi_map_popup_overlay") closeAdiMapPopup();
+         });
+   }
+
+   document.getElementById("adi_map_popup_title").textContent = title;
+   const overlay = document.getElementById("adi_map_popup_overlay");
+   overlay.classList.add("adi_airport_map_open");
+   document.body.style.overflow = "hidden";
+
+   if (_adiMapPopup) {
+      _adiMapPopup.remove();
+      _adiMapPopup = null;
+   }
+
+   const container = document.getElementById("adi_map_popup_container");
+   container.innerHTML = "";
+
+   requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+         _adiMapPopup = L.map("adi_map_popup_container", {
+            scrollWheelZoom: true,
+         });
+
+         L.tileLayer(
+            "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+            {
+               maxZoom: 19,
+               attribution: '&copy; <a href="https://www.esri.com/">Esri</a>',
+            },
+         ).addTo(_adiMapPopup);
+
+         const pinIcon = L.divIcon({
+            className: "",
+            html: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 36" width="28" height="40"><path fill="#e53935" stroke="#fff" stroke-width="1.2" d="M12 0C5.373 0 0 5.373 0 12c0 9 12 24 12 24S24 21 24 12C24 5.373 18.627 0 12 0zm0 17a5 5 0 1 1 0-10 5 5 0 0 1 0 10z"/></svg>`,
+            iconSize: [28, 40],
+            iconAnchor: [14, 40],
+         });
+
+         const marker = L.marker([lat, lng], { icon: pinIcon }).addTo(
+            _adiMapPopup,
+         );
+         marker.bindTooltip(
+            `<strong style="font-size:14px;color:#04142a">${icao}</strong>`,
+            {
+               direction: "top",
+               offset: [0, -40],
+               permanent: true,
+            },
+         );
+
+         _adiMapPopup.invalidateSize({ animate: false });
+         _adiMapPopup.setView([lat, lng], 13, { animate: false });
+      });
+   });
+}
+
+function closeAdiMapPopup() {
+   const overlay = document.getElementById("adi_map_popup_overlay");
+   if (overlay) overlay.classList.remove("adi_airport_map_open");
+   document.body.style.overflow = "";
+}
+
 document.addEventListener("DOMContentLoaded", () => {
    // Inject loader into the page
    const loaderEl = document.createElement("div");
@@ -899,6 +989,19 @@ document.addEventListener("DOMContentLoaded", () => {
    });
 
    fetchAircraftDetail();
+
+   // "Show on the map" → open popup modal
+   document.addEventListener("click", (e) => {
+      const btn = e.target.closest(".adi_show_map_btn");
+      if (!btn) return;
+      e.preventDefault();
+      openAdiMapPopup(
+         parseFloat(btn.dataset.lat) || 0,
+         parseFloat(btn.dataset.lng) || 0,
+         btn.dataset.icao || "",
+         btn.dataset.label || "Airport",
+      );
+   });
 });
 
 // Remove price blur on logout (same as search_result.js)

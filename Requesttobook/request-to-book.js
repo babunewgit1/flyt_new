@@ -9,19 +9,6 @@ if (!bookingId) {
 }
 
 // =============================================================================
-// LOGIN GUARD — request to book requires authentication
-// =============================================================================
-const detailsPageURL = `/request-to-book?id=${encodeURIComponent(bookingId)}`;
-
-(function checkLoginOnLoad() {
-   if (typeof Cookies === "undefined") return;
-   const isLoggedIn = !!Cookies.get("authToken") && !!Cookies.get("userEmail");
-   if (!isLoggedIn) {
-      window.location.href = detailsPageURL;
-   }
-})();
-
-// =============================================================================
 // CONSTANTS
 // =============================================================================
 const AIRCRAFT_DETAIL_API =
@@ -30,8 +17,7 @@ const AIRCRAFT_DETAIL_API =
 const BUBBLE_BASE_URL =
    "https://operators-dashboard.bubbleapps.io/version-test";
 
-// TODO: Confirm the exact submit endpoint name with client
-const SUBMIT_REQUEST_API = `${BUBBLE_BASE_URL}/api/1.1/wf/webflow_submit_request_flyt`;
+const SUBMIT_REQUEST_API = `${BUBBLE_BASE_URL}/api/1.1/wf/webflow_book_now_with_card_flyt`;
 
 const CURRENCY_SYMBOLS = {
    usd: "$",
@@ -401,7 +387,7 @@ function renderHeading(detail) {
 
    headingWrapper.innerHTML = `
       <div class="adi_heading_arrow">
-         <a href="/request-to-book?id=${encodeURIComponent(bookingId)}"><img src="https://cdn.prod.website-files.com/673728493d38fb595b0df373/69c37498460e7320906ec1a3_arrow_right.png" alt="" /></a>
+         <a href="/aircraft#sc_result"><img src="https://cdn.prod.website-files.com/673728493d38fb595b0df373/69c37498460e7320906ec1a3_arrow_right.png" alt="" /></a>
       </div>
       <div class="adi_heading_content">
          <h2 data-wf--white_heading_h2--variant="black_version" class="hm_sponser_h2 adi_heading_h2 w-variant-c97c5271-25fa-0785-e5a2-babd61f625cd">${detail.model_text || ""}</h2>
@@ -414,8 +400,7 @@ function renderHeading(detail) {
 // SHARED VALIDATION
 // =============================================================================
 function isValid() {
-   const termsAccepted = document.getElementById("rtb_terms_checkbox")?.checked;
-   return !!termsAccepted;
+   return true;
 }
 
 // =============================================================================
@@ -499,64 +484,88 @@ function renderMainSection(responseData) {
       })
       .join("");
 
-   // ── Airport alternatives ──────────────────────────────────────
-   // NOTE: Confirm the exact field names from your Bubble API.
-   // The API should return alternative airports for each leg.
    const firstLeg = legs[0] || {};
-   const mapFromLat = firstLeg.mobile_app_from_latitude_number || 0;
-   const mapFromLng = firstLeg.mobile_app_from_longitude_number || 0;
-   const mapToLat = firstLeg.mobile_app_to_latitude_number || 0;
-   const mapToLng = firstLeg.mobile_app_to_longitude_number || 0;
+   const pax = firstLeg.pax1_number || "";
 
+   // ── Airport alternatives from API response ─────────────────────
    const primaryFromICAO =
       firstLeg.mobile_app_from_airport_icao_code_text || "";
    const primaryToICAO = firstLeg.mobile_app_to_airport_icao_code_text || "";
 
-   // API may return alternative airports as arrays — update field names if different
-   const fromAlts = responseData.from_alternative_airports || [];
-   const toAlts = responseData.to_alternative_airports || [];
+   const fromAlts = responseData.alternate_departure_airports || [];
+   const toAlts = responseData.alternate_arrival_airports || [];
 
-   const fromAirports = [
-      { icao: primaryFromICAO },
-      ...fromAlts.map((a) => ({ icao: a.icao_code || a })),
+   // Build departure list: primary first, then alternatives (no duplicates)
+   // Include lat/lng/name for map modal
+   const primaryFromData = {
+      id: firstLeg.from_custom_airport || "",
+      icao: primaryFromICAO,
+      lat: firstLeg.mobile_app_from_latitude_number || 0,
+      lng: firstLeg.mobile_app_from_longitude_number || 0,
+      name: firstLeg.mobile_app_from_airport_name_short_text || primaryFromICAO,
+   };
+   const primaryToData = {
+      id: firstLeg.to_custom_airport || "",
+      icao: primaryToICAO,
+      lat: firstLeg.mobile_app_to_latitude_number || 0,
+      lng: firstLeg.mobile_app_to_longitude_number || 0,
+      name: firstLeg.mobile_app_to_airport_name_short_text || primaryToICAO,
+   };
+
+   const fromAirportData = [
+      primaryFromData,
+      ...fromAlts
+         .filter((a) => (a.aviapages_main_code_text || "") !== primaryFromICAO)
+         .map((a) => ({
+            id: a._id || "",
+            icao: a.aviapages_main_code_text || "",
+            lat: a.latitude_number || 0,
+            lng: a.longitude_number || 0,
+            name: a.airportnameshort_text || a.aviapages_main_code_text || "",
+         })),
    ].filter((a) => a.icao);
 
-   const toAirports = [
-      { icao: primaryToICAO },
-      ...toAlts.map((a) => ({ icao: a.icao_code || a })),
+   const toAirportData = [
+      primaryToData,
+      ...toAlts
+         .filter((a) => (a.aviapages_main_code_text || "") !== primaryToICAO)
+         .map((a) => ({
+            id: a._id || "",
+            icao: a.aviapages_main_code_text || "",
+            lat: a.latitude_number || 0,
+            lng: a.longitude_number || 0,
+            name: a.airportnameshort_text || a.aviapages_main_code_text || "",
+         })),
    ].filter((a) => a.icao);
 
-   const fromRadios = fromAirports
+   // Store for map modal
+   window._rtbFromAirports = fromAirportData;
+   window._rtbToAirports = toAirportData;
+
+   // Build radio HTML — first item is pre-selected
+   const CHECKMARK_SVG = `<svg width="12" height="10" viewBox="0 0 12 10" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 5L4.5 8.5L11 1" stroke="#04142a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
+   const fromRadios = fromAirportData
       .map(
-         (a, i) => `
-      <label class="rtb_airport_option">
-         <input type="radio" name="rtb_from_airport" value="${a.icao}" ${i === 0 ? "checked" : ""} />
-         <span class="rtb_airport_custom"></span>
-         <span class="rtb_airport_code">${a.icao}</span>
+         (airport, i) => `
+      <label class="rtb_airport_option${i === 0 ? " rtb_airport_selected" : ""}">
+         <input type="radio" name="rtb_from_airport" value="${airport.id}" ${i === 0 ? "checked" : ""} />
+         <span class="rtb_airport_custom">${i === 0 ? CHECKMARK_SVG : ""}</span>
+         <span class="rtb_airport_code">${airport.icao}</span>
       </label>`,
       )
       .join("");
 
-   const toRadios = toAirports
+   const toRadios = toAirportData
       .map(
-         (a, i) => `
-      <label class="rtb_airport_option">
-         <input type="radio" name="rtb_to_airport" value="${a.icao}" ${i === 0 ? "checked" : ""} />
-         <span class="rtb_airport_custom"></span>
-         <span class="rtb_airport_code">${a.icao}</span>
+         (airport, i) => `
+      <label class="rtb_airport_option${i === 0 ? " rtb_airport_selected" : ""}">
+         <input type="radio" name="rtb_to_airport" value="${airport.id}" ${i === 0 ? "checked" : ""} />
+         <span class="rtb_airport_custom">${i === 0 ? CHECKMARK_SVG : ""}</span>
+         <span class="rtb_airport_code">${airport.icao}</span>
       </label>`,
       )
       .join("");
-
-   // ── Dep/Arr times for display ─────────────────────────────────
-   const depTimestamp = firstLeg.date_date || 0;
-   const depTimeDisplay = formatTime(depTimestamp);
-   const flightMins = parseFlightMins(d["leg_1_flight_time_text"]);
-   const arrTimestamp = depTimestamp
-      ? depTimestamp + flightMins * 60 * 1000
-      : 0;
-   const arrTimeDisplay = formatTime(arrTimestamp);
-   const pax = firstLeg.pax1_number || "";
 
    // ── Inject HTML ───────────────────────────────────────────────
    wrapper.innerHTML = `
@@ -575,7 +584,7 @@ function renderMainSection(responseData) {
             <!-- Info Card -->
             <div class="adi_info_card">
                <div class="adi_info_card_left">
-                  <span class="adi_type_badge">${d.type_text || ""}</span>
+                  <span class="adi_type_badge requestbooking">${d.type_text || ""}</span>
                   <h3 class="adi_info_model">${d.model_text || ""}</h3>
                   <p class="adi_info_similar">Or similar ${d.category_text || ""}</p>
                </div>
@@ -593,6 +602,7 @@ function renderMainSection(responseData) {
 
             <!-- Confirmation Request Notice -->
             <div class="rtb_notice">
+               <h4>Confirmation request</h4>
                <p class="rtb_notice_text">This aircraft is not available for instant booking at this time. Please submit your request, and our team will promptly confirm availability with our partner operator or suggest suitable alternatives. You'll receive a response shortly with confirmed details.</p>
             </div>
 
@@ -607,17 +617,19 @@ function renderMainSection(responseData) {
                <h4 class="adi_section_title">AIRPORTS</h4>
                <div class="rtb_airports_grid">
                   <div class="rtb_airports_col">
-                     <p class="rtb_airports_col_label">Departure:</p>
-                     <div class="rtb_airport_list">${fromRadios}</div>
+                     <div class="rtb_airports_col_header">
+                        <span class="rtb_airports_col_label">Departure:</span>
+                        <button class="rtb_map_link" id="rtb_show_from_map">Show on the map</button>
+                     </div>
+                     <div class="rtb_airport_list" id="rtb_from_list">${fromRadios}</div>
                   </div>
                   <div class="rtb_airports_col">
-                     <p class="rtb_airports_col_label">Arrival:</p>
-                     <div class="rtb_airport_list">${toRadios}</div>
+                     <div class="rtb_airports_col_header">
+                        <span class="rtb_airports_col_label">Arrival:</span>
+                        <button class="rtb_map_link" id="rtb_show_to_map">Show on the map</button>
+                     </div>
+                     <div class="rtb_airport_list" id="rtb_to_list">${toRadios}</div>
                   </div>
-               </div>
-               <div class="rtb_times_row">
-                  ${depTimeDisplay ? `<span class="rtb_time_item">Departure time: <strong>${depTimeDisplay}</strong></span>` : ""}
-                  ${arrTimeDisplay ? `<span class="rtb_time_item">Estimated arrival: <strong>${arrTimeDisplay}</strong></span>` : ""}
                </div>
             </div>
 
@@ -625,7 +637,7 @@ function renderMainSection(responseData) {
             <div class="adi_passengers_row">
                <h4 class="adi_passengers_label">PASSENGERS: <span>${pax}</span></h4>
                <button class="adi_edit_pax_btn adi_map_link">Edit Passenger No.</button>
-            </div>
+            </div>            
 
             <!-- Special Requests -->
             <div class="rtb_special_requests">
@@ -634,42 +646,9 @@ function renderMainSection(responseData) {
             </div>
 
             <!-- Terms of Service -->
-            <div class="terms">
-               <div class="term_heading">
-                  <h4 class="adi_section_title">Terms of service</h4>
-                  <h5>Cancellation Policy:</h5>
-               </div>
-               <div class="term_para">
-                  <p class="term_para_main">For one-way, multi-leg, and multi-day one-way flights, the cancellation policy is as follows:</p>
-                  <p class="term_para_blod">Greater than 72 hours prior to departure: fully refundable</p>
-                  <p class="term_para_blod">72 Hours to 48 hours prior to departure: 50% refundable</p>
-                  <p class="term_para_blod">48 hours or less prior to departure: non-refundable</p>
-               </div>
-               <div class="term_para">
-                  <p class="term_para_main">For round trip flights:</p>
-                  <p class="term_para_blod">Greater than 72 hours prior to departure: fully refundable</p>
-                  <p class="term_para_blod">72 Hours to 48 hours prior to departure: 50% refundable</p>
-                  <p class="term_para_blod">48 hours or less prior to departure: non-refundable</p>
-               </div>
-               <div class="term_para">
-                  <p class="term_para_main">In cases of no-shows, a cancellation fee equal to 100% of the full contract amount, along with any related expenses incurred, will be applied.</p>
-               </div>
-               <div class="term_para">
-                  <p class="term_para_main"><strong>FLYT</strong> reserves the right to fulfill your booking on another aircraft model that is equivalent or greater in class and may adjust your departure time by <strong class="light_strong">+/- 1 hour.</strong></p>
-               </div>
-            </div>
-
-            <!-- Terms Checkbox -->
-            <div class="checkbox">
-               <label class="co_checkbox_label">
-                  <input type="checkbox" class="co_checkbox_input" id="rtb_terms_checkbox" checked />
-                  <span class="co_checkbox_custom">
-                     <svg width="12" height="10" viewBox="0 0 12 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M1 5L4.5 8.5L11 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                     </svg>
-                  </span>
-                  <span class="co_checkbox_text">Accept charter flight terms and conditions</span>
-               </label>
+            <div class="request_terms">
+               <h4 class="adi_section_title">Terms of service</h4>
+               <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.  It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
             </div>
 
          </div><!-- /.adi_main_left -->
@@ -687,14 +666,18 @@ function renderMainSection(responseData) {
                <h4 class="adi_section_title">INFORMATION</h4>
                <div class="rtb_info_hold">
                   <div class="rtb_info_hold_header">
-                     <img src="https://cdn.prod.website-files.com/673728493d38fb595b0df373/69a2494f9a23d14e20a1f78d_info_icon.png" alt="info" class="rtb_info_icon" />
-                     <strong>Credit Card Hold</strong>
+                     <img src="https://cdn.prod.website-files.com/673728493d38fb595b0df373/69e8d386030571ad5363ed66_idea.png" alt="info" class="rtb_info_icon" />                     
                   </div>
-                  <p class="rtb_info_text">In order to proceed with this request, you must provide a valid form of payment. Please keep in mind that your card will not be charged at this time, however FOR VERIFICATION PURPOSES A HOLD IN THE AMOUNT OF $1 will be placed on your card. If you decide not to proceed with this request, this amount will be refunded.</p>
-               </div>
-               <div class="rtb_hold_amount_row">
-                  <span class="rtb_hold_label">Hold:</span>
-                  <strong class="rtb_hold_value">$1</strong>
+                  <div class="trb_into_para">
+                     <h5>Credit Card Hold</h5>
+                     <p class="rtb_info_text">In order to proceed with this request, you must provide a valid form of payment. Please keep in mind that your card will not be charged at this time, however FOR VERIFICATION PURPOSES A HOLD IN THE AMOUNT OF $1 will be placed on your card. If you decide not to proceed with this request, this amount will be refunded.</p>
+                  </div>
+               </div>               
+            </div>
+            <div class="rtb_payment_list">
+               <div class="adi_estimate_row">
+                  <span class="adi_estimate_label">Hold:</span>
+                  <span class="adi_estimate_value">$1</span>
                </div>
             </div>
 
@@ -740,7 +723,11 @@ function renderMainSection(responseData) {
       });
    }
 
-   // ── Init Leaflet map ──────────────────────────────────────────
+   // ── Init Leaflet route map (right column) ─────────────────────
+   const mapFromLat = firstLeg.mobile_app_from_latitude_number || 0;
+   const mapFromLng = firstLeg.mobile_app_from_longitude_number || 0;
+   const mapToLat = firstLeg.mobile_app_to_latitude_number || 0;
+   const mapToLng = firstLeg.mobile_app_to_longitude_number || 0;
    initLeafletMap(mapFromLat, mapFromLng, mapToLat, mapToLng);
 
    // ── Fetch saved cards ─────────────────────────────────────────
@@ -763,27 +750,216 @@ function renderMainSection(responseData) {
    if (submitBtn) {
       submitBtn.addEventListener("click", (e) => {
          e.preventDefault();
-         submitRequest();
+
+         const isLoggedIn =
+            typeof Cookies !== "undefined" &&
+            !!Cookies.get("authToken") &&
+            !!Cookies.get("userEmail");
+
+         if (isLoggedIn) {
+            submitRequest();
+         } else {
+            window.onAuthSuccess = function () {
+               submitRequest();
+            };
+            const onLoggedIn = () => {
+               window.removeEventListener("userLoggedIn", onLoggedIn);
+               if (typeof window.onAuthSuccess === "function") {
+                  const cb = window.onAuthSuccess;
+                  window.onAuthSuccess = null;
+                  setTimeout(() => {
+                     cb();
+                  }, 800);
+               }
+            };
+            window.addEventListener("userLoggedIn", onLoggedIn);
+
+            const loginForm = document.querySelector(".fl_auth.login_form");
+            if (loginForm) {
+               document
+                  .querySelectorAll(".fl_auth")
+                  .forEach((f) => f.classList.add("form_hide"));
+               loginForm.classList.remove("form_hide");
+               document.body.classList.add("overflow");
+            }
+         }
       });
    }
 
-   const termsCheckbox = document.getElementById("rtb_terms_checkbox");
-   if (termsCheckbox) {
-      termsCheckbox.addEventListener("change", updateSubmitBtn);
+   updateSubmitBtn();
+
+   // ── Airport radio: toggle selected class + checkmark ──────────
+   function setupAirportRadios(listId, radioName) {
+      const list = document.getElementById(listId);
+      if (!list) return;
+      list.querySelectorAll(`input[name="${radioName}"]`).forEach((radio) => {
+         radio.addEventListener("change", () => {
+            list.querySelectorAll(".rtb_airport_option").forEach((label) => {
+               const isSelected = label.querySelector("input").checked;
+               label.classList.toggle("rtb_airport_selected", isSelected);
+               const custom = label.querySelector(".rtb_airport_custom");
+               if (custom) {
+                  custom.innerHTML = isSelected
+                     ? `<svg width="12" height="10" viewBox="0 0 12 10" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 5L4.5 8.5L11 1" stroke="#04142a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+                     : "";
+               }
+            });
+         });
+      });
    }
 
-   updateSubmitBtn();
+   setupAirportRadios("rtb_from_list", "rtb_from_airport");
+   setupAirportRadios("rtb_to_list", "rtb_to_airport");
+
+   // ── Show on the map buttons ───────────────────────────────────
+   const showFromMapBtn = document.getElementById("rtb_show_from_map");
+   const showToMapBtn = document.getElementById("rtb_show_to_map");
+
+   if (showFromMapBtn) {
+      showFromMapBtn.addEventListener("click", () => {
+         openRtbAirportMap(window._rtbFromAirports, "Departure Airports");
+      });
+   }
+   if (showToMapBtn) {
+      showToMapBtn.addEventListener("click", () => {
+         openRtbAirportMap(window._rtbToAirports, "Arrival Airports");
+      });
+   }
+}
+
+// =============================================================================
+// AIRPORT MAP MODAL — Leaflet popup showing all airports as markers
+// =============================================================================
+let _rtbMapInstance = null;
+
+function openRtbAirportMap(airports, title) {
+   if (typeof L === "undefined") {
+      alert("Map library not loaded. Please refresh the page.");
+      return;
+   }
+
+   // Inject modal HTML once
+   if (!document.getElementById("rtb_airport_map_overlay")) {
+      document.body.insertAdjacentHTML(
+         "beforeend",
+         `<div class="rtb_airport_map_overlay" id="rtb_airport_map_overlay">
+            <div class="rtb_airport_map_modal">
+               <div class="rtb_airport_map_header">
+                  <h4 class="rtb_airport_map_title" id="rtb_airport_map_title"></h4>
+                  <button class="rtb_airport_map_close" id="rtb_airport_map_close" aria-label="Close">
+                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M1 1L15 15M15 1L1 15" stroke="#04142a" stroke-width="2" stroke-linecap="round"/></svg>
+                  </button>
+               </div>
+               <div id="rtb_airport_map_container" class="rtb_airport_map_container"></div>
+            </div>
+         </div>`,
+      );
+
+      document
+         .getElementById("rtb_airport_map_close")
+         .addEventListener("click", closeRtbAirportMap);
+      document
+         .getElementById("rtb_airport_map_overlay")
+         .addEventListener("click", (e) => {
+            if (e.target.id === "rtb_airport_map_overlay") closeRtbAirportMap();
+         });
+   }
+
+   // Set title
+   document.getElementById("rtb_airport_map_title").textContent = title;
+
+   // Show overlay
+   const overlay = document.getElementById("rtb_airport_map_overlay");
+   overlay.classList.add("rtb_airport_map_open");
+   document.body.style.overflow = "hidden";
+
+   // Destroy previous map
+   if (_rtbMapInstance) {
+      _rtbMapInstance.remove();
+      _rtbMapInstance = null;
+   }
+
+   // Reset container
+   const container = document.getElementById("rtb_airport_map_container");
+   container.innerHTML = "";
+
+   // Wait for browser paint then init
+   requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+         _rtbMapInstance = L.map("rtb_airport_map_container", {
+            scrollWheelZoom: true,
+         });
+
+         L.tileLayer(
+            "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+            {
+               maxZoom: 19,
+               attribution: '&copy; <a href="https://www.esri.com/">Esri</a>',
+            },
+         ).addTo(_rtbMapInstance);
+
+         const pinIcon = L.divIcon({
+            className: "",
+            html: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 36" width="24" height="36"><path fill="#e53935" stroke="#fff" stroke-width="1.2" d="M12 0C5.373 0 0 5.373 0 12c0 9 12 24 12 24S24 21 24 12C24 5.373 18.627 0 12 0zm0 17a5 5 0 1 1 0-10 5 5 0 0 1 0 10z"/></svg>`,
+            iconSize: [24, 36],
+            iconAnchor: [12, 36],
+         });
+
+         const validAirports = airports.filter(
+            (a) =>
+               a.lat != null &&
+               a.lng != null &&
+               (Number(a.lat) !== 0 || Number(a.lng) !== 0),
+         );
+
+         const bounds = [];
+
+         validAirports.forEach((a) => {
+            const lat = Number(a.lat);
+            const lng = Number(a.lng);
+            const marker = L.marker([lat, lng], { icon: pinIcon }).addTo(
+               _rtbMapInstance,
+            );
+            marker.bindTooltip(
+               `<div class="rtb_map_popup"><strong>${a.icao}</strong><span>${a.name || ""}</span></div>`,
+               {
+                  direction: "top",
+                  offset: [0, -36],
+                  className: "rtb_map_tooltip",
+               },
+            );
+            bounds.push([lat, lng]);
+         });
+
+         // Recalc size first
+         _rtbMapInstance.invalidateSize({ animate: false });
+
+         // Fit bounds
+         if (bounds.length > 1) {
+            _rtbMapInstance.fitBounds(L.latLngBounds(bounds), {
+               padding: [60, 60],
+               maxZoom: 12,
+               animate: false,
+            });
+         } else if (bounds.length === 1) {
+            _rtbMapInstance.setView(bounds[0], 10, { animate: false });
+         } else {
+            _rtbMapInstance.setView([20, 0], 2, { animate: false });
+         }
+      });
+   });
+}
+
+function closeRtbAirportMap() {
+   const overlay = document.getElementById("rtb_airport_map_overlay");
+   if (overlay) overlay.classList.remove("rtb_airport_map_open");
+   document.body.style.overflow = "";
 }
 
 // =============================================================================
 // SUBMIT REQUEST
 // =============================================================================
 async function submitRequest() {
-   if (!isValid()) {
-      window.toast.error("Please accept the terms and conditions.");
-      return;
-   }
-
    const authToken =
       typeof Cookies !== "undefined" ? Cookies.get("authToken") : null;
    if (!authToken) {
@@ -791,18 +967,26 @@ async function submitRequest() {
       return;
    }
 
-   // Get selected card
-   const selectedCard = document.querySelector(
-      "#co_saved_cards .co_saved_card_radio:checked",
-   );
-   if (!selectedCard) {
-      window.toast.error("Please select a payment method.");
+   // ── 3. Validate a saved card is selected ──
+   const allCardRadios = document.querySelectorAll(".co_saved_card_radio");
+   if (allCardRadios.length === 0) {
+      window.toast.error("Please add a card to continue.");
       return;
    }
-   const cardEl = selectedCard.closest(".co_saved_card");
-   const profileId = cardEl?.dataset.profileId || "";
+
+   const selectedCardRadio = document.querySelector(
+      ".co_saved_card_radio:checked",
+   );
+   if (!selectedCardRadio) {
+      window.toast.error("Please select a saved card to proceed.");
+      return;
+   }
+
+   // ── 4. Get required data ──
+   const profileId =
+      selectedCardRadio.closest(".co_saved_card")?.dataset.profileId;
    if (!profileId) {
-      window.toast.error("Invalid payment profile. Please try again.");
+      window.toast.error("Could not read card details. Please try again.");
       return;
    }
 
@@ -836,17 +1020,27 @@ async function submitRequest() {
             Authorization: `Bearer ${authToken}`,
          },
          body: JSON.stringify({
-            aircraftid: bookingId,
+            quote: rtbData?.quote,
+            // quote: "1756941598340x118775576265228290",
             payment_profile_id: profileId,
-            from_airport: fromAirport,
-            to_airport: toAirport,
+            wire_payment: "no",
+            alternate_departure_airport_id: fromAirport,
+            alternate_arrival_airport_id: toAirport,
+            // alternate_arrival_airport: toAirport,
             special_requests: specialRequests,
          }),
       });
 
       const data = await res.json();
 
-      if (res.ok && data.response && !data.response.has_error) {
+      console.log(data);
+
+      if (
+         res.ok &&
+         data.response &&
+         !data.response.has_error &&
+         data.response.transaction_id
+      ) {
          // Success — lock button and redirect
          submitSuccess = true;
          if (btnText) btnText.textContent = "Redirecting...";
@@ -855,7 +1049,7 @@ async function submitRequest() {
                "Your request has been submitted successfully.",
          );
          setTimeout(() => {
-            window.location.href = "/booking-confirmed";
+            window.location.href = `/booking-confirmed?transaction_id=${encodeURIComponent(data.response.transaction_id)}`;
          }, 800);
       } else {
          const errMsg =
@@ -893,7 +1087,7 @@ function renderSavedCards(cards) {
    if (!container) return;
 
    if (!cards || cards.length === 0) {
-      container.innerHTML = `<div class="co_no_cards"><p>No saved cards</p></div>`;
+      container.innerHTML = `<div class="co_no_cards req_no_card"><p>No saved cards</p></div>`;
       return;
    }
 
@@ -1433,7 +1627,40 @@ function setupModals() {
    }
 
    document.addEventListener("click", (e) => {
-      if (e.target.closest(".co_addcard_button")) openModal(modal1Overlay);
+      if (e.target.closest(".co_addcard_button")) {
+         const isLoggedIn =
+            typeof Cookies !== "undefined" &&
+            !!Cookies.get("authToken") &&
+            !!Cookies.get("userEmail");
+
+         if (isLoggedIn) {
+            openModal(modal1Overlay);
+         } else {
+            window.onAuthSuccess = function () {
+               openModal(modal1Overlay);
+            };
+            const onLoggedIn = () => {
+               window.removeEventListener("userLoggedIn", onLoggedIn);
+               if (typeof window.onAuthSuccess === "function") {
+                  const cb = window.onAuthSuccess;
+                  window.onAuthSuccess = null;
+                  setTimeout(() => {
+                     cb();
+                  }, 800);
+               }
+            };
+            window.addEventListener("userLoggedIn", onLoggedIn);
+
+            const loginForm = document.querySelector(".fl_auth.login_form");
+            if (loginForm) {
+               document
+                  .querySelectorAll(".fl_auth")
+                  .forEach((f) => f.classList.add("form_hide"));
+               loginForm.classList.remove("form_hide");
+               document.body.classList.add("overflow");
+            }
+         }
+      }
    });
 
    document
@@ -1666,7 +1893,7 @@ function setupCardValidation() {
 
       try {
          const res = await fetch(
-            `${BUBBLE_BASE_URL}/api/1.1/wf/webflow_save_card_flyt`,
+            `${BUBBLE_BASE_URL}/api/1.1/wf/webflow_add_card_flyt`,
             {
                method: "POST",
                headers: {
@@ -1675,8 +1902,8 @@ function setupCardValidation() {
                },
                body: JSON.stringify({
                   card_number: rawCardNum,
-                  expiration_month: expMonth,
-                  expiration_year: expYear,
+                  expiry_month: expMonth,
+                  expiry_year: expYear,
                   card_code: cvv,
                   first_name: firstName,
                   last_name: lastName,
@@ -1691,6 +1918,8 @@ function setupCardValidation() {
          );
 
          const data = await res.json();
+
+         console.log(data);
 
          if (res.ok && !(data.response && data.response.has_error)) {
             window.toast.success("Card saved successfully!");
@@ -1738,6 +1967,87 @@ document.addEventListener("DOMContentLoaded", () => {
    loaderEl.className = "adi_page_loader";
    loaderEl.innerHTML = `<div class="adi_loader_spinner"></div>`;
    document.body.appendChild(loaderEl);
+
+   // ─── Inject Passenger Edit Modal ────────────────────────────
+   const modalHTML = `
+   <div class="adi_pax_overlay" id="adi_pax_overlay">
+      <div class="adi_pax_modal">
+         <h3 class="adi_pax_modal_title">Edit Passenger Count</h3>
+         <div class="passenger_edit_block">
+            <div class="adi_pax_label_row">
+               <span>PASSENGERS:</span>
+            </div>
+            <div class="adi_pax_counter">
+               <button id="adi_pax_minus">&#8722;</button>
+               <div class="adi_pax_count_val" id="adi_pax_val">1</div>
+               <button id="adi_pax_plus">&#43;</button>
+            </div>           
+         </div>
+         <div class="adi_pax_modal_footer">
+            <button class="adi_pax_cancel_btn" id="adi_pax_cancel">Cancel</button>
+            <button class="adi_pax_save_btn" id="adi_pax_save">Save</button>
+         </div>
+      </div>
+   </div>`;
+   document.body.insertAdjacentHTML("beforeend", modalHTML);
+
+   const overlay = document.getElementById("adi_pax_overlay");
+   const valEl = document.getElementById("adi_pax_val");
+   const minusBtn = document.getElementById("adi_pax_minus");
+   const plusBtn = document.getElementById("adi_pax_plus");
+   let currentPax = 1;
+   let maxPax = 99;
+
+   function openPaxModal(pax, max) {
+      currentPax = pax || 1;
+      maxPax = max || 99;
+      valEl.textContent = currentPax;
+      overlay.classList.add("open");
+   }
+
+   function closePaxModal() {
+      overlay.classList.remove("open");
+   }
+
+   minusBtn.addEventListener("click", () => {
+      if (currentPax > 1) {
+         currentPax--;
+         valEl.textContent = currentPax;
+      }
+   });
+
+   plusBtn.addEventListener("click", () => {
+      if (currentPax < maxPax) {
+         currentPax++;
+         valEl.textContent = currentPax;
+      }
+   });
+
+   document
+      .getElementById("adi_pax_cancel")
+      .addEventListener("click", closePaxModal);
+
+   // Close on overlay background click
+   overlay.addEventListener("click", (e) => {
+      if (e.target === overlay) closePaxModal();
+   });
+
+   // Save → update passenger count on the page
+   document.getElementById("adi_pax_save").addEventListener("click", () => {
+      const paxSpan = document.querySelector(".adi_passengers_label span");
+      if (paxSpan) paxSpan.textContent = currentPax;
+      closePaxModal();
+   });
+
+   // Open modal when "Edit Passenger No." is clicked
+   document.addEventListener("click", (e) => {
+      if (e.target.closest(".adi_edit_pax_btn")) {
+         const paxSpan = document.querySelector(".adi_passengers_label span");
+         const curPax = parseInt(paxSpan?.textContent) || 1;
+         const max = rtbData?.max_pax || 99;
+         openPaxModal(curPax, max);
+      }
+   });
 
    fetchAircraftDetail();
    setupModals();

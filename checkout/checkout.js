@@ -1691,6 +1691,8 @@ async function bookFlight() {
                quote: quote,
                payment_profile_id: profileId,
                wire_payment: wirePayment,
+               // pax,
+               // carbon_offset
             }),
          },
       );
@@ -1698,7 +1700,12 @@ async function bookFlight() {
       const data = await res.json();
       console.log("✈️ Book Flight Response:", data);
 
-      if (res.ok && data.response && !data.response.has_error) {
+      if (
+         res.ok &&
+         data.response &&
+         !data.response.has_error &&
+         data.response.transaction_id
+      ) {
          // ── Success — keep button locked until redirect ──
          bookingSuccess = true;
          if (bookBtnText) bookBtnText.textContent = "Redirecting...";
@@ -1707,7 +1714,7 @@ async function bookFlight() {
             "Your flight has been booked successfully.";
          window.toast.success(successMsg);
          setTimeout(() => {
-            window.location.href = "/booking-confirmed";
+            window.location.href = `/booking-confirmed?transaction_id=${encodeURIComponent(data.response.transaction_id)}`;
          }, 800);
       } else {
          // ── Error from API ──

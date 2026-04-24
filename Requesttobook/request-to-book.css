@@ -1,0 +1,453 @@
+.requestbooking {
+   border-color: #f13314;
+   color: #f13314;
+}
+
+.rtb_notice {
+   background-color: #e5e7e9;
+   padding: 25px;
+   padding-right: 80px;
+}
+
+.rtb_notice h4 {
+   font-size: 19px;
+   color: #04142a;
+   font-weight: 600;
+   margin-bottom: 10px;
+}
+
+.rtb_notice_text {
+   font-size: 16px;
+   color: #68727f;
+   font-weight: 26px;
+}
+
+/* =============================================================================
+   AIRPORT SECTION
+   ============================================================================= */
+.rtb_airports_grid {
+   display: grid;
+   grid-template-columns: 1fr 1fr;
+   gap: 100px;
+   margin-top: 16px;
+}
+
+.rtb_airports_col_label {
+   font-size: 18px;
+   color: #68727f;
+}
+
+.rtb_airports_col_header button {
+   display: inline-block;
+   font-size: 18px;
+   color: #04142a;
+   font-weight: 500;
+   text-decoration: underline;
+   padding: 0;
+   background: none;
+   transition: all 0.2s ease;
+}
+
+.rtb_airports_col_header button:hover {
+   opacity: 0.7;
+}
+
+.rtb_airport_list {
+   display: flex;
+   flex-direction: column;
+   gap: 12px;
+}
+
+.rtb_airport_option {
+   display: flex;
+   align-items: center;
+   gap: 16px;
+   padding: 16px 20px;
+   background-color: #e5e7e9;
+   border-radius: 0px;
+   cursor: pointer;
+   font-size: 20px;
+   font-weight: 700;
+   color: #04142a;
+   transition:
+      background-color 0.2s,
+      color 0.2s;
+   user-select: none;
+   font-family:
+      Geom Graphic,
+      Arial,
+      sans-serif;
+   font-weight: 700;
+   margin-bottom: 0;
+}
+
+.rtb_airport_option input[type="radio"] {
+   display: none;
+}
+
+.rtb_airport_custom {
+   width: 24px;
+   height: 24px;
+   min-width: 24px;
+   border-radius: 50%;
+   border: 1px solid #707986;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   background-color: #fff;
+   transition:
+      background-color 0.2s,
+      border-color 0.2s;
+}
+
+.rtb_airport_option.rtb_airport_selected {
+   background-color: #68727f;
+   color: #ffffff;
+}
+
+.rtb_airports_col_header {
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   margin-bottom: 20px;
+}
+
+/* =============================================================================
+   AIRPORT MAP MODAL
+   ============================================================================= */
+
+.rtb_airport_map_overlay {
+   display: none;
+   position: fixed;
+   inset: 0;
+   background: rgba(4, 20, 42, 0.6);
+   z-index: 99999;
+   align-items: center;
+   justify-content: center;
+   padding: 20px;
+   backdrop-filter: blur(3px);
+}
+
+.rtb_airport_map_overlay.rtb_airport_map_open {
+   display: flex;
+}
+
+.rtb_airport_map_modal {
+   background: #fff;
+   border-radius: 12px;
+   overflow: visible;
+   width: 100%;
+   max-width: 820px;
+   max-height: 90vh;
+   display: flex;
+   flex-direction: column;
+   box-shadow: 0 20px 60px rgba(4, 20, 42, 0.25);
+}
+
+.rtb_airport_map_header {
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   padding: 18px 24px;
+   border-bottom: 1px solid #eaecef;
+   flex-shrink: 0;
+}
+
+.rtb_airport_map_title {
+   font-size: 16px;
+   font-weight: 700;
+   color: #04142a;
+   text-transform: uppercase;
+   letter-spacing: 0.05em;
+   margin: 0;
+}
+
+.rtb_airport_map_close {
+   width: 36px;
+   height: 36px;
+   border-radius: 50%;
+   border: none;
+   background: #f0f2f5;
+   cursor: pointer;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   transition: background 0.2s;
+   flex-shrink: 0;
+}
+
+.rtb_airport_map_close:hover {
+   background: #dfdede;
+}
+
+.rtb_airport_map_container {
+   width: 100%;
+   height: 450px;
+   min-height: 450px;
+   position: relative;
+}
+
+.rtb_map_popup {
+   display: flex;
+   flex-direction: column;
+   gap: 3px;
+   min-width: 100px;
+}
+
+.rtb_map_popup strong {
+   font-size: 14px;
+   color: #04142a;
+   font-weight: 700;
+}
+
+.rtb_map_popup span {
+   font-size: 12px;
+   color: #68727f;
+}
+
+/* Leaflet tooltip override */
+.rtb_map_tooltip {
+   background: #fff;
+   color: #04142a;
+   border: none;
+   border-radius: 8px;
+   padding: 8px 14px;
+   box-shadow: 0 4px 16px rgba(4, 20, 42, 0.18);
+   font-family: inherit;
+}
+
+.rtb_map_tooltip::before {
+   border-top-color: #fff;
+}
+
+.rtb_special_requests {
+   padding: 25px;
+   border-top: 1px solid #dfdede;
+}
+
+.rtb_special_requests textarea {
+   display: block;
+   width: 100%;
+   height: 140px;
+   background-color: #e5e7e9;
+   padding: 20px;
+   font-size: 16px;
+   color: #68727f;
+   border: 0;
+   outline: none;
+   resize: none;
+   margin-top: 16px;
+}
+
+.rtb_special_requests textarea::placeholder {
+   opacity: 1;
+   color: #68727f;
+}
+
+.request_terms {
+   padding: 25px;
+   border-top: 1px solid #dfdede;
+   border-bottom: 1px solid #dfdede;
+   border-radius: 0px 0px 6px 6px;
+}
+
+.request_terms p {
+   margin-top: 16px;
+   font-size: 16px;
+   color: #68727f;
+   line-height: 26px;
+}
+
+.rtb_info_panel {
+   padding: 25px;
+   border: 1px solid #dfdede;
+   border-right: 0;
+}
+
+.rtb_info_hold {
+   display: grid;
+   grid-template-columns: 50px 1fr;
+   column-gap: 20px;
+}
+
+.rtb_info_hold img {
+   display: block;
+   width: 100%;
+}
+
+.trb_into_para h5 {
+   font-size: 19px;
+   color: #04142a;
+   font-weight: 600;
+   margin-bottom: 6px;
+}
+
+.rtb_info_text {
+   font-size: 16px;
+   color: #68727f;
+   line-height: 26px;
+}
+
+.rtb_info_hold {
+   margin-top: 20px;
+}
+
+.rtb_payment_list .adi_estimate_row {
+   margin: 0;
+   padding-top: 18px;
+   padding-bottom: 18px;
+}
+
+.rtb_payment_list {
+   border-left: 1px solid #dfdede;
+}
+
+.co_payment_redirect {
+   margin-top: 20px;
+}
+
+.rtb_payment_list .adi_estimate_value {
+   font-weight: 600;
+}
+
+/* ====================================
+      Responsive Code start
+==================================== */
+
+@media screen and (min-width: 992px) and (max-width: 1280px) {
+   .rtb_airports_grid {
+      gap: 20px;
+   }
+
+   .rtb_airports_col_header {
+      flex-direction: column;
+      text-align: left;
+      align-items: flex-start;
+      gap: 6px;
+   }
+
+   .rtb_airports_grid .rtb_airports_col:last-child .rtb_airports_col_header {
+      text-align: right;
+      align-items: flex-end;
+   }
+}
+
+@media screen and (min-width: 768px) and (max-width: 991px) {
+   .rtb_airports_grid {
+      gap: 50px;
+   }
+
+   .adi_info_card_left {
+      border: 0;
+   }
+
+   .rtb_notice {
+      padding: 16px !important;
+   }
+
+   .rtb_special_requests,
+   .request_terms,
+   .rtb_info_panel {
+      padding-left: 0;
+      padding-right: 0;
+   }
+
+   .rtb_info_panel {
+      border: 0;
+   }
+
+   .rtb_payment_list {
+      border: 0;
+   }
+
+   .rtb_payment_list .adi_estimate_row {
+      padding-top: 0;
+   }
+
+   .request_terms {
+      border-radius: 0;
+   }
+}
+
+@media screen and (max-width: 767px) {
+   .rtb_notice {
+      padding: 16px;
+      padding-right: 0;
+   }
+
+   .rtb_airports_grid {
+      column-gap: 16px;
+      gap: 10px;
+      align-items: flex-start;
+   }
+
+   .rtb_airports_col_header {
+      flex-direction: column;
+      text-align: left;
+      align-items: flex-start;
+      gap: 6px;
+   }
+
+   .rtb_airports_col_header button {
+      font-size: 15px;
+   }
+
+   .rtb_airports_grid .rtb_airports_col:last-child .rtb_airports_col_header {
+      text-align: right;
+      align-items: flex-end;
+   }
+
+   .rtb_airport_option {
+      gap: 10px;
+      padding: 10px 10px;
+   }
+
+   .rtb_airport_option {
+      font-size: 18px;
+   }
+
+   .rtb_special_requests {
+      padding-left: 0;
+      padding-right: 0;
+   }
+
+   .rtb_special_requests textarea {
+      display: block;
+      height: 100px;
+      padding: 10px;
+      font-size: 14px;
+   }
+
+   .request_terms {
+      padding-left: 0;
+      padding-right: 0;
+      border-radius: 0px 0px 0px 0px;
+   }
+
+   .request_terms p {
+      text-align: center;
+   }
+
+   .rtb_info_panel {
+      padding-left: 0;
+      padding-right: 0;
+      border: 0;
+   }
+
+   .rtb_payment_list {
+      border: 0;
+   }
+
+   .rtb_payment_list .adi_estimate_row {
+      padding-top: 0;
+   }
+
+   .rtb_info_text {
+      font-size: 14px;
+      line-height: 22px;
+   }
+}
+
+/* ====================================
+      Responsive Code end
+==================================== */
