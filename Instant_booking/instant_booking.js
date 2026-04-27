@@ -1,3 +1,9 @@
+/*
+=====================================================================
+    !instant_booking.js file will connect Instant-Book for FLYT.com
+=====================================================================
+*/
+
 // Guard: Redirect to /aircraft if no id param in URL
 const urlParams = new URLSearchParams(window.location.search);
 const bookingId = urlParams.get("id");
