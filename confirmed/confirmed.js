@@ -1,3 +1,9 @@
+/*
+=====================================================================
+    !confirmed.js file will connect "booking-confirmed" for FLYT.com
+=====================================================================
+*/
+
 // =============================================================================
 // BOOKING CONFIRMED PAGE — GUARD
 // Verifies transaction_id from URL against the API before showing page content

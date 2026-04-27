@@ -1,3 +1,9 @@
+/*
+===========================================================================================
+    !checkout.css file will connect "Request-to-Book and checkout page" for FLYT.com
+===========================================================================================
+*/
+
 .terms {
    padding: 25px;
    max-width: 90%;
@@ -463,11 +469,14 @@
    display: none;
    position: fixed;
    inset: 0;
-   background-color: rgba(4, 20, 42, 0.55);
+   background: rgba(4, 20, 42, 0.6);
+   backdrop-filter: blur(3px);
    z-index: 999999;
    align-items: center;
    justify-content: center;
    overflow: hidden;
+   height: 100vh;
+   max-height: 100vh;
 }
 
 .co_modal_overlay.co_modal_open {
