@@ -4,7 +4,7 @@
 // =============================================================================
 
 const VERIFY_PAYMENT_API =
-   "https://operators-dashboard.bubbleapps.io/version-test/api/1.1/wf/webflow_verify_payment_flyt";
+   "https://operators-dashboard.bubbleapps.io/api/1.1/wf/webflow_verify_payment_flyt";
 
 (async function verifyBooking() {
    const urlParams = new URLSearchParams(window.location.search);
@@ -15,7 +15,7 @@ const VERIFY_PAYMENT_API =
    // ── 1. No transaction_id or not logged in → redirect home ──
    if (!transactionId || !authToken) {
       window.location.href = "/";
-      return;
+      throw new Error("Missing transaction ID or auth token");
    }
 
    try {
@@ -33,9 +33,9 @@ const VERIFY_PAYMENT_API =
       const data = await res.json();
 
       // ── 2. API says invalid → redirect home ──
-      if (!res.ok || !data.response || data.response.has_error) {
+      if (!res.ok || !data.response || !data.response.payment_verified) {
          window.location.href = "/";
-         return;
+         throw new Error("Invalid payment verification");
       }
 
       // ── 3. Valid — show page content ──
@@ -43,5 +43,6 @@ const VERIFY_PAYMENT_API =
    } catch (err) {
       console.error("Verify Payment Error:", err);
       window.location.href = "/";
+      throw new Error("Verification error");
    }
 })();

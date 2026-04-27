@@ -4,6 +4,7 @@ const bookingId = urlParams.get("id");
 
 if (!bookingId) {
    window.location.href = "/aircraft";
+   throw new Error("No booking ID");
 }
 
 // =============================================================================
@@ -15,7 +16,6 @@ const AIRCRAFT_DETAIL_API =
    "https://operators-dashboard.bubbleapps.io/api/1.1/wf/webflow_return_aircraft_detail_flyt";
 
 // Maps currency_text from the API to the correct display symbol.
-// Same as search_result.js
 const CURRENCY_SYMBOLS = {
    usd: "$",
    eur: "\u20ac",
@@ -39,16 +39,10 @@ function redirectToBooking(item) {
    const id = item._id || "";
    const isInstant =
       (item.type_text || "").trim().toUpperCase() === "INSTANT BOOKING";
-   const isNotInstant =
-      (item.type_text || "").trim().toUpperCase() !== "INSTANT BOOKING";
 
-   // Condition 1: Has ID and booking type is INSTANT BOOKING
    if (id && isInstant) {
       window.location.href = `/instant-book?id=${encodeURIComponent(id)}`;
-   }
-
-   // Condition 2: Has ID and booking type is NOT INSTANT BOOKING
-   if (id && isNotInstant) {
+   } else if (id) {
       window.location.href = `/request-to-book?id=${encodeURIComponent(id)}`;
    }
 }
@@ -58,8 +52,12 @@ let apiResponseData = null;
 async function fetchAircraftDetail() {
    showLoader();
    try {
-      const currencyCode =
-         JSON.parse(sessionStorage.getItem("currency"))?.api_currency || "USD";
+      let currencyCode = "USD";
+      try {
+         currencyCode =
+            JSON.parse(sessionStorage.getItem("currency"))?.api_currency ||
+            "USD";
+      } catch {}
 
       const response = await fetch(AIRCRAFT_DETAIL_API, {
          method: "POST",
@@ -87,11 +85,9 @@ async function fetchAircraftDetail() {
       renderJetSlider(data.response.aircraft || []);
 
       // Apply price blur only if user is logged in AND blur_pricing === true
-      // (same logic as search_result.js fetchSearchHistory)
       const isLoggedIn =
          typeof Cookies !== "undefined" && !!Cookies.get("authToken");
       if (isLoggedIn && data.response?.blur_pricing === true) {
-         // Blur both the related jet slider prices AND the main booking card prices
          document.querySelectorAll(".adj_card_price").forEach((el) => {
             el.style.filter = "blur(5px)";
          });

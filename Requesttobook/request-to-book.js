@@ -6,6 +6,7 @@ const bookingId = urlParams.get("id");
 
 if (!bookingId) {
    window.location.href = "/aircraft";
+   throw new Error("No booking ID");
 }
 
 // =============================================================================
@@ -15,7 +16,7 @@ const AIRCRAFT_DETAIL_API =
    "https://operators-dashboard.bubbleapps.io/api/1.1/wf/webflow_return_aircraft_detail_flyt";
 
 const BUBBLE_BASE_URL =
-   "https://operators-dashboard.bubbleapps.io/version-test";
+   "https://operators-dashboard.bubbleapps.io";
 
 const SUBMIT_REQUEST_API = `${BUBBLE_BASE_URL}/api/1.1/wf/webflow_book_now_with_card_flyt`;
 
@@ -347,8 +348,12 @@ function hideLoader() {
 async function fetchAircraftDetail() {
    showLoader();
    try {
-      const currencyCode =
-         JSON.parse(sessionStorage.getItem("currency"))?.api_currency || "USD";
+      let currencyCode = "USD";
+      try {
+         currencyCode =
+            JSON.parse(sessionStorage.getItem("currency"))?.api_currency ||
+            "USD";
+      } catch {}
 
       const response = await fetch(AIRCRAFT_DETAIL_API, {
          method: "POST",
@@ -371,6 +376,15 @@ async function fetchAircraftDetail() {
       renderHeading(detail);
       renderMainSection(data.response);
       renderJetSlider(data.response.aircraft || []);
+
+      // Apply price blur only if user is logged in AND blur_pricing === true
+      const isLoggedIn =
+         typeof Cookies !== "undefined" && !!Cookies.get("authToken");
+      if (isLoggedIn && data.response?.blur_pricing === true) {
+         document.querySelectorAll(".adj_card_price").forEach((el) => {
+            el.style.filter = "blur(5px)";
+         });
+      }
    } catch (error) {
       console.error("RTB Detail Error:", error);
    } finally {
@@ -394,13 +408,6 @@ function renderHeading(detail) {
          <p data-wf--global_para--variant="black_color" class="whole_para adi_heading_para w-variant-124bf981-d164-97ae-531d-77453bb396cb">${detail.model_message_text || ""}</p>
       </div>
    `;
-}
-
-// =============================================================================
-// SHARED VALIDATION
-// =============================================================================
-function isValid() {
-   return true;
 }
 
 // =============================================================================
@@ -738,13 +745,8 @@ function renderMainSection(responseData) {
 
    function updateSubmitBtn() {
       if (!submitBtn) return;
-      if (isValid()) {
-         submitBtn.classList.remove("co_btn_disabled");
-         submitBtn.removeAttribute("aria-disabled");
-      } else {
-         submitBtn.classList.add("co_btn_disabled");
-         submitBtn.setAttribute("aria-disabled", "true");
-      }
+      submitBtn.classList.remove("co_btn_disabled");
+      submitBtn.removeAttribute("aria-disabled");
    }
 
    if (submitBtn) {
@@ -1004,6 +1006,12 @@ async function submitRequest() {
    const specialRequests =
       document.getElementById("rtb_special_requests_input")?.value.trim() || "";
 
+   // Get passenger count
+   const paxCount =
+      parseInt(
+         document.querySelector(".adi_passengers_label span")?.textContent,
+      ) || 1;
+
    // Lock button
    const submitBtnWrap = document.querySelector(".co_payment_redirect");
    const btnText = document.querySelector(".co_payment_redirect .btnc_text");
@@ -1026,8 +1034,8 @@ async function submitRequest() {
             wire_payment: "no",
             alternate_departure_airport_id: fromAirport,
             alternate_arrival_airport_id: toAirport,
-            // alternate_arrival_airport: toAirport,
             special_requests: specialRequests,
+            pax: paxCount,
          }),
       });
 
@@ -2056,4 +2064,17 @@ document.addEventListener("DOMContentLoaded", () => {
 // Redirect on logout
 window.addEventListener("userLoggedOut", () => {
    window.location.href = detailsPageURL;
+   // Remove price blur on logout
+   document.querySelectorAll(".adj_card_price").forEach((el) => {
+      el.style.filter = "";
+   });
+});
+
+// Re-apply price blur on login
+window.addEventListener("userLoggedIn", () => {
+   if (rtbData?.blur_pricing === true) {
+      document.querySelectorAll(".adj_card_price").forEach((el) => {
+         el.style.filter = "blur(5px)";
+      });
+   }
 });

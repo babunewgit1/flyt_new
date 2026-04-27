@@ -9,12 +9,15 @@ const paxParam = urlParams.get("pax");
 
 if (!bookingId) {
    window.location.href = "/aircraft";
+   throw new Error("No booking ID");
 }
 if (carbonParam !== "true" && carbonParam !== "false") {
    window.location.href = "/aircraft";
+   throw new Error("Invalid carbon param");
 }
 if (!paxParam || isNaN(parseInt(paxParam)) || parseInt(paxParam) < 1) {
    window.location.href = "/aircraft";
+   throw new Error("Invalid pax param");
 }
 
 // =============================================================================
@@ -39,8 +42,7 @@ const passengerCount = parseInt(paxParam) || 1;
 const CHECKOUT_API =
    "https://operators-dashboard.bubbleapps.io/api/1.1/wf/webflow_return_aircraft_detail_flyt";
 
-const BUBBLE_BASE_URL =
-   "https://operators-dashboard.bubbleapps.io/version-test";
+const BUBBLE_BASE_URL = "https://operators-dashboard.bubbleapps.io";
 
 // Global store for responseData so bookFlight() can access .quote
 let checkoutData = null;
@@ -368,8 +370,12 @@ function hideLoader() {
 async function fetchCheckoutData() {
    showLoader();
    try {
-      const currencyCode =
-         JSON.parse(sessionStorage.getItem("currency"))?.api_currency || "USD";
+      let currencyCode = "USD";
+      try {
+         currencyCode =
+            JSON.parse(sessionStorage.getItem("currency"))?.api_currency ||
+            "USD";
+      } catch {}
 
       const response = await fetch(CHECKOUT_API, {
          method: "POST",
@@ -1341,7 +1347,6 @@ function renderSavedCards(cards) {
          card["_api_c2_payment.creditCard.cardNumber"] || ""
       ).replace(/X/g, "");
       const cardType = card["_api_c2_payment.creditCard.cardType"] || null;
-      const issuer = card["_api_c2_payment.creditCard.issuerNumber"] || "";
       const isDefault = card["_api_c2_defaultPaymentProfile"] === true;
       const { logo, type } = getCardLogo(cardType);
 
@@ -1689,10 +1694,11 @@ async function bookFlight() {
             },
             body: JSON.stringify({
                quote: quote,
+               // quote: "1756941598340x118775576265228290",
                payment_profile_id: profileId,
                wire_payment: wirePayment,
-               // pax,
-               // carbon_offset
+               pax: passengerCount,
+               carbon_credit: includeCarbon,
             }),
          },
       );

@@ -1212,6 +1212,7 @@
    display: flex;
    align-items: center;
    justify-content: center;
+   flex-shrink: 0;
 }
 
 .srt_cat_name {
