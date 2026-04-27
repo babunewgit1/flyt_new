@@ -1,3 +1,9 @@
+/*
+=====================================================================
+    !request-to-book.js file will connect "Request-to-Book" for FLYT.com
+=====================================================================
+*/
+
 // =============================================================================
 // URL PARAM GUARD
 // =============================================================================
@@ -15,8 +21,7 @@ if (!bookingId) {
 const AIRCRAFT_DETAIL_API =
    "https://operators-dashboard.bubbleapps.io/api/1.1/wf/webflow_return_aircraft_detail_flyt";
 
-const BUBBLE_BASE_URL =
-   "https://operators-dashboard.bubbleapps.io";
+const BUBBLE_BASE_URL = "https://operators-dashboard.bubbleapps.io";
 
 const SUBMIT_REQUEST_API = `${BUBBLE_BASE_URL}/api/1.1/wf/webflow_book_now_with_card_flyt`;
 
