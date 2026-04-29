@@ -857,7 +857,7 @@ async function fetchSearchHistory() {
                            id="w-node-_9d765e8c-1117-f30f-9454-6c61b782b51b-b782b51b"
                            class="btn_common btn_white"
                         >
-                           <a href="#" class="btnc_link w-inline-block"
+                           <a href="/create-aircraft-request?id=${encodeURIComponent(flightRequestId || "")}" class="btnc_link w-inline-block"
                               ><p class="btnc_text black_link">requests A Custom Quote</p>
                               <div class="btnc_icon_wrap">
                                  <img
