@@ -858,7 +858,7 @@ async function fetchSearchHistory() {
                            id="w-node-_9d765e8c-1117-f30f-9454-6c61b782b51b-b782b51b"
                            class="btn_common btn_white"
                         >
-                           <a href="/create-aircraft-request?id=${encodeURIComponent(window._flightRequestId || "")}" class="btnc_link w-inline-block"
+                           <a href="#" class="btnc_link w-inline-block custom_quote_btn"
                               ><p class="btnc_text black_link">requests A Custom Quote</p>
                               <div class="btnc_icon_wrap">
                                  <img
@@ -872,6 +872,17 @@ async function fetchSearchHistory() {
                      </div>
                   </div>
              `;
+
+            // Attach click handler — reads flightRequestId at click time (after main API has set it)
+            const customQuoteBtn =
+               warningInject.querySelector(".custom_quote_btn");
+            if (customQuoteBtn) {
+               customQuoteBtn.addEventListener("click", function (e) {
+                  e.preventDefault();
+                  const id = window._flightRequestId || "";
+                  window.location.href = `/create-aircraft-request?id=${encodeURIComponent(id)}`;
+               });
+            }
 
             // Update search_count inside the injected HTML
             if (data.response?.search_count !== undefined) {
