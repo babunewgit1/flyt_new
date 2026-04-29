@@ -319,3 +319,7 @@ button.explore:hover {
    filter: brightness(0) saturate(100%) invert(8%) sepia(11%) saturate(5970%)
       hue-rotate(184deg) brightness(92%) contrast(102%);
 }
+
+.babui {
+   display: none;
+}
