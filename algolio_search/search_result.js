@@ -230,6 +230,10 @@ async function makeApiCall() {
 
    const flightRequestId = data.response.flightrequest;
    window._flightRequestId = flightRequestId;
+
+   // Show warning bar now that flightRequestId is available
+   const warningInject = document.querySelector(".warning_inject");
+   if (warningInject) warningInject.style.display = "";
    const expectedSearchResults = data.response["Expected Search Results"];
 
    // Save flightRequestId in sessionStorage as an array
@@ -806,6 +810,7 @@ async function fetchSearchHistory() {
       // Inject warning HTML into .warning_inject based on search_limited
       const warningInject = document.querySelector(".warning_inject");
       if (warningInject) {
+         warningInject.style.display = "none";
          if (data.response?.search_limited === true) {
             warningInject.innerHTML = `
                 <div class="true_wraning">
