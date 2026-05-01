@@ -7,23 +7,28 @@
 // =============================================================================
 // EXPLORE MODAL — open/close
 // =============================================================================
-const modalBtn = document.querySelectorAll(".explore");
-const popModalClose = document.querySelectorAll(".popx_close");
-
-modalBtn.forEach((btn) => {
-   btn.addEventListener("click", function (e) {
+document.addEventListener("click", function (e) {
+   // Open explore modal
+   const exploreBtn = e.target.closest(".explore");
+   if (exploreBtn) {
       e.preventDefault();
-      const item = btn.closest(".cadi_item_unit");
+      const item = exploreBtn.closest(".cadi_item_unit");
       if (!item) return;
       const modal = item.querySelector(".car_popup_wrapper");
-      if (modal) modal.style.display = "flex";
-   });
-});
+      if (modal) {
+         modal.style.display = "flex";
+         document.body.style.overflow = "hidden";
+      }
+      return;
+   }
 
-popModalClose.forEach((closeItem) => {
-   closeItem.addEventListener("click", function () {
-      closeItem.closest(".car_popup_wrapper").style.display = "none";
-   });
+   // Close explore modal
+   const closeBtn = e.target.closest(".popx_close");
+   if (closeBtn) {
+      const wrapper = closeBtn.closest(".car_popup_wrapper");
+      if (wrapper) wrapper.style.display = "none";
+      document.body.style.overflow = "";
+   }
 });
 
 // =============================================================================

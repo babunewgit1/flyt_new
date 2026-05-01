@@ -359,14 +359,11 @@
 
    .rtb_info_panel {
       border: 0;
+      border-bottom: 1px solid #dfdede;
    }
 
    .rtb_payment_list {
       border: 0;
-   }
-
-   .rtb_payment_list .adi_estimate_row {
-      padding-top: 0;
    }
 
    .request_terms {

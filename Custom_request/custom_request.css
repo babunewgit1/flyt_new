@@ -198,3 +198,50 @@
    border-left: 0;
    border-radius: 0px;
 }
+
+/*
+=======================================
+      Responsive code start
+=======================================
+*/
+@media screen and (min-width: 992px) and (max-width: 1200px) {
+}
+
+@media screen and (min-width: 768px) and (max-width: 991px) {
+   .cadi_item_list {
+      grid-column-gap: 10px;
+      grid-row-gap: 10px;
+   }
+
+   .topvalue {
+      font-size: 13px;
+   }
+
+   .full_custom_block {
+      border: 0;
+      border-radius: 0;
+      margin-top: 0;
+   }
+
+   .right_border_block {
+      border: 0;
+   }
+
+   .adi_map_wrapper {
+      border-radius: 0;
+   }
+
+   .selected_checkbox {
+      padding-left: 0;
+      padding-right: 0;
+   }
+}
+
+@media screen and (max-width: 767px) {
+}
+
+/*
+====================================
+      Responsive code end
+====================================
+*/
