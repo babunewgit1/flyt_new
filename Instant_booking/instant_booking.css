@@ -1304,6 +1304,10 @@
    .adi_eft_badge {
       white-space: nowrap;
    }
+
+   .adi_info_card_left {
+      border-right: 0;
+   }
 }
 
 @media screen and (max-width: 767px) {

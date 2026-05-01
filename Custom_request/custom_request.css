@@ -127,4 +127,74 @@
    padding-bottom: 20px;
    border: 1px solid #dfdede;
    border-radius: 6px;
+   border-right: 0;
+}
+
+.adi_map_wrapper {
+   border-radius: 6px 6px 0px 0px;
+   overflow: hidden;
+   border: 0;
+}
+
+.selected_checkbox {
+   padding: 25px;
+   border-top: 1px solid #dfdede;
+}
+
+.selected_checkbox_desc {
+   margin-top: 10px;
+   font-size: 16px;
+   color: #68727f;
+   line-height: 20px;
+}
+
+.noclass {
+   display: block;
+   font-size: 18px;
+   font-weight: 500;
+   color: #04142a;
+}
+
+.selected_item {
+   margin-top: 16px;
+}
+
+.selectedItem p {
+   font-size: 18px;
+   font-weight: 500;
+   color: #04142a;
+   position: relative;
+   padding-left: 28px;
+}
+
+.selectedItem p:after {
+   content: "";
+   display: block;
+   width: 10px;
+   height: 10px;
+   background-color: #04142a;
+   border-radius: 50%;
+   border: 6px solid #898f96;
+   position: absolute;
+   left: 0;
+   top: -1px;
+}
+
+.selectedItem {
+   display: inline-block;
+   margin-right: 20px;
+   margin-bottom: 10px;
+}
+
+.rtb_info_panel,
+.rtb_payment_list {
+   border: 0;
+   border-top: 1px solid #dfdede;
+}
+
+.co_payblock {
+   padding-bottom: 0;
+   border-bottom: 0;
+   border-left: 0;
+   border-radius: 0px;
 }
