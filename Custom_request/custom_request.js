@@ -12,6 +12,7 @@ document.addEventListener("click", function (e) {
    const exploreBtn = e.target.closest(".explore");
    if (exploreBtn) {
       e.preventDefault();
+      e.stopPropagation();
       const item = exploreBtn.closest(".cadi_item_unit");
       if (!item) return;
       const modal = item.querySelector(".car_popup_wrapper");

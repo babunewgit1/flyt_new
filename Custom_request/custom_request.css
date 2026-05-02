@@ -38,7 +38,7 @@
    transition: all 0.2s ease;
 }
 
-.checkbox-input:checked + .check_item_img::before {
+.checkbox-input:checked ~ .act_item_check .check_item_img::before {
    background-color: #04142a;
    border-color: #04142a;
    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='10' viewBox='0 0 12 10'%3E%3Cpath d='M1 5L4.5 8.5L11 1.5' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E");
@@ -204,7 +204,10 @@
       Responsive code start
 =======================================
 */
-@media screen and (min-width: 992px) and (max-width: 1200px) {
+@media screen and (min-width: 992px) and (max-width: 1280px) {
+   .cadi_item_list {
+      grid-template-columns: 1fr 1fr;
+   }
 }
 
 @media screen and (min-width: 768px) and (max-width: 991px) {
@@ -238,6 +241,126 @@
 }
 
 @media screen and (max-width: 767px) {
+   .cdi_heading_para {
+      padding-left: 0;
+      padding-right: 0;
+   }
+
+   .cadi_item_list {
+      display: grid;
+      grid-template-columns: 1fr;
+   }
+
+   .topvalue {
+      display: none;
+   }
+
+   .checkbox_name {
+      display: block;
+   }
+
+   .act_item_check {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+   }
+
+   .down_cnt {
+      padding: 0;
+      padding-left: 16px;
+   }
+
+   .topvalue {
+      font-size: 11px;
+      padding: 4px 8px;
+      margin-left: -16px;
+   }
+
+   .checkbox-label {
+      font-size: 16px;
+      margin-top: 10px;
+   }
+
+   .check_item_img img {
+      border-radius: 3px 3px 0 0;
+      height: 135px;
+      object-fit: cover;
+   }
+
+   .checkbox-item {
+      border-radius: 3px;
+   }
+
+   .explore {
+      margin-top: 15px;
+      border-radius: 4px;
+      padding: 6px 12px;
+      font-size: 13px;
+   }
+
+   .wxp_text .adi_section_title {
+      text-align: left;
+      padding-right: 25px;
+   }
+
+   .car_popup_cl_block {
+      margin-top: 15px;
+   }
+
+   .car_popup_cl_block {
+      padding: 5px;
+   }
+
+   .car_popup_cl_wrapx {
+      padding-top: 9px;
+      padding-bottom: 2px;
+      padding-left: 10px;
+      padding-right: 10px;
+   }
+
+   .car_popup_clname {
+      font-size: 14px;
+   }
+
+   .car_popup_cl_pax {
+      grid-column-gap: 4px;
+   }
+
+   .car_popup_cl_pax_icon {
+      width: 1.3rem;
+   }
+
+   .car_popup_para {
+      line-height: 1.4;
+      font-size: 14px;
+   }
+
+   .full_custom_block {
+      margin-top: 0;
+      border: 0;
+      border-radius: 0;
+   }
+
+   .right_border_block {
+      border: 0;
+   }
+
+   .adi_map_wrapper {
+      border-radius: 0;
+      border: 0;
+   }
+
+   .selected_checkbox {
+      padding-left: 0;
+      padding-right: 0;
+   }
+
+   .rtb_payment_list {
+      border: 0;
+   }
+
+   .right_border_block {
+      padding-bottom: 0;
+   }
 }
 
 /*
