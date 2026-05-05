@@ -1034,7 +1034,6 @@ async function submitRequest() {
          },
          body: JSON.stringify({
             quote: rtbData?.quote,
-            // quote: "1756941598340x118775576265228290",
             payment_profile_id: profileId,
             wire_payment: "no",
             alternate_departure_airport_id: fromAirport,

@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+   <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>API Test</title>
+      <style>
+         body {
+            font-family: monospace;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+         }
+         pre {
+            background: #2d2d2d;
+            padding: 16px;
+            border-radius: 6px;
+            overflow: auto;
+            white-space: pre-wrap;
+         }
+         h2 {
+            color: #569cd6;
+         }
+         .loading {
+            color: #dcdcaa;
+         }
+         .error {
+            color: #f44747;
+         }
+         .success {
+            color: #6a9955;
+         }
+      </style>
+   </head>
+   <body>
+      <h2>API Test — webflow_custom_request_flyt</h2>
+      <div id="status" class="loading">Fetching...</div>
+      <pre id="output"></pre>
+
+      <script>
+         (async () => {
+            const statusEl = document.getElementById("status");
+            const outputEl = document.getElementById("output");
+
+            const API_URL =
+               "https://operators-dashboard.bubbleapps.io/api/1.1/wf/webflow_custom_request_flyt";
+            const AUTH_TOKEN =
+               "Bearer bus|1777821438602x295180115893820740|1777821461809x816126332718881000";
+
+            const params = {
+               flightrequestid: "1777821703395x331915226761115840",
+               turboprop: "No",
+               lightjet: "No",
+               midsizejet: "No",
+               supermidsizejet: "No",
+               heavyjet: "No",
+               ultralongrange: "No",
+               specialrequests: "Yes",
+               alternate_departure_airport: "1498590229233x449956897646188740",
+               alternate_arrival_airport: "1498583093130x971314677270129300",
+               pax: 2,
+               payment_profile_id: "824807666",
+            };
+
+            console.log("Request Params:", params);
+
+            try {
+               const res = await fetch(API_URL, {
+                  method: "POST",
+                  headers: {
+                     "Content-Type": "application/json",
+                     Authorization: AUTH_TOKEN,
+                  },
+                  body: JSON.stringify(params),
+               });
+
+               const data = await res.json();
+               console.log("Response:", data);
+
+               statusEl.textContent = `Status: ${res.status} ${res.statusText}`;
+               statusEl.className = res.ok ? "success" : "error";
+               outputEl.textContent = JSON.stringify(data, null, 3);
+            } catch (err) {
+               console.error("Error:", err);
+               statusEl.textContent = "Error: " + err.message;
+               statusEl.className = "error";
+               outputEl.textContent = err.stack;
+            }
+         })();
+      </script>
+   </body>
+</html>

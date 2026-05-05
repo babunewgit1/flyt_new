@@ -55,7 +55,7 @@ const CUSTOM_REQUEST_API =
    "https://operators-dashboard.bubbleapps.io/api/1.1/wf/webflow_return_data_flyt";
 
 const BUBBLE_BASE_URL = "https://operators-dashboard.bubbleapps.io";
-const SUBMIT_REQUEST_API = `${BUBBLE_BASE_URL}/api/1.1/wf/webflow_book_now_with_card_flyt`;
+const SUBMIT_REQUEST_API = `${BUBBLE_BASE_URL}/api/1.1/wf/webflow_custom_request_flyt`;
 
 // Global store for API response data
 let crData = null;
@@ -978,6 +978,15 @@ async function submitRequest() {
       return;
    }
 
+   // At least one cabin class must be selected
+   const checkedBoxes = document.querySelectorAll(".checkbox-input:checked");
+   if (checkedBoxes.length === 0) {
+      window.toast.error(
+         "Please select at least one cabin class before submitting.",
+      );
+      return;
+   }
+
    const allCardRadios = document.querySelectorAll(".co_saved_card_radio");
    if (allCardRadios.length === 0) {
       window.toast.error("Please add a card to continue.");
@@ -1000,10 +1009,10 @@ async function submitRequest() {
    }
 
    const selectedFrom = document.querySelector(
-      "input[name='rtb_from_airport']:checked",
+      "input[name='cr_from_airport']:checked",
    );
    const selectedTo = document.querySelector(
-      "input[name='rtb_to_airport']:checked",
+      "input[name='cr_to_airport']:checked",
    );
    const fromAirport = selectedFrom?.value || "";
    const toAirport = selectedTo?.value || "";
@@ -1024,21 +1033,40 @@ async function submitRequest() {
    if (yeash) yeash.classList.add("btn_loading");
 
    try {
+      // Build checkbox cabin class params (same as js.js)
+      const cabinParams = {
+         turboprop: "no",
+         lightjet: "no",
+         midsizejet: "no",
+         supermidsizejet: "no",
+         heavyjet: "no",
+         ultralongrange: "no",
+      };
+      document.querySelectorAll(".checkbox-input:checked").forEach((cb) => {
+         const val = cb.value;
+         if (cabinParams.hasOwnProperty(val)) {
+            cabinParams[val] = "yes";
+         }
+      });
+
+      const requestPayload = {
+         flightrequestid: crData?._id || flightRequestId,
+         ...cabinParams,
+         specialrequests: specialRequests,
+         alternate_departure_airport: fromAirport,
+         alternate_arrival_airport: toAirport,
+         pax: paxCount,
+         payment_profile_id: profileId,
+      };
+      console.log("Submit Payload:", requestPayload);
+
       const res = await fetch(SUBMIT_REQUEST_API, {
          method: "POST",
          headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${authToken}`,
          },
-         body: JSON.stringify({
-            quote: crData?.quote,
-            payment_profile_id: profileId,
-            wire_payment: "no",
-            alternate_departure_airport_id: fromAirport,
-            alternate_arrival_airport_id: toAirport,
-            special_requests: specialRequests,
-            pax: paxCount,
-         }),
+         body: JSON.stringify(requestPayload),
       });
 
       const data = await res.json();
@@ -1057,7 +1085,7 @@ async function submitRequest() {
                "Your request has been submitted successfully.",
          );
          setTimeout(() => {
-            window.location.href = `/booking-confirmed?transaction_id=${encodeURIComponent(data.response.transaction_id)}`;
+            window.location.href = `/confirmed-request?transaction_id=${encodeURIComponent(data.response.transaction_id)}`;
          }, 800);
       } else {
          const errMsg =
@@ -1305,6 +1333,7 @@ async function fetchSavedCards() {
          },
       );
       const data = await res.json();
+      console.log("Get Cards Response:", data);
       if (res.ok && data.response && data.response.payment_methods) {
          renderSavedCards(data.response.payment_methods);
       } else {
@@ -1792,6 +1821,14 @@ async function initCustomRequest() {
 
       if (!data.response) {
          console.error("API returned no response data.");
+         window.location.href = "/aircraft#sc_result";
+         return;
+      }
+
+      // Invalid flight request ID → empty arrays
+      if (!data.response.flight_legs?.length) {
+         console.error("Invalid flight request ID — no flight legs found.");
+         window.location.href = "/aircraft#sc_result";
          return;
       }
 
