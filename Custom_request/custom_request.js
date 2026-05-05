@@ -1085,7 +1085,7 @@ async function submitRequest() {
                "Your request has been submitted successfully.",
          );
          setTimeout(() => {
-            window.location.href = `/confirmed-request?transaction_id=${encodeURIComponent(data.response.transaction_id)}`;
+            window.location.href = `/request-confirmed?transaction_id=${encodeURIComponent(data.response.transaction_id)}`;
          }, 800);
       } else {
          const errMsg =
