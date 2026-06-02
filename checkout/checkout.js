@@ -1601,7 +1601,7 @@ document.addEventListener("DOMContentLoaded", () => {
    // Inject loader
    const loaderEl = document.createElement("div");
    loaderEl.className = "adi_page_loader";
-   loaderEl.innerHTML = `<div class="adi_loader_spinner"></div>`;
+   loaderEl.innerHTML = `<img class="adi_loader_gif" src="https://cdn.prod.website-files.com/673728493d38fb595b0df373/6a1e64a99d07301d20528da7_GIF_Transparent.gif" alt="Loading..." />`;
    document.body.appendChild(loaderEl);
 
    renderHeading();

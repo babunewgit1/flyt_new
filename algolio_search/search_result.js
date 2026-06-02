@@ -130,19 +130,17 @@ async function makeApiCall() {
       return;
    }
 
-   // Show loader — hide both views via CSS
+   // Show loader — full-screen overlay
    const resultWrapper = document.querySelector(".api_result_display");
-   if (resultWrapper) {
-      resultWrapper.classList.add("loading_mode");
+   if (resultWrapper) resultWrapper.classList.add("loading_mode");
 
-      const existingLoader = resultWrapper.querySelector(".src_loader_main");
-      if (existingLoader) existingLoader.remove();
+   const existingLoader = document.querySelector(".src_loader_main");
+   if (existingLoader) existingLoader.remove();
 
-      const loader = document.createElement("div");
-      loader.className = "src_loader src_loader_main";
-      loader.innerHTML = `<div class="src_loader_spinner"></div>`;
-      resultWrapper.prepend(loader);
-   }
+   const loader = document.createElement("div");
+   loader.className = "src_loader src_loader_main";
+   loader.innerHTML = `<img class="src_loader_gif" src="https://cdn.prod.website-files.com/673728493d38fb595b0df373/6a1e64a99d07301d20528da7_GIF_Transparent.gif" alt="Loading..." />`;
+   document.body.appendChild(loader);
 
    // Show loader in dropdown
    const dropdownWrapper = document.querySelector(".drp_class_wrapper");
@@ -152,7 +150,7 @@ async function makeApiCall() {
          .forEach((item) => (item.style.display = "none"));
       const dropLoader = document.createElement("div");
       dropLoader.className = "src_loader src_drop_loader";
-      dropLoader.innerHTML = `<div class="src_loader_spinner"></div>`;
+      dropLoader.innerHTML = `<img class="src_loader_gif src_loader_gif_sm" src="https://cdn.prod.website-files.com/673728493d38fb595b0df373/6a1e64a99d07301d20528da7_GIF_Transparent.gif" alt="Loading..." />`;
       dropdownWrapper.appendChild(dropLoader);
    }
 
