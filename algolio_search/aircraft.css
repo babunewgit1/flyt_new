@@ -1060,7 +1060,7 @@
    justify-content: center;
    align-items: center;
    background-color: #04142a;
-   z-index: 99999;
+   z-index: 9999;
 }
 
 .src_loader_gif {
@@ -1684,7 +1684,9 @@
    .src_common_model {
       width: 15rem;
    }
+}
 
+@media screen and (max-width: 767px) {
    .src_loader_gif {
       max-width: 200px;
    }

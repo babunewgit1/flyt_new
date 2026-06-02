@@ -1572,6 +1572,10 @@
    .co_modal {
       border-radius: 0 !important;
    }
+
+   .adi_loader_gif {
+      max-width: 200px;
+   }
 }
 
 /* ====================================
