@@ -2024,20 +2024,20 @@ function setupAddressAutocomplete() {
             fillFields(autocomplete.getPlace()),
          );
 
-         // Fix: reposition dropdown on modal scroll
-         const fixDropdownPos = () => {
-            const pac = document.querySelector(".pac-container");
-            if (pac && pac.style.display !== "none") {
-               const rect = addressInput.getBoundingClientRect();
-               pac.style.top = rect.bottom + "px";
-               pac.style.left = rect.left + "px";
-               pac.style.width = rect.width + "px";
-            }
-         };
-         const modal2El = document.getElementById("co_modal_2");
-         if (modal2El)
-            modal2El.addEventListener("scroll", fixDropdownPos, true);
-         window.addEventListener("scroll", fixDropdownPos, true);
+         // Move pac-container inside the address input wrapper
+         // so it scrolls naturally with the modal content
+         const addressWrap = addressInput.closest(".co_card_input");
+         if (addressWrap) {
+            addressWrap.classList.add("co_address_wrap");
+            const observer = new MutationObserver(() => {
+               const pac = document.querySelector("body > .pac-container");
+               if (pac) {
+                  addressWrap.appendChild(pac);
+                  observer.disconnect();
+               }
+            });
+            observer.observe(document.body, { childList: true });
+         }
       })
       .catch(() => {});
 }
