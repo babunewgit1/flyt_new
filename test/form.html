@@ -1,0 +1,611 @@
+<!doctype html>
+<html lang="en">
+   <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Address Autocomplete Form</title>
+      <link
+         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+         rel="stylesheet"
+      />
+      <style>
+         *,
+         *::before,
+         *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+         }
+
+         body {
+            font-family: "Inter", sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f0f2f5;
+            padding: 20px;
+         }
+
+         .form-container {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 40px;
+            width: 100%;
+            max-width: 560px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+         }
+
+         .form-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 6px;
+         }
+
+         .form-subtitle {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 32px;
+         }
+
+         .form-group {
+            margin-bottom: 20px;
+            position: relative;
+         }
+
+         .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 6px;
+         }
+
+         .form-group label .required {
+            color: #ef4444;
+            margin-left: 2px;
+         }
+
+         .form-group input,
+         .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 15px;
+            font-family: "Inter", sans-serif;
+            color: #1a1a2e;
+            background: #ffffff;
+            transition:
+               border-color 0.2s ease,
+               box-shadow 0.2s ease;
+            outline: none;
+         }
+
+         .form-group input:focus,
+         .form-group select:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+         }
+
+         .form-group input::placeholder {
+            color: #9ca3af;
+         }
+
+         .form-group .input-icon {
+            position: absolute;
+            right: 14px;
+            top: 38px;
+            color: #9ca3af;
+            pointer-events: none;
+         }
+
+         .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+         }
+
+         .address-note {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            background: #eff6ff;
+            border-radius: 8px;
+            margin-bottom: 24px;
+            font-size: 13px;
+            color: #3b82f6;
+         }
+
+         .address-note svg {
+            flex-shrink: 0;
+         }
+
+         .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background: #1a1a2e;
+            color: #ffffff;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            font-family: "Inter", sans-serif;
+            cursor: pointer;
+            transition:
+               background 0.2s ease,
+               transform 0.1s ease;
+            margin-top: 8px;
+         }
+
+         .submit-btn:hover {
+            background: #2d2d4a;
+         }
+
+         .submit-btn:active {
+            transform: scale(0.98);
+         }
+
+         /* Auto-fill animation */
+         .form-group input.auto-filled {
+            animation: autoFillPulse 0.6s ease;
+            border-color: #22c55e;
+            box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.15);
+         }
+
+         @keyframes autoFillPulse {
+            0% {
+               background-color: #ffffff;
+            }
+            40% {
+               background-color: #f0fdf4;
+            }
+            100% {
+               background-color: #ffffff;
+            }
+         }
+
+         .form-group select.auto-filled {
+            animation: autoFillPulse 0.6s ease;
+            border-color: #22c55e;
+            box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.15);
+         }
+
+         /* Google Autocomplete dropdown styling */
+         .pac-container {
+            border-radius: 10px;
+            border: 1.5px solid #e5e7eb;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            margin-top: 4px;
+            font-family: "Inter", sans-serif;
+            overflow: hidden;
+         }
+
+         .pac-item {
+            padding: 10px 16px;
+            font-size: 14px;
+            cursor: pointer;
+            border-top: 1px solid #f3f4f6;
+            transition: background 0.15s ease;
+         }
+
+         .pac-item:first-child {
+            border-top: none;
+         }
+
+         .pac-item:hover {
+            background: #f0f5ff;
+         }
+
+         .pac-item-selected {
+            background: #eff6ff;
+         }
+
+         .pac-icon {
+            display: none;
+         }
+
+         .pac-item-query {
+            font-size: 14px;
+            font-weight: 500;
+            color: #1a1a2e;
+         }
+
+         .pac-matched {
+            font-weight: 700;
+            color: #3b82f6;
+         }
+
+         @media (max-width: 480px) {
+            .form-container {
+               padding: 24px 20px;
+            }
+
+            .form-row {
+               grid-template-columns: 1fr;
+               gap: 0;
+            }
+         }
+      </style>
+   </head>
+   <body>
+      <div class="form-container">
+         <h1 class="form-title">Billing Address</h1>
+         <p class="form-subtitle">
+            Enter your address and we'll auto-fill the details.
+         </p>
+
+         <div class="address-note">
+            <svg
+               width="18"
+               height="18"
+               viewBox="0 0 24 24"
+               fill="none"
+               stroke="currentColor"
+               stroke-width="2"
+               stroke-linecap="round"
+               stroke-linejoin="round"
+            >
+               <circle cx="12" cy="12" r="10" />
+               <line x1="12" y1="16" x2="12" y2="12" />
+               <line x1="12" y1="8" x2="12.01" y2="8" />
+            </svg>
+            Start typing your address to see suggestions
+         </div>
+
+         <form id="addressForm" autocomplete="off">
+            <!-- Address Field with Autocomplete -->
+            <div class="form-group">
+               <label for="address"
+                  >Address <span class="required">*</span></label
+               >
+               <input
+                  type="text"
+                  id="address"
+                  placeholder="Start typing your address..."
+                  required
+               />
+               <span class="input-icon">
+                  <svg
+                     width="18"
+                     height="18"
+                     viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="2"
+                     stroke-linecap="round"
+                     stroke-linejoin="round"
+                  >
+                     <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                     <circle cx="12" cy="10" r="3" />
+                  </svg>
+               </span>
+            </div>
+
+            <!-- Address Line 2 -->
+            <div class="form-group">
+               <label for="address2">Apartment, Suite, Unit (Optional)</label>
+               <input
+                  type="text"
+                  id="address2"
+                  placeholder="Apt, Suite, Unit, etc."
+               />
+            </div>
+
+            <!-- City & State -->
+            <div class="form-row">
+               <div class="form-group">
+                  <label for="city">City <span class="required">*</span></label>
+                  <input type="text" id="city" placeholder="City" required />
+               </div>
+               <div class="form-group">
+                  <label for="state"
+                     >State <span class="required">*</span></label
+                  >
+                  <input type="text" id="state" placeholder="State" required />
+               </div>
+            </div>
+
+            <!-- Zip & Country -->
+            <div class="form-row">
+               <div class="form-group">
+                  <label for="zipCode"
+                     >Zip Code <span class="required">*</span></label
+                  >
+                  <input
+                     type="text"
+                     id="zipCode"
+                     placeholder="Zip Code"
+                     required
+                  />
+               </div>
+               <div class="form-group">
+                  <label for="country"
+                     >Country <span class="required">*</span></label
+                  >
+                  <select id="country" required>
+                     <option value="">Select Country</option>
+                     <option value="US">United States</option>
+                     <option value="CA">Canada</option>
+                     <option value="GB">United Kingdom</option>
+                     <option value="AU">Australia</option>
+                     <option value="DE">Germany</option>
+                     <option value="FR">France</option>
+                     <option value="IN">India</option>
+                     <option value="BD">Bangladesh</option>
+                     <option value="JP">Japan</option>
+                     <option value="BR">Brazil</option>
+                     <option value="MX">Mexico</option>
+                     <option value="IT">Italy</option>
+                     <option value="ES">Spain</option>
+                     <option value="NL">Netherlands</option>
+                     <option value="SE">Sweden</option>
+                     <option value="SG">Singapore</option>
+                     <option value="AE">United Arab Emirates</option>
+                     <option value="SA">Saudi Arabia</option>
+                  </select>
+               </div>
+            </div>
+
+            <button type="submit" class="submit-btn">Save Address</button>
+         </form>
+      </div>
+
+      <!-- Google Maps JavaScript API with Places Library -->
+      <script
+         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA2b6xewl-nZ8FVVmjIlnKq9QHEOhFX_8A&libraries=places&callback=initAutocomplete"
+         async
+         defer
+      ></script>
+
+      <script>
+         /**
+          * Google Places Autocomplete - Address Auto-fill
+          * ------------------------------------------------
+          * Copy-paste ready for any project.
+          * Just update the API key in the script tag above.
+          */
+
+         let autocomplete;
+
+         // Map Google address component types to form fields
+         const componentForm = {
+            street_number: { field: null, type: "short_name" },
+            route: { field: null, type: "long_name" },
+            locality: { field: "city", type: "long_name" },
+            administrative_area_level_1: { field: "state", type: "long_name" },
+            postal_code: { field: "zipCode", type: "short_name" },
+            country: { field: "country", type: "short_name" },
+         };
+
+         function initAutocomplete() {
+            const addressInput = document.getElementById("address");
+
+            // Initialize Google Places Autocomplete
+            autocomplete = new google.maps.places.Autocomplete(addressInput, {
+               types: ["address"], // Only show address results
+               fields: ["address_components", "formatted_address", "geometry"],
+            });
+
+            // When user selects an address from the dropdown
+            autocomplete.addListener("place_changed", fillInAddress);
+         }
+
+         function fillInAddress() {
+            const place = autocomplete.getPlace();
+
+            if (!place.address_components) {
+               console.warn("No address details available for this selection.");
+               return;
+            }
+
+            // Clear previous values
+            document.getElementById("city").value = "";
+            document.getElementById("state").value = "";
+            document.getElementById("zipCode").value = "";
+            document.getElementById("country").value = "";
+
+            /**
+             * Field mapping with multiple fallback types (priority order).
+             * Google returns address data under different component types
+             * depending on the country/region. This ensures maximum coverage.
+             */
+            const fieldConfig = {
+               city: {
+                  id: "city",
+                  valueType: "long_name",
+                  types: [
+                     "locality",
+                     "sublocality_level_1",
+                     "sublocality",
+                     "administrative_area_level_2",
+                     "postal_town",
+                     "neighborhood",
+                  ],
+               },
+               state: {
+                  id: "state",
+                  valueType: "long_name",
+                  types: [
+                     "administrative_area_level_1",
+                     "administrative_area_level_2",
+                     "administrative_area_level_3",
+                  ],
+               },
+               zipCode: {
+                  id: "zipCode",
+                  valueType: "short_name",
+                  types: ["postal_code", "postal_code_prefix"],
+               },
+               country: {
+                  id: "country",
+                  valueType: "short_name",
+                  types: ["country"],
+               },
+               streetNumber: {
+                  id: null, // handled separately for address composition
+                  valueType: "short_name",
+                  types: ["street_number"],
+               },
+               route: {
+                  id: null,
+                  valueType: "long_name",
+                  types: ["route", "street_address", "premise", "subpremise"],
+               },
+            };
+
+            // Collect candidates: { fieldKey: { type: value, ... } }
+            let candidates = {};
+            for (const key in fieldConfig) {
+               candidates[key] = {};
+            }
+
+            // Helper: apply value to a form field with animation
+            function applyValue(fieldId, value) {
+               const element = document.getElementById(fieldId);
+               if (!element || !value) return;
+
+               if (element.tagName === "SELECT") {
+                  const option = element.querySelector(
+                     `option[value="${value}"]`,
+                  );
+                  if (option) {
+                     element.value = value;
+                  }
+               } else {
+                  element.value = value;
+               }
+
+               element.classList.add("auto-filled");
+               setTimeout(() => {
+                  element.classList.remove("auto-filled");
+               }, 1500);
+            }
+
+            // Collect all candidates from address components
+            for (const component of place.address_components) {
+               for (const type of component.types) {
+                  for (const fieldKey in fieldConfig) {
+                     const config = fieldConfig[fieldKey];
+                     if (config.types.includes(type)) {
+                        candidates[fieldKey][type] =
+                           component[config.valueType];
+                     }
+                  }
+               }
+            }
+
+            // Apply best candidate for each field using priority order
+            let filled = {};
+            for (const fieldKey in fieldConfig) {
+               const config = fieldConfig[fieldKey];
+               if (!config.id) continue; // skip address parts (handled below)
+
+               filled[fieldKey] = false;
+               for (const type of config.types) {
+                  if (candidates[fieldKey][type]) {
+                     applyValue(config.id, candidates[fieldKey][type]);
+                     filled[fieldKey] = true;
+                     break;
+                  }
+               }
+            }
+
+            // Build and set street address from components
+            const addressInput = document.getElementById("address");
+            let streetParts = [];
+
+            // Street number
+            for (const type of fieldConfig.streetNumber.types) {
+               if (candidates.streetNumber[type]) {
+                  streetParts.push(candidates.streetNumber[type]);
+                  break;
+               }
+            }
+
+            // Route
+            for (const type of fieldConfig.route.types) {
+               if (candidates.route[type]) {
+                  streetParts.push(candidates.route[type]);
+                  break;
+               }
+            }
+
+            if (streetParts.length > 0) {
+               addressInput.value = streetParts.join(" ").trim();
+            }
+
+            // Fallback: Reverse Geocoding for any missing fields
+            const missingFields = Object.keys(filled).filter((k) => !filled[k]);
+
+            if (
+               missingFields.length > 0 &&
+               place.geometry &&
+               place.geometry.location
+            ) {
+               const lat = place.geometry.location.lat();
+               const lng = place.geometry.location.lng();
+               const geocoder = new google.maps.Geocoder();
+
+               geocoder.geocode(
+                  { location: { lat, lng } },
+                  function (results, status) {
+                     if (status === "OK" && results && results.length > 0) {
+                        for (const result of results) {
+                           for (const component of result.address_components) {
+                              for (const fieldKey of [...missingFields]) {
+                                 if (filled[fieldKey]) continue;
+
+                                 const config = fieldConfig[fieldKey];
+                                 for (const cType of config.types) {
+                                    if (component.types.includes(cType)) {
+                                       applyValue(
+                                          config.id,
+                                          component[config.valueType],
+                                       );
+                                       filled[fieldKey] = true;
+                                       // Remove from missing list
+                                       const idx =
+                                          missingFields.indexOf(fieldKey);
+                                       if (idx > -1)
+                                          missingFields.splice(idx, 1);
+                                       break;
+                                    }
+                                 }
+                              }
+
+                              // All fields found, stop
+                              if (missingFields.length === 0) return;
+                           }
+                        }
+                     }
+                  },
+               );
+            }
+         }
+
+         // Form submission handler
+         document
+            .getElementById("addressForm")
+            .addEventListener("submit", function (e) {
+               e.preventDefault();
+
+               const formData = {
+                  address: document.getElementById("address").value,
+                  address2: document.getElementById("address2").value,
+                  city: document.getElementById("city").value,
+                  state: document.getElementById("state").value,
+                  zipCode: document.getElementById("zipCode").value,
+                  country: document.getElementById("country").value,
+               };
+
+               console.log("Address Submitted:", formData);
+               alert(
+                  "Address saved successfully!\n\nCheck console for form data.",
+               );
+            });
+      </script>
+   </body>
+</html>

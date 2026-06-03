@@ -915,6 +915,11 @@ function setupModals() {
                         <input required id="co_phone" name="phone" type="text" placeholder="Phone Number" />
                      </div>
 
+                     <!-- Address (full row) -->
+                     <div class="co_card_input">
+                        <input type="text" id="co_address" placeholder="Address" autocomplete="street-address" />
+                     </div>
+
                      <!-- City + State (half row each) -->
                      <div class="co_card_grp">
                         <div class="co_card_input">
@@ -936,12 +941,7 @@ function setupModals() {
                               ${COUNTRIES.map((c) => `<option value="${c.code}">${c.name}</option>`).join("")}
                            </select>
                         </div>
-                     </div>
-
-                     <!-- Address (full row) -->
-                     <div class="co_card_input">
-                        <input type="text" id="co_address" placeholder="Address" autocomplete="street-address" />
-                     </div>
+                     </div>                     
                   </div>
                      <div class="co_modal_add_btn">
                       <div data-wf--btn--variant="black" class="btn_common button_redirect w-variant-717a8abf-6071-4cd8-7483-e0b5d36c316c yeash"><button id="co_modal_2_submit" class="btnc_link w-inline-block"><p class="btnc_text">Save This Card</p><div class="btnc_icon_wrap"><img loading="lazy" src="https://cdn.prod.website-files.com/673728493d38fb595b0df373/68f1ce68d69455e26961b49e_45d32b1e5e78559aa8e96f0801193e00_icon.png" alt="logo" class="btnc_icon"></div></button></div>
@@ -1014,6 +1014,9 @@ function setupModals() {
 
    // ── Card Form Validation & Auto-Format ─────────────────────────
    setupCardValidation();
+
+   // ── Google Places Address Autocomplete ────────────────────────
+   setupAddressAutocomplete();
 }
 
 // =============================================================================
@@ -1323,6 +1326,240 @@ function setupCardValidation() {
          submitBtn.disabled = false;
       }
    });
+}
+
+// =============================================================================
+// GOOGLE PLACES ADDRESS AUTOCOMPLETE
+// =============================================================================
+function setupAddressAutocomplete() {
+   const PLACES_API_KEY = "AIzaSyA2b6xewl-nZ8FVVmjIlnKq9QHEOhFX_8A";
+
+   const ADDR_FIELD_CONFIG = {
+      city: {
+         id: "co_city",
+         valueType: "long_name",
+         types: [
+            "locality",
+            "sublocality_level_1",
+            "sublocality",
+            "administrative_area_level_2",
+            "postal_town",
+            "neighborhood",
+         ],
+      },
+      state: {
+         id: "co_state",
+         valueType: "long_name",
+         types: [
+            "administrative_area_level_1",
+            "administrative_area_level_2",
+            "administrative_area_level_3",
+         ],
+      },
+      zipCode: {
+         id: "co_zip",
+         valueType: "short_name",
+         types: ["postal_code", "postal_code_prefix"],
+      },
+      country: {
+         id: "co_country",
+         valueType: "short_name",
+         types: ["country"],
+      },
+      streetNumber: {
+         id: null,
+         valueType: "short_name",
+         types: ["street_number"],
+      },
+      route: {
+         id: null,
+         valueType: "long_name",
+         types: ["route", "street_address", "premise", "subpremise"],
+      },
+   };
+
+   function loadPlacesAPI() {
+      return new Promise((resolve, reject) => {
+         if (window.google && window.google.maps && window.google.maps.places) {
+            resolve();
+            return;
+         }
+         if (
+            document.querySelector(
+               'script[src*="maps.googleapis.com/maps/api/js"]',
+            )
+         ) {
+            const check = setInterval(() => {
+               if (
+                  window.google &&
+                  window.google.maps &&
+                  window.google.maps.places
+               ) {
+                  clearInterval(check);
+                  resolve();
+               }
+            }, 100);
+            return;
+         }
+         const script = document.createElement("script");
+         script.src = `https://maps.googleapis.com/maps/api/js?key=${PLACES_API_KEY}&libraries=places`;
+         script.async = true;
+         script.defer = true;
+         script.onload = () => {
+            const check = setInterval(() => {
+               if (
+                  window.google &&
+                  window.google.maps &&
+                  window.google.maps.places
+               ) {
+                  clearInterval(check);
+                  resolve();
+               }
+            }, 50);
+         };
+         script.onerror = () =>
+            reject(new Error("Failed to load Google Places API"));
+         document.head.appendChild(script);
+      });
+   }
+
+   function applyValue(fieldId, value) {
+      const element = document.getElementById(fieldId);
+      if (!element || !value) return;
+      if (element.tagName === "SELECT") {
+         const option = element.querySelector(`option[value="${value}"]`);
+         if (option) {
+            element.value = value;
+         } else {
+            for (const opt of element.options) {
+               if (
+                  opt.textContent.trim().toLowerCase() === value.toLowerCase()
+               ) {
+                  element.value = opt.value;
+                  break;
+               }
+            }
+         }
+      } else {
+         element.value = value;
+      }
+      element.dispatchEvent(new Event("input", { bubbles: true }));
+      element.dispatchEvent(new Event("change", { bubbles: true }));
+      element.classList.add("co_auto_filled");
+      setTimeout(() => element.classList.remove("co_auto_filled"), 1500);
+   }
+
+   function fillFields(place) {
+      if (!place.address_components) return;
+
+      document.getElementById("co_city").value = "";
+      document.getElementById("co_state").value = "";
+      document.getElementById("co_zip").value = "";
+      const coCountry = document.getElementById("co_country");
+      if (coCountry) coCountry.selectedIndex = 0;
+
+      const candidates = {};
+      for (const key in ADDR_FIELD_CONFIG) candidates[key] = {};
+
+      for (const component of place.address_components) {
+         for (const type of component.types) {
+            for (const fieldKey in ADDR_FIELD_CONFIG) {
+               const config = ADDR_FIELD_CONFIG[fieldKey];
+               if (config.types.includes(type)) {
+                  candidates[fieldKey][type] = component[config.valueType];
+               }
+            }
+         }
+      }
+
+      const filled = {};
+      for (const fieldKey in ADDR_FIELD_CONFIG) {
+         const config = ADDR_FIELD_CONFIG[fieldKey];
+         if (!config.id) continue;
+         filled[fieldKey] = false;
+         for (const type of config.types) {
+            if (candidates[fieldKey][type]) {
+               applyValue(config.id, candidates[fieldKey][type]);
+               filled[fieldKey] = true;
+               break;
+            }
+         }
+      }
+
+      const addressInput = document.getElementById("co_address");
+      const streetParts = [];
+      for (const type of ADDR_FIELD_CONFIG.streetNumber.types) {
+         if (candidates.streetNumber[type]) {
+            streetParts.push(candidates.streetNumber[type]);
+            break;
+         }
+      }
+      for (const type of ADDR_FIELD_CONFIG.route.types) {
+         if (candidates.route[type]) {
+            streetParts.push(candidates.route[type]);
+            break;
+         }
+      }
+      if (streetParts.length > 0)
+         addressInput.value = streetParts.join(" ").trim();
+
+      const missingFields = Object.keys(filled).filter((k) => !filled[k]);
+      if (
+         missingFields.length > 0 &&
+         place.geometry &&
+         place.geometry.location
+      ) {
+         const lat = place.geometry.location.lat();
+         const lng = place.geometry.location.lng();
+         const geocoder = new google.maps.Geocoder();
+         geocoder.geocode(
+            { location: { lat, lng } },
+            function (results, status) {
+               if (status === "OK" && results && results.length > 0) {
+                  for (const result of results) {
+                     for (const component of result.address_components) {
+                        for (const fieldKey of [...missingFields]) {
+                           if (filled[fieldKey]) continue;
+                           const config = ADDR_FIELD_CONFIG[fieldKey];
+                           for (const cType of config.types) {
+                              if (component.types.includes(cType)) {
+                                 applyValue(
+                                    config.id,
+                                    component[config.valueType],
+                                 );
+                                 filled[fieldKey] = true;
+                                 const idx = missingFields.indexOf(fieldKey);
+                                 if (idx > -1) missingFields.splice(idx, 1);
+                                 break;
+                              }
+                           }
+                        }
+                        if (missingFields.length === 0) return;
+                     }
+                  }
+               }
+            },
+         );
+      }
+   }
+
+   const addressInput = document.getElementById("co_address");
+   if (!addressInput) return;
+
+   loadPlacesAPI()
+      .then(() => {
+         const autocomplete = new google.maps.places.Autocomplete(
+            addressInput,
+            {
+               types: ["address"],
+               fields: ["address_components", "formatted_address", "geometry"],
+            },
+         );
+         autocomplete.addListener("place_changed", () =>
+            fillFields(autocomplete.getPlace()),
+         );
+      })
+      .catch(() => {});
 }
 
 // =============================================================================
