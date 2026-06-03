@@ -1910,8 +1910,6 @@ function setupAddressAutocomplete() {
       }
       element.dispatchEvent(new Event("input", { bubbles: true }));
       element.dispatchEvent(new Event("change", { bubbles: true }));
-      element.classList.add("co_auto_filled");
-      setTimeout(() => element.classList.remove("co_auto_filled"), 1500);
    }
 
    function fillFields(place) {
