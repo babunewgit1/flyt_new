@@ -1445,7 +1445,6 @@ function setupAddressAutocomplete() {
       }
       element.dispatchEvent(new Event("input", { bubbles: true }));
       element.dispatchEvent(new Event("change", { bubbles: true }));
-
    }
 
    function fillFields(place) {
