@@ -817,6 +817,7 @@
 
 /* ── Google Autocomplete dropdown styling ─────────────────────── */
 .pac-container {
+   position: fixed !important;
    z-index: 999999 !important; /* Above modal overlays */
    border-radius: 10px;
    border: 1.5px solid #e5e7eb;

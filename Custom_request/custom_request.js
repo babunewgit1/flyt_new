@@ -2023,6 +2023,21 @@ function setupAddressAutocomplete() {
          autocomplete.addListener("place_changed", () =>
             fillFields(autocomplete.getPlace()),
          );
+
+         // Fix: reposition dropdown on modal scroll
+         const fixDropdownPos = () => {
+            const pac = document.querySelector(".pac-container");
+            if (pac && pac.style.display !== "none") {
+               const rect = addressInput.getBoundingClientRect();
+               pac.style.top = rect.bottom + "px";
+               pac.style.left = rect.left + "px";
+               pac.style.width = rect.width + "px";
+            }
+         };
+         const modal2El = document.getElementById("co_modal_2");
+         if (modal2El)
+            modal2El.addEventListener("scroll", fixDropdownPos, true);
+         window.addEventListener("scroll", fixDropdownPos, true);
       })
       .catch(() => {});
 }
