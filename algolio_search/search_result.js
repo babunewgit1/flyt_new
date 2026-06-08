@@ -59,6 +59,66 @@ const CURRENCY_SYMBOLS = {
    cad: "C$",
 };
 
+// =============================================================================
+// AIRCRAFT RESULTS CACHE — avoids re-polling on back/reload
+// =============================================================================
+const CACHE_KEY_PREFIX = "flyt_aircraft_cache_";
+const CACHE_EXPIRY_MS = 10 * 60 * 1000; // 10 minutes
+
+// Builds a unique cache key from the search parameters + currency.
+function buildCacheKey(data) {
+   const parts = [
+      data.fromId,
+      data.toId,
+      data.dateAsText,
+      data.pax,
+      (data.way || "").toLowerCase().replace(/\s+/g, "_"),
+      JSON.parse(sessionStorage.getItem("currency"))?.api_currency || "USD",
+   ];
+   if ((data.way || "").toLowerCase() !== "one way") {
+      parts.push(
+         data.returnDateAsText,
+         data.returnFromId,
+         data.returnToId,
+         data.paxReturn,
+      );
+   }
+   return CACHE_KEY_PREFIX + parts.join("_");
+}
+
+// Returns cached data if it exists and hasn't expired; otherwise null.
+function getCachedResult(key) {
+   try {
+      const raw = sessionStorage.getItem(key);
+      if (!raw) return null;
+      const cached = JSON.parse(raw);
+      if (Date.now() - cached.savedAt > CACHE_EXPIRY_MS) {
+         sessionStorage.removeItem(key);
+         return null;
+      }
+      return cached;
+   } catch (e) {
+      return null;
+   }
+}
+
+// Saves aircraft data + flightRequestId to sessionStorage with a timestamp.
+function setCachedResult(key, aircraft, flightRequestId) {
+   try {
+      sessionStorage.setItem(
+         key,
+         JSON.stringify({
+            aircraft,
+            flightRequestId,
+            savedAt: Date.now(),
+         }),
+      );
+   } catch (e) {
+      // sessionStorage full or quota exceeded — silently ignore
+      console.warn("Cache save failed:", e);
+   }
+}
+
 // Converts "3:30 PM" → "15:30:00" for building API timestamps.
 function to24HourTime(timeStr) {
    if (!timeStr) return "00:00:00";
@@ -129,6 +189,34 @@ async function makeApiCall() {
       if (notFound) notFound.style.display = "flex";
       return;
    }
+
+   // ── Check cache before making API calls ──────────────────────────
+   const cacheKey = buildCacheKey(getStoredData);
+   const cached = getCachedResult(cacheKey);
+
+   if (cached && cached.aircraft?.length) {
+      console.log("Cache HIT — rendering from sessionStorage");
+      window._flightRequestId = cached.flightRequestId;
+
+      // Show warning bar
+      const warningInject = document.querySelector(".warning_inject");
+      if (warningInject) warningInject.style.display = "";
+
+      // Render directly from cache
+      renderAircraftResults(cached.aircraft);
+      renderAircraftTable(cached.aircraft);
+      highlightMatchingDropdownItems(cached.aircraft);
+
+      // Apply blur if fetchSearchHistory already resolved with blur_pricing = true
+      if (window._blurPricing === true) {
+         document.querySelectorAll(".src_card_price").forEach((el) => {
+            el.style.filter = "blur(5px)";
+         });
+      }
+      return;
+   }
+
+   console.log("Cache MISS — fetching from API");
 
    // Show loader — full-screen overlay
    const resultWrapper = document.querySelector(".api_result_display");
@@ -275,6 +363,9 @@ async function makeApiCall() {
       renderAircraftResults(pollResponse.aircraft);
       renderAircraftTable(pollResponse.aircraft);
       highlightMatchingDropdownItems(pollResponse.aircraft);
+
+      // Save to cache for instant load on back/reload
+      setCachedResult(cacheKey, pollResponse.aircraft, flightRequestId);
 
       // Apply blur if fetchSearchHistory already resolved with blur_pricing = true
       if (window._blurPricing === true) {
