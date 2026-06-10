@@ -53,9 +53,65 @@ function redirectToBooking(item) {
    }
 }
 
+// =============================================================================
+// DETAIL PRE-FETCH CACHE — reads pre-loaded data from search results page
+// =============================================================================
+const DETAIL_CACHE_PREFIX = "flyt_detail_cache_";
+const DETAIL_CACHE_EXPIRY_MS = 10 * 60 * 1000; // 10 minutes
+
+// Returns cached detail data if it exists and hasn't expired; otherwise null.
+function getDetailCache(aircraftId) {
+   try {
+      const raw = sessionStorage.getItem(DETAIL_CACHE_PREFIX + aircraftId);
+      if (!raw) return null;
+      const cached = JSON.parse(raw);
+      if (Date.now() - cached.savedAt > DETAIL_CACHE_EXPIRY_MS) {
+         sessionStorage.removeItem(DETAIL_CACHE_PREFIX + aircraftId);
+         return null;
+      }
+      return cached.response;
+   } catch (e) {
+      return null;
+   }
+}
+
 let apiResponseData = null;
 
 async function fetchAircraftDetail() {
+   // ── Check pre-fetched cache before making API call ──────────────
+   const cachedResponse = getDetailCache(bookingId);
+
+   if (cachedResponse) {
+      console.log("Detail Cache HIT — rendering instantly from pre-fetched data");
+      apiResponseData = cachedResponse;
+
+      const detail = cachedResponse.aircraft_detail;
+      if (!detail || !detail._id) {
+         window.location.href = "/aircraft";
+         return;
+      }
+
+      // render blocks (no loader needed — instant!)
+      renderHeading(detail);
+      renderMainSection(cachedResponse);
+      renderJetSlider(cachedResponse.aircraft || []);
+
+      // Apply price blur only if user is logged in AND blur_pricing === true
+      const isLoggedIn =
+         typeof Cookies !== "undefined" && !!Cookies.get("authToken");
+      if (isLoggedIn && cachedResponse.blur_pricing === true) {
+         document.querySelectorAll(".adj_card_price").forEach((el) => {
+            el.style.filter = "blur(5px)";
+         });
+      }
+
+      // Hide the loader (it's created visible by default in DOMContentLoaded)
+      hideLoader();
+      return;
+   }
+
+   // ── Cache MISS — fall back to normal API call ──────────────────
+   console.log("Detail Cache MISS — fetching from API");
    showLoader();
    try {
       let currencyCode = "USD";

@@ -65,6 +65,207 @@ const CURRENCY_SYMBOLS = {
 const CACHE_KEY_PREFIX = "flyt_aircraft_cache_";
 const CACHE_EXPIRY_MS = 10 * 60 * 1000; // 10 minutes
 
+// =============================================================================
+// DETAIL PRE-FETCH CACHE — pre-loads aircraft detail data in background
+// =============================================================================
+const DETAIL_CACHE_PREFIX = "flyt_detail_cache_";
+const DETAIL_CACHE_EXPIRY_MS = 10 * 60 * 1000; // 10 minutes
+const DETAIL_CACHE_SEARCH_KEY = "flyt_detail_cache_search_fingerprint";
+
+// Clears all detail pre-fetch entries from sessionStorage.
+// Called only when the search changes — preserves cache on back/refresh.
+function clearDetailCache() {
+   try {
+      const keysToRemove = [];
+      for (let i = 0; i < sessionStorage.length; i++) {
+         const key = sessionStorage.key(i);
+         if (key && key.startsWith(DETAIL_CACHE_PREFIX)) {
+            keysToRemove.push(key);
+         }
+      }
+      keysToRemove.forEach((k) => sessionStorage.removeItem(k));
+   } catch (e) {
+      // Silently ignore — storage access may fail in rare cases
+   }
+}
+
+// Builds a fingerprint from aircraft IDs to detect if search results changed.
+function buildSearchFingerprint(aircraftList) {
+   return aircraftList
+      .map((a) => a._id || "")
+      .filter(Boolean)
+      .sort()
+      .join("|");
+}
+
+// Sequentially pre-fetches detail data for each aircraft in the background.
+// - Only clears cache when search results change (smart cache invalidation)
+// - Skips aircraft that are already cached and not expired
+// - Staggers calls with 300ms delay to avoid flooding the API
+// - Silently ignores any errors (failed aircraft simply won't be cached)
+// - Aborts if user navigates away (using AbortController)
+async function prefetchAircraftDetails(aircraftList) {
+   if (!aircraftList || aircraftList.length === 0) return;
+
+   // Smart cache invalidation: only clear if search results changed
+   const currentFingerprint = buildSearchFingerprint(aircraftList);
+   const storedFingerprint = sessionStorage.getItem(DETAIL_CACHE_SEARCH_KEY);
+
+   if (storedFingerprint === currentFingerprint) {
+      // Same search — check if all aircraft are already cached
+      let allCached = true;
+      for (const aircraft of aircraftList) {
+         if (!aircraft._id) continue;
+         try {
+            const raw = sessionStorage.getItem(
+               DETAIL_CACHE_PREFIX + aircraft._id,
+            );
+            if (!raw) {
+               allCached = false;
+               break;
+            }
+            const parsed = JSON.parse(raw);
+            if (Date.now() - parsed.savedAt > DETAIL_CACHE_EXPIRY_MS) {
+               allCached = false;
+               break;
+            }
+         } catch {
+            allCached = false;
+            break;
+         }
+      }
+      if (allCached) {
+         console.log(
+            "[Pre-fetch] Same search, all aircraft already cached — skipping. (0 API calls)",
+         );
+         return;
+      }
+      console.log("[Pre-fetch] Same search, some aircraft need refresh...");
+   } else {
+      // Different search — clear old cache
+      console.log(
+         "[Pre-fetch] New search detected — clearing old detail cache.",
+      );
+      clearDetailCache();
+      sessionStorage.setItem(DETAIL_CACHE_SEARCH_KEY, currentFingerprint);
+   }
+
+   // Get current currency code
+   let currencyCode = "USD";
+   try {
+      currencyCode =
+         JSON.parse(sessionStorage.getItem("currency"))?.api_currency || "USD";
+   } catch {}
+
+   const controller = new AbortController();
+
+   // Abort pre-fetch if user navigates away
+   const onBeforeUnload = () => controller.abort();
+   window.addEventListener("beforeunload", onBeforeUnload);
+
+   const BATCH_SIZE = 4;
+
+   // Filter aircraft that actually need fetching (skip already cached)
+   const toFetch = [];
+   aircraftList.forEach((aircraft, i) => {
+      const aircraftId = aircraft._id;
+      if (!aircraftId) return;
+
+      const cacheKey = DETAIL_CACHE_PREFIX + aircraftId;
+      try {
+         const existing = sessionStorage.getItem(cacheKey);
+         if (existing) {
+            const parsed = JSON.parse(existing);
+            if (Date.now() - parsed.savedAt < DETAIL_CACHE_EXPIRY_MS) {
+               console.log(
+                  `[Pre-fetch] ${aircraft.model_text || aircraftId} — already cached, skipping`,
+               );
+               return;
+            }
+         }
+      } catch {}
+
+      toFetch.push({ aircraft, aircraftId, index: i });
+   });
+
+   if (toFetch.length === 0) {
+      console.log(
+         "[Pre-fetch] All aircraft already cached — nothing to fetch.",
+      );
+      window.removeEventListener("beforeunload", onBeforeUnload);
+      return;
+   }
+
+   console.log(
+      `[Pre-fetch] Starting background pre-load for ${toFetch.length} aircraft (batch size: ${BATCH_SIZE})...`,
+   );
+
+   // Process in batches of BATCH_SIZE
+   for (
+      let batchStart = 0;
+      batchStart < toFetch.length;
+      batchStart += BATCH_SIZE
+   ) {
+      const batch = toFetch.slice(batchStart, batchStart + BATCH_SIZE);
+      const batchNum = Math.floor(batchStart / BATCH_SIZE) + 1;
+      const totalBatches = Math.ceil(toFetch.length / BATCH_SIZE);
+
+      console.log(
+         `[Pre-fetch] Batch ${batchNum}/${totalBatches} — fetching ${batch.length} aircraft in parallel...`,
+      );
+
+      // Fire all requests in this batch simultaneously
+      const promises = batch.map(async ({ aircraft, aircraftId }) => {
+         try {
+            const response = await fetch(
+               "https://operators-dashboard.bubbleapps.io/api/1.1/wf/webflow_return_aircraft_detail_flyt",
+               {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                     aircraftid: aircraftId,
+                     currency_code: currencyCode,
+                  }),
+                  signal: controller.signal,
+               },
+            );
+
+            const data = await response.json();
+
+            if (data.response?.aircraft_detail?._id) {
+               sessionStorage.setItem(
+                  DETAIL_CACHE_PREFIX + aircraftId,
+                  JSON.stringify({
+                     response: data.response,
+                     savedAt: Date.now(),
+                  }),
+               );
+               console.log(
+                  `[Pre-fetch] ${aircraft.model_text || aircraftId} — ✅ cached`,
+               );
+            }
+         } catch (err) {
+            if (err.name === "AbortError") {
+               console.log("[Pre-fetch] Aborted — user navigated away");
+               return;
+            }
+            console.log(
+               `[Pre-fetch] ${aircraft.model_text || aircraftId} — ❌ failed (silently ignored)`,
+            );
+         }
+      });
+
+      // Wait for entire batch to complete before starting next batch
+      await Promise.allSettled(promises);
+
+      // Check if aborted
+      if (controller.signal.aborted) break;
+   }
+
+   window.removeEventListener("beforeunload", onBeforeUnload);
+   console.log("[Pre-fetch] Background pre-loading complete.");
+}
+
 // Builds a unique cache key from the search parameters + currency.
 function buildCacheKey(data) {
    const parts = [
@@ -213,6 +414,9 @@ async function makeApiCall() {
             el.style.filter = "blur(5px)";
          });
       }
+
+      // Start background pre-fetch for aircraft detail pages
+      prefetchAircraftDetails(cached.aircraft);
       return;
    }
 
@@ -373,6 +577,9 @@ async function makeApiCall() {
             el.style.filter = "blur(5px)";
          });
       }
+
+      // Start background pre-fetch for aircraft detail pages
+      prefetchAircraftDetails(pollResponse.aircraft);
    }
 
    // Remove dropdown loader and show items
