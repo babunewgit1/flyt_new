@@ -62,7 +62,9 @@ const DETAIL_CACHE_EXPIRY_MS = 10 * 60 * 1000; // 10 minutes
 // Returns the current currency code from sessionStorage (default: "USD").
 function getCurrentCurrency() {
    try {
-      return JSON.parse(sessionStorage.getItem("currency"))?.api_currency || "USD";
+      return (
+         JSON.parse(sessionStorage.getItem("currency"))?.api_currency || "USD"
+      );
    } catch {
       return "USD";
    }
@@ -90,6 +92,83 @@ function getDetailCache(aircraftId) {
    }
 }
 
+// =============================================================================
+// SLIDER PRE-FETCH — pre-loads detail data for slider aircraft in background
+// =============================================================================
+async function prefetchSliderDetails(aircraftList) {
+   if (!aircraftList || aircraftList.length === 0) return;
+
+   // Exclude the current aircraft (already loaded as main detail)
+   const toFetch = aircraftList.filter((ac) => {
+      if (!ac._id || ac._id === bookingId) return false;
+      // Skip if already cached and not expired
+      try {
+         const raw = sessionStorage.getItem(buildDetailCacheKey(ac._id));
+         if (raw) {
+            const parsed = JSON.parse(raw);
+            if (Date.now() - parsed.savedAt < DETAIL_CACHE_EXPIRY_MS)
+               return false;
+         }
+      } catch {}
+      return true;
+   });
+
+   if (toFetch.length === 0) {
+      console.log(
+         "[Slider Pre-fetch] All slider aircraft already cached — skipping.",
+      );
+      return;
+   }
+
+   console.log(
+      `[Slider Pre-fetch] Pre-loading ${toFetch.length} slider aircraft in background...`,
+   );
+
+   const currencyCode = getCurrentCurrency();
+   const controller = new AbortController();
+   const onBeforeUnload = () => controller.abort();
+   window.addEventListener("beforeunload", onBeforeUnload);
+
+   // Fetch all in parallel (only 4-5 aircraft, safe to fire together)
+   const promises = toFetch.map(async (aircraft) => {
+      try {
+         const response = await fetch(AIRCRAFT_DETAIL_API, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+               aircraftid: aircraft._id,
+               currency_code: currencyCode,
+            }),
+            signal: controller.signal,
+         });
+
+         const data = await response.json();
+
+         if (data.response?.aircraft_detail?._id) {
+            sessionStorage.setItem(
+               buildDetailCacheKey(aircraft._id),
+               JSON.stringify({
+                  response: data.response,
+                  savedAt: Date.now(),
+               }),
+            );
+            console.log(
+               `[Slider Pre-fetch] ${aircraft.model_text || aircraft._id} — ✅ cached`,
+            );
+         }
+      } catch (err) {
+         if (err.name === "AbortError") return;
+         console.log(
+            `[Slider Pre-fetch] ${aircraft.model_text || aircraft._id} — ❌ failed (ignored)`,
+         );
+      }
+   });
+
+   await Promise.allSettled(promises);
+   window.removeEventListener("beforeunload", onBeforeUnload);
+   console.log("[Slider Pre-fetch] Complete.");
+}
+
 let apiResponseData = null;
 
 async function fetchAircraftDetail() {
@@ -97,7 +176,9 @@ async function fetchAircraftDetail() {
    const cachedResponse = getDetailCache(bookingId);
 
    if (cachedResponse) {
-      console.log("Detail Cache HIT — rendering instantly from pre-fetched data");
+      console.log(
+         "Detail Cache HIT — rendering instantly from pre-fetched data",
+      );
       apiResponseData = cachedResponse;
 
       const detail = cachedResponse.aircraft_detail;
@@ -122,6 +203,9 @@ async function fetchAircraftDetail() {
 
       // Hide the loader (it's created visible by default in DOMContentLoaded)
       hideLoader();
+
+      // Pre-fetch slider aircraft details in background
+      prefetchSliderDetails(cachedResponse.aircraft || []);
       return;
    }
 
@@ -169,6 +253,9 @@ async function fetchAircraftDetail() {
             el.style.filter = "blur(5px)";
          });
       }
+
+      // Pre-fetch slider aircraft details in background
+      prefetchSliderDetails(data.response.aircraft || []);
    } catch (error) {
       console.error("Aircraft Detail Error:", error);
    } finally {
