@@ -95,8 +95,25 @@ function getDetailCache(aircraftId) {
 // =============================================================================
 // SLIDER PRE-FETCH — pre-loads detail data for slider aircraft in background
 // =============================================================================
+// Clears all detail pre-fetch entries from sessionStorage (any currency).
+function clearDetailCache() {
+   try {
+      const keysToRemove = [];
+      for (let i = 0; i < sessionStorage.length; i++) {
+         const key = sessionStorage.key(i);
+         if (key && key.startsWith(DETAIL_CACHE_PREFIX)) {
+            keysToRemove.push(key);
+         }
+      }
+      keysToRemove.forEach((k) => sessionStorage.removeItem(k));
+   } catch (e) {}
+}
+
 async function prefetchSliderDetails(aircraftList) {
    if (!aircraftList || aircraftList.length === 0) return;
+
+   // Clear old currency's detail cache before pre-fetching with current currency
+   clearDetailCache();
 
    // Exclude the current aircraft (already loaded as main detail)
    const toFetch = aircraftList.filter((ac) => {
