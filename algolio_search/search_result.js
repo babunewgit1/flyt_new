@@ -72,6 +72,20 @@ const DETAIL_CACHE_PREFIX = "flyt_detail_cache_";
 const DETAIL_CACHE_EXPIRY_MS = 10 * 60 * 1000; // 10 minutes
 const DETAIL_CACHE_SEARCH_KEY = "flyt_detail_cache_search_fingerprint";
 
+// Returns the current currency code from sessionStorage (default: "USD").
+function getCurrentCurrency() {
+   try {
+      return JSON.parse(sessionStorage.getItem("currency"))?.api_currency || "USD";
+   } catch {
+      return "USD";
+   }
+}
+
+// Builds a currency-aware detail cache key so switching currency never returns stale prices.
+function buildDetailCacheKey(aircraftId) {
+   return DETAIL_CACHE_PREFIX + getCurrentCurrency() + "_" + aircraftId;
+}
+
 // Clears all detail pre-fetch entries from sessionStorage.
 // Called only when the search changes — preserves cache on back/refresh.
 function clearDetailCache() {
@@ -89,9 +103,12 @@ function clearDetailCache() {
    }
 }
 
-// Builds a fingerprint from aircraft IDs to detect if search results changed.
+// Builds a fingerprint from aircraft IDs + currency to detect if search results
+// or currency changed. Currency is included so a USD→EUR switch triggers a
+// cache clear and fresh pre-fetch with the correct prices.
 function buildSearchFingerprint(aircraftList) {
-   return aircraftList
+   const currency = getCurrentCurrency();
+   return currency + "|" + aircraftList
       .map((a) => a._id || "")
       .filter(Boolean)
       .sort()
@@ -118,7 +135,7 @@ async function prefetchAircraftDetails(aircraftList) {
          if (!aircraft._id) continue;
          try {
             const raw = sessionStorage.getItem(
-               DETAIL_CACHE_PREFIX + aircraft._id,
+               buildDetailCacheKey(aircraft._id),
             );
             if (!raw) {
                allCached = false;
@@ -171,7 +188,7 @@ async function prefetchAircraftDetails(aircraftList) {
       const aircraftId = aircraft._id;
       if (!aircraftId) return;
 
-      const cacheKey = DETAIL_CACHE_PREFIX + aircraftId;
+      const cacheKey = buildDetailCacheKey(aircraftId);
       try {
          const existing = sessionStorage.getItem(cacheKey);
          if (existing) {
@@ -234,7 +251,7 @@ async function prefetchAircraftDetails(aircraftList) {
 
             if (data.response?.aircraft_detail?._id) {
                sessionStorage.setItem(
-                  DETAIL_CACHE_PREFIX + aircraftId,
+                  buildDetailCacheKey(aircraftId),
                   JSON.stringify({
                      response: data.response,
                      savedAt: Date.now(),

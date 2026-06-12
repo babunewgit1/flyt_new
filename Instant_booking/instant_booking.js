@@ -59,14 +59,29 @@ function redirectToBooking(item) {
 const DETAIL_CACHE_PREFIX = "flyt_detail_cache_";
 const DETAIL_CACHE_EXPIRY_MS = 10 * 60 * 1000; // 10 minutes
 
+// Returns the current currency code from sessionStorage (default: "USD").
+function getCurrentCurrency() {
+   try {
+      return JSON.parse(sessionStorage.getItem("currency"))?.api_currency || "USD";
+   } catch {
+      return "USD";
+   }
+}
+
+// Builds a currency-aware detail cache key (must match search_result.js format).
+function buildDetailCacheKey(aircraftId) {
+   return DETAIL_CACHE_PREFIX + getCurrentCurrency() + "_" + aircraftId;
+}
+
 // Returns cached detail data if it exists and hasn't expired; otherwise null.
 function getDetailCache(aircraftId) {
    try {
-      const raw = sessionStorage.getItem(DETAIL_CACHE_PREFIX + aircraftId);
+      const cacheKey = buildDetailCacheKey(aircraftId);
+      const raw = sessionStorage.getItem(cacheKey);
       if (!raw) return null;
       const cached = JSON.parse(raw);
       if (Date.now() - cached.savedAt > DETAIL_CACHE_EXPIRY_MS) {
-         sessionStorage.removeItem(DETAIL_CACHE_PREFIX + aircraftId);
+         sessionStorage.removeItem(cacheKey);
          return null;
       }
       return cached.response;
