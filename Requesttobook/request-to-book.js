@@ -356,7 +356,9 @@ const DETAIL_CACHE_EXPIRY_MS = 10 * 60 * 1000; // 10 minutes
 // Returns the current currency code from sessionStorage (default: "USD").
 function getCurrentCurrency() {
    try {
-      return JSON.parse(sessionStorage.getItem("currency"))?.api_currency || "USD";
+      return (
+         JSON.parse(sessionStorage.getItem("currency"))?.api_currency || "USD"
+      );
    } catch {
       return "USD";
    }
@@ -415,18 +417,16 @@ async function prefetchSliderDetails(aircraftList) {
          const raw = sessionStorage.getItem(buildDetailCacheKey(ac._id));
          if (raw) {
             const parsed = JSON.parse(raw);
-            if (Date.now() - parsed.savedAt < DETAIL_CACHE_EXPIRY_MS) return false;
+            if (Date.now() - parsed.savedAt < DETAIL_CACHE_EXPIRY_MS)
+               return false;
          }
       } catch {}
       return true;
    });
 
    if (toFetch.length === 0) {
-      console.log("[Slider Pre-fetch] All slider aircraft already cached — skipping.");
       return;
    }
-
-   console.log(`[Slider Pre-fetch] Pre-loading ${toFetch.length} slider aircraft in background...`);
 
    const currencyCode = getCurrentCurrency();
    const controller = new AbortController();
@@ -456,17 +456,14 @@ async function prefetchSliderDetails(aircraftList) {
                   savedAt: Date.now(),
                }),
             );
-            console.log(`[Slider Pre-fetch] ${aircraft.model_text || aircraft._id} — ✅ cached`);
          }
       } catch (err) {
          if (err.name === "AbortError") return;
-         console.log(`[Slider Pre-fetch] ${aircraft.model_text || aircraft._id} — ❌ failed (ignored)`);
       }
    });
 
    await Promise.allSettled(promises);
    window.removeEventListener("beforeunload", onBeforeUnload);
-   console.log("[Slider Pre-fetch] Complete.");
 }
 
 // =============================================================================
@@ -477,8 +474,6 @@ async function fetchAircraftDetail() {
    const cachedResponse = getDetailCache(bookingId);
 
    if (cachedResponse) {
-      console.log("Detail Cache HIT — rendering instantly from pre-fetched data");
-
       const detail = cachedResponse.aircraft_detail;
       if (!detail || !detail._id) {
          window.location.href = "/aircraft";
@@ -508,7 +503,6 @@ async function fetchAircraftDetail() {
    }
 
    // ── Cache MISS — fall back to normal API call ──────────────────
-   console.log("Detail Cache MISS — fetching from API");
    showLoader();
    try {
       let currencyCode = "USD";
@@ -552,7 +546,6 @@ async function fetchAircraftDetail() {
       // Pre-fetch slider aircraft details in background
       prefetchSliderDetails(data.response.aircraft || []);
    } catch (error) {
-      console.error("RTB Detail Error:", error);
    } finally {
       hideLoader();
    }
@@ -1206,8 +1199,6 @@ async function submitRequest() {
 
       const data = await res.json();
 
-      console.log(data);
-
       if (
          res.ok &&
          data.response &&
@@ -1232,7 +1223,6 @@ async function submitRequest() {
          window.toast.error(errMsg);
       }
    } catch (err) {
-      console.error("Submit Request Error:", err);
       window.toast.error("Something went wrong. Please try again.");
    } finally {
       if (!submitSuccess) {
@@ -1406,7 +1396,6 @@ async function deleteCard(profileId) {
          return { success: false, message };
       }
    } catch (err) {
-      console.error("Delete Card Error:", err);
       return {
          success: false,
          message: "Something went wrong. Please try again.",
@@ -1448,7 +1437,6 @@ async function updateDefaultCard(profileId, isDefault) {
          window.toast.error(errMsg);
       }
    } catch (err) {
-      console.error("Update Default Card Error:", err);
       window.toast.error("Something went wrong. Please try again.");
    }
 }
@@ -1481,7 +1469,6 @@ async function fetchSavedCards() {
          renderSavedCards([]);
       }
    } catch (err) {
-      console.error("Get Cards Error:", err);
       renderSavedCards([]);
    }
 }
@@ -2096,8 +2083,6 @@ function setupCardValidation() {
 
          const data = await res.json();
 
-         console.log(data);
-
          if (res.ok && !(data.response && data.response.has_error)) {
             window.toast.success("Card saved successfully!");
             cardNumber.value = "";
@@ -2125,7 +2110,6 @@ function setupCardValidation() {
             window.toast.error(errMsg);
          }
       } catch (err) {
-         console.error("Save Card Error:", err);
          window.toast.error("Something went wrong. Please try again.");
       } finally {
          if (submitBtn.querySelector(".btnc_text")) {

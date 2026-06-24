@@ -75,7 +75,9 @@ const DETAIL_CACHE_SEARCH_KEY = "flyt_detail_cache_search_fingerprint";
 // Returns the current currency code from sessionStorage (default: "USD").
 function getCurrentCurrency() {
    try {
-      return JSON.parse(sessionStorage.getItem("currency"))?.api_currency || "USD";
+      return (
+         JSON.parse(sessionStorage.getItem("currency"))?.api_currency || "USD"
+      );
    } catch {
       return "USD";
    }
@@ -108,11 +110,15 @@ function clearDetailCache() {
 // cache clear and fresh pre-fetch with the correct prices.
 function buildSearchFingerprint(aircraftList) {
    const currency = getCurrentCurrency();
-   return currency + "|" + aircraftList
-      .map((a) => a._id || "")
-      .filter(Boolean)
-      .sort()
-      .join("|");
+   return (
+      currency +
+      "|" +
+      aircraftList
+         .map((a) => a._id || "")
+         .filter(Boolean)
+         .sort()
+         .join("|")
+   );
 }
 
 // Sequentially pre-fetches detail data for each aircraft in the background.
@@ -152,17 +158,10 @@ async function prefetchAircraftDetails(aircraftList) {
          }
       }
       if (allCached) {
-         console.log(
-            "[Pre-fetch] Same search, all aircraft already cached — skipping. (0 API calls)",
-         );
          return;
       }
-      console.log("[Pre-fetch] Same search, some aircraft need refresh...");
    } else {
       // Different search — clear old cache
-      console.log(
-         "[Pre-fetch] New search detected — clearing old detail cache.",
-      );
       clearDetailCache();
       sessionStorage.setItem(DETAIL_CACHE_SEARCH_KEY, currentFingerprint);
    }
@@ -194,9 +193,6 @@ async function prefetchAircraftDetails(aircraftList) {
          if (existing) {
             const parsed = JSON.parse(existing);
             if (Date.now() - parsed.savedAt < DETAIL_CACHE_EXPIRY_MS) {
-               console.log(
-                  `[Pre-fetch] ${aircraft.model_text || aircraftId} — already cached, skipping`,
-               );
                return;
             }
          }
@@ -206,16 +202,9 @@ async function prefetchAircraftDetails(aircraftList) {
    });
 
    if (toFetch.length === 0) {
-      console.log(
-         "[Pre-fetch] All aircraft already cached — nothing to fetch.",
-      );
       window.removeEventListener("beforeunload", onBeforeUnload);
       return;
    }
-
-   console.log(
-      `[Pre-fetch] Starting background pre-load for ${toFetch.length} aircraft (batch size: ${BATCH_SIZE})...`,
-   );
 
    // Process in batches of BATCH_SIZE
    for (
@@ -226,11 +215,6 @@ async function prefetchAircraftDetails(aircraftList) {
       const batch = toFetch.slice(batchStart, batchStart + BATCH_SIZE);
       const batchNum = Math.floor(batchStart / BATCH_SIZE) + 1;
       const totalBatches = Math.ceil(toFetch.length / BATCH_SIZE);
-
-      console.log(
-         `[Pre-fetch] Batch ${batchNum}/${totalBatches} — fetching ${batch.length} aircraft in parallel...`,
-      );
-
       // Fire all requests in this batch simultaneously
       const promises = batch.map(async ({ aircraft, aircraftId }) => {
          try {
@@ -257,18 +241,11 @@ async function prefetchAircraftDetails(aircraftList) {
                      savedAt: Date.now(),
                   }),
                );
-               console.log(
-                  `[Pre-fetch] ${aircraft.model_text || aircraftId} — ✅ cached`,
-               );
             }
          } catch (err) {
             if (err.name === "AbortError") {
-               console.log("[Pre-fetch] Aborted — user navigated away");
                return;
             }
-            console.log(
-               `[Pre-fetch] ${aircraft.model_text || aircraftId} — ❌ failed (silently ignored)`,
-            );
          }
       });
 
@@ -280,7 +257,6 @@ async function prefetchAircraftDetails(aircraftList) {
    }
 
    window.removeEventListener("beforeunload", onBeforeUnload);
-   console.log("[Pre-fetch] Background pre-loading complete.");
 }
 
 // Builds a unique cache key from the search parameters + currency.
@@ -333,7 +309,6 @@ function setCachedResult(key, aircraft, flightRequestId) {
       );
    } catch (e) {
       // sessionStorage full or quota exceeded — silently ignore
-      console.warn("Cache save failed:", e);
    }
 }
 
@@ -377,7 +352,6 @@ async function pollForAircraft(
       });
 
       const data = await response.json();
-      console.log(`Poll attempt ${attempt} response:`, data.response);
 
       const aircraftCount = data.response?.aircraft?.length ?? 0;
       const matched = aircraftCount === expectedSearchResults;
@@ -402,7 +376,6 @@ async function pollForAircraft(
 // Fires the main search API, extracts flightRequestId + expected count, then starts polling.
 async function makeApiCall() {
    if (!getStoredData) {
-      console.error("No stored data found");
       const notFound = document.querySelector(".notfound");
       if (notFound) notFound.style.display = "flex";
       return;
@@ -413,7 +386,6 @@ async function makeApiCall() {
    const cached = getCachedResult(cacheKey);
 
    if (cached && cached.aircraft?.length) {
-      console.log("Cache HIT — rendering from sessionStorage");
       window._flightRequestId = cached.flightRequestId;
 
       // Show warning bar
@@ -436,8 +408,6 @@ async function makeApiCall() {
       prefetchAircraftDetails(cached.aircraft);
       return;
    }
-
-   console.log("Cache MISS — fetching from API");
 
    // Show loader — full-screen overlay
    const resultWrapper = document.querySelector(".api_result_display");
@@ -521,11 +491,8 @@ async function makeApiCall() {
    });
 
    const data = await response.json();
-   console.log("Step 1 - Main API Response:", data.response);
-
    // Guard: if API response is undefined or malformed, show not found
    if (!data.response) {
-      console.error("Main API returned undefined response.");
       const notFound = document.querySelector(".notfound");
       if (notFound) notFound.style.display = "flex";
       const resultWrapper = document.querySelector(".api_result_display");
@@ -564,16 +531,11 @@ async function makeApiCall() {
       }
    }
 
-   console.log("flightRequestId:", flightRequestId);
-   console.log("Expected Search Results:", expectedSearchResults);
-
    // Step 2: Poll until aircraft results are ready
    const pollResponse = await pollForAircraft(
       flightRequestId,
       expectedSearchResults,
    );
-   console.log("Final Poll Response:", pollResponse);
-
    // Step 3: Remove loader and restore view
    const mainLoader = document.querySelector(".src_loader_main");
    if (mainLoader) mainLoader.remove();
@@ -1118,8 +1080,6 @@ async function fetchSearchHistory() {
          },
       );
       const data = await response.json();
-      console.log("Search History Response:", data);
-
       // Inject warning HTML into .warning_inject based on search_limited
       const warningInject = document.querySelector(".warning_inject");
       if (warningInject) {
@@ -1224,9 +1184,7 @@ async function fetchSearchHistory() {
             el.style.filter = "";
          });
       }
-   } catch (error) {
-      console.error("Search History Error:", error);
-   }
+   } catch (error) {}
 }
 
 // =============================================================================

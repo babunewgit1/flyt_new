@@ -113,7 +113,6 @@ const handleInput = debounce(function (event) {
          }
       })
       .catch((err) => {
-         console.error("Algolia search error:", err);
          resultsContainer.innerHTML = "<p>Error fetching results.</p>";
          resultsContainer.style.display = "block";
       });
@@ -365,7 +364,6 @@ document.addEventListener("DOMContentLoaded", () => {
                         "Return time must be after departure time.",
                      );
                   } else if (showErrorToast) {
-                     console.error("Return time must be after departure time.");
                   }
 
                   if (retTimeEl) {
@@ -567,26 +565,6 @@ document.addEventListener("DOMContentLoaded", () => {
          const json = await res.json();
          if (json.status === "success") {
             pricingData = json.response;
-
-            console.log(pricingData);
-            // Log Peak Days
-            if (pricingData.peak_start_dates && pricingData.peak_end_dates) {
-               console.log("=== Peak Days ===");
-               for (let i = 0; i < pricingData.peak_start_dates.length; i++) {
-                  const start = new Date(pricingData.peak_start_dates[i]);
-                  const end = new Date(pricingData.peak_end_dates[i]);
-                  console.log(
-                     "Peak Range " +
-                        (i + 1) +
-                        ": " +
-                        start.toLocaleDateString() +
-                        " to " +
-                        end.toLocaleDateString(),
-                  );
-               }
-            } else {
-               console.log("No peak days found in pricing data.");
-            }
             // Pricing Validation Rule:
             // If One Way and outbound is 0/empty -> no prices
             // If Round Trip and (outbound is 0 OR return is 0) -> no prices
@@ -599,7 +577,6 @@ document.addEventListener("DOMContentLoaded", () => {
             pricingData = null;
          }
       } catch (err) {
-         console.error("Pricing API Error:", err);
          pricingData = null;
       } finally {
          pricingLoading = false;
@@ -660,7 +637,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       if (isPeak) {
-         console.log("Peak Date Found:", date);
          finalPrice += basePrice * (pricingData.peak_day_pct || 0);
          hasPeakOrPriority = true;
       }
@@ -1031,9 +1007,7 @@ document.addEventListener("DOMContentLoaded", () => {
                timeDep.h = data.h;
                timeDep.m = data.m;
                timeDep.ampm = data.ampm;
-            } catch (e) {
-               console.error("Error parsing depTime", e);
-            }
+            } catch (e) {}
          } else if (currentInput.dataset.selectedHour) {
             // One Way Format (Legacy keys)
             timeDep.h = currentInput.dataset.selectedHour;
@@ -1052,9 +1026,7 @@ document.addEventListener("DOMContentLoaded", () => {
                timeRet.h = data.h;
                timeRet.m = data.m;
                timeRet.ampm = data.ampm;
-            } catch (e) {
-               console.error("Error parsing retTime", e);
-            }
+            } catch (e) {}
          } else {
             timeRet.h = "12";
             timeRet.m = "00";
@@ -1166,13 +1138,11 @@ document.addEventListener("DOMContentLoaded", () => {
          if (!selectedDateDep) {
             if (window.toast && window.toast.error)
                window.toast.error("Please select a departure date.");
-            else console.error("Please select a departure date.");
             return;
          }
          if (isRoundTrip && !selectedDateRet) {
             if (window.toast && window.toast.error)
                window.toast.error("Please select a return date.");
-            else console.error("Please select a return date.");
             return;
          }
 
@@ -1197,8 +1167,6 @@ document.addEventListener("DOMContentLoaded", () => {
                      window.toast.error(
                         "Return time must be after departure time.",
                      );
-                  else
-                     console.error("Return time must be after departure time.");
                   return; // STOP here, do not close widget
                }
             }

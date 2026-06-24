@@ -131,15 +131,8 @@ async function prefetchSliderDetails(aircraftList) {
    });
 
    if (toFetch.length === 0) {
-      console.log(
-         "[Slider Pre-fetch] All slider aircraft already cached — skipping.",
-      );
       return;
    }
-
-   console.log(
-      `[Slider Pre-fetch] Pre-loading ${toFetch.length} slider aircraft in background...`,
-   );
 
    const currencyCode = getCurrentCurrency();
    const controller = new AbortController();
@@ -169,21 +162,14 @@ async function prefetchSliderDetails(aircraftList) {
                   savedAt: Date.now(),
                }),
             );
-            console.log(
-               `[Slider Pre-fetch] ${aircraft.model_text || aircraft._id} — ✅ cached`,
-            );
          }
       } catch (err) {
          if (err.name === "AbortError") return;
-         console.log(
-            `[Slider Pre-fetch] ${aircraft.model_text || aircraft._id} — ❌ failed (ignored)`,
-         );
       }
    });
 
    await Promise.allSettled(promises);
    window.removeEventListener("beforeunload", onBeforeUnload);
-   console.log("[Slider Pre-fetch] Complete.");
 }
 
 let apiResponseData = null;
@@ -193,9 +179,6 @@ async function fetchAircraftDetail() {
    const cachedResponse = getDetailCache(bookingId);
 
    if (cachedResponse) {
-      console.log(
-         "Detail Cache HIT — rendering instantly from pre-fetched data",
-      );
       apiResponseData = cachedResponse;
 
       const detail = cachedResponse.aircraft_detail;
@@ -227,7 +210,6 @@ async function fetchAircraftDetail() {
    }
 
    // ── Cache MISS — fall back to normal API call ──────────────────
-   console.log("Detail Cache MISS — fetching from API");
    showLoader();
    try {
       let currencyCode = "USD";
@@ -247,7 +229,6 @@ async function fetchAircraftDetail() {
       });
 
       const data = await response.json();
-      console.log("Aircraft Detail Response:", data.response);
       apiResponseData = data.response;
 
       const detail = data.response?.aircraft_detail;

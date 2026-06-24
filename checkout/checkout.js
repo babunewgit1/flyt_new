@@ -403,12 +403,9 @@ async function fetchCheckoutData() {
          return;
       }
 
-      console.log(data.response);
-
       checkoutData = data.response; // store globally for book button
       renderMainSection(data.response);
    } catch (error) {
-      console.error("Checkout Fetch Error:", error);
    } finally {
       hideLoader();
    }
@@ -1270,7 +1267,6 @@ function setupCardValidation() {
          country: country,
          phone_number: phoneNumber,
       };
-      console.log("Save Card Payload:", payload);
 
       try {
          const res = await fetch(
@@ -1286,7 +1282,6 @@ function setupCardValidation() {
          );
 
          const data = await res.json();
-         console.log("✅ Save Card Response:", data);
 
          if (res.ok && !(data.response && data.response.has_error)) {
             window.toast.success("Card saved successfully!");
@@ -1317,7 +1312,6 @@ function setupCardValidation() {
             window.toast.error(errMsg);
          }
       } catch (err) {
-         console.error("Save Card Error:", err);
          window.toast.error("Something went wrong. Please try again.");
       } finally {
          if (submitBtn.querySelector(".btnc_text")) {
@@ -1747,7 +1741,6 @@ async function deleteCard(profileId) {
          },
       );
       const data = await res.json();
-      console.log("🗑️ Delete Card Response:", data);
 
       if (res.ok && !(data.response && data.response.has_error)) {
          return { success: true };
@@ -1759,7 +1752,6 @@ async function deleteCard(profileId) {
          return { success: false, message };
       }
    } catch (err) {
-      console.error("Delete Card Error:", err);
       return {
          success: false,
          message: "Something went wrong. Please try again.",
@@ -1788,7 +1780,6 @@ async function updateDefaultCard(profileId, isDefault) {
          },
       );
       const data = await res.json();
-      console.log("🔄 Update Default Card Response:", data);
 
       if (res.ok && !(data.response && data.response.has_error)) {
          window.toast.success(
@@ -1803,7 +1794,6 @@ async function updateDefaultCard(profileId, isDefault) {
          window.toast.error(errMsg);
       }
    } catch (err) {
-      console.error("Update Default Card Error:", err);
       window.toast.error("Something went wrong. Please try again.");
    }
 }
@@ -1831,7 +1821,6 @@ async function fetchSavedCards() {
          },
       );
       const data = await res.json();
-      console.log("📥 Get Cards Response:", data);
 
       if (res.ok && data.response && data.response.payment_methods) {
          renderSavedCards(data.response.payment_methods);
@@ -1839,7 +1828,6 @@ async function fetchSavedCards() {
          renderSavedCards([]);
       }
    } catch (err) {
-      console.error("Get Cards Error:", err);
       renderSavedCards([]);
    }
 }
@@ -1960,7 +1948,6 @@ async function bookFlight() {
       );
 
       const data = await res.json();
-      console.log("✈️ Book Flight Response:", data);
 
       if (
          res.ok &&
@@ -1987,7 +1974,6 @@ async function bookFlight() {
          window.toast.error(errMsg);
       }
    } catch (err) {
-      console.error("Book Flight Error:", err);
       window.toast.error("Something went wrong. Please try again.");
    } finally {
       // Only restore button on failure — success keeps it locked until redirect

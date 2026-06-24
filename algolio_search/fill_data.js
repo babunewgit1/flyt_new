@@ -28,7 +28,6 @@ document.addEventListener("DOMContentLoaded", function () {
    try {
       data = JSON.parse(raw);
    } catch (e) {
-      console.error("fill_data.js: Could not parse storeData.", e);
       return;
    }
 

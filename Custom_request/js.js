@@ -158,7 +158,6 @@ async function submitFormWithAPI() {
       sessionStorage.removeItem("pendingFormSubmission");
       submitButton.value = originalText;
       submitButton.disabled = false;
-      console.error("API call error:", error);
       displayMessage("An error occurred. Please search flight again.");
    }
 }

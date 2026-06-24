@@ -47,7 +47,6 @@ const VERIFY_PAYMENT_API =
       // ── 3. Valid — show page content ──
       document.body.classList.remove("confirmed_loading");
    } catch (err) {
-      console.error("Verify Payment Error:", err);
       window.location.href = "/";
       throw new Error("Verification error");
    }

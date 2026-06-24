@@ -19,8 +19,8 @@ window.initToast = function () {
       };
    } else {
       window.toast = {
-         success: (msg) => console.log("Success:", msg),
-         error: (msg) => console.error("Error:", msg),
+         success: () => {},
+         error: () => {},
       };
    }
 };
@@ -52,16 +52,8 @@ async function sendFlightRequestIdsIfLoggedIn() {
 
          if (response.ok) {
             sessionStorage.removeItem("flightRequestId");
-         } else {
-            console.error(
-               "Failed to send to backend:",
-               response.status,
-               response.statusText,
-            );
-         }
-      } catch (err) {
-         console.error("Error sending to backend:", err);
-      }
+         } else {}
+      } catch (err) {}
    }
 }
 window.sendFlightRequestIdsIfLoggedIn = sendFlightRequestIdsIfLoggedIn;
@@ -171,7 +163,6 @@ document.addEventListener("DOMContentLoaded", function () {
       );
 
       if (typeof Cookies === "undefined") {
-         console.warn("Cookies library not found");
          return;
       }
 
@@ -216,9 +207,7 @@ document.addEventListener("DOMContentLoaded", function () {
                      },
                   },
                );
-            } catch (error) {
-               console.error("Logout API failed", error);
-            }
+            } catch (error) {}
          }
 
          Cookies.remove("userEmail");
@@ -341,8 +330,6 @@ document.addEventListener("DOMContentLoaded", function () {
                },
             );
             const signupData = await signupRes.json();
-            console.log(signupData);
-
             if (
                signupRes.ok &&
                signupData.response &&
@@ -366,13 +353,9 @@ document.addEventListener("DOMContentLoaded", function () {
                         secure: true,
                      },
                   );
-               } else {
-                  console.warn("Cookies library not found.");
                }
 
                window.toast.success("Sign up Successful");
-               console.log("✅ Signup Success Response:", signupData);
-               console.log("✅ Signup User Data:", signupData.response);
                signupForm.reset();
 
                // Refresh Header UI & Close Form
@@ -397,7 +380,6 @@ document.addEventListener("DOMContentLoaded", function () {
                );
             }
          } catch (err) {
-            console.error(err);
             window.toast.error("Something went wrong. Please try again.");
          } finally {
             if (submitBtn) {
@@ -444,7 +426,6 @@ document.addEventListener("DOMContentLoaded", function () {
             );
 
             const data = await response.json();
-            console.log(data);
 
             if (response.ok && data.response) {
                // Store user data in cookies
@@ -467,13 +448,9 @@ document.addEventListener("DOMContentLoaded", function () {
                      expires: 7,
                      secure: true,
                   });
-               } else {
-                  console.warn("Cookies library not found.");
-               }
+               } else {}
 
                window.toast.success("Login Successful!");
-               console.log("✅ Login Success Response:", data);
-               console.log("✅ Login User Data:", data.response);
                loginForm.reset();
 
                // Dispatch event to update header instantly
@@ -487,7 +464,6 @@ document.addEventListener("DOMContentLoaded", function () {
                );
             }
          } catch (error) {
-            console.error(error);
             window.toast.error(
                "An error occurred during login. Please try again.",
             );
@@ -554,7 +530,6 @@ document.addEventListener("DOMContentLoaded", function () {
                );
             }
          } catch (error) {
-            console.error("Error:", error);
             window.toast.error("An error occurred. Please try again.");
          } finally {
             if (submitBtn) {

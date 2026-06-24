@@ -1058,7 +1058,6 @@ async function submitRequest() {
          pax: paxCount,
          payment_profile_id: profileId,
       };
-      console.log("Submit Payload:", requestPayload);
 
       const res = await fetch(SUBMIT_REQUEST_API, {
          method: "POST",
@@ -1070,7 +1069,6 @@ async function submitRequest() {
       });
 
       const data = await res.json();
-      console.log(data);
 
       if (
          res.ok &&
@@ -1095,7 +1093,6 @@ async function submitRequest() {
          window.toast.error(errMsg);
       }
    } catch (err) {
-      console.error("Submit Request Error:", err);
       window.toast.error("Something went wrong. Please try again.");
    } finally {
       if (!submitSuccess) {
@@ -1264,7 +1261,6 @@ async function deleteCard(profileId) {
          return { success: false, message };
       }
    } catch (err) {
-      console.error("Delete Card Error:", err);
       return {
          success: false,
          message: "Something went wrong. Please try again.",
@@ -1306,7 +1302,6 @@ async function updateDefaultCard(profileId, isDefault) {
          window.toast.error(errMsg);
       }
    } catch (err) {
-      console.error("Update Default Card Error:", err);
       window.toast.error("Something went wrong. Please try again.");
    }
 }
@@ -1333,14 +1328,12 @@ async function fetchSavedCards() {
          },
       );
       const data = await res.json();
-      console.log("Get Cards Response:", data);
       if (res.ok && data.response && data.response.payment_methods) {
          renderSavedCards(data.response.payment_methods);
       } else {
          renderSavedCards([]);
       }
    } catch (err) {
-      console.error("Get Cards Error:", err);
       renderSavedCards([]);
    }
 }
@@ -1753,7 +1746,6 @@ function setupCardValidation() {
          );
 
          const data = await res.json();
-         console.log(data);
 
          if (res.ok && !(data.response && data.response.has_error)) {
             window.toast.success("Card saved successfully!");
@@ -1782,7 +1774,6 @@ function setupCardValidation() {
             window.toast.error(errMsg);
          }
       } catch (err) {
-         console.error("Save Card Error:", err);
          window.toast.error("Something went wrong. Please try again.");
       } finally {
          if (submitBtn.querySelector(".btnc_text")) {
@@ -2059,7 +2050,6 @@ function hideLoader() {
 async function initCustomRequest() {
    showLoader();
    try {
-      console.log("Fetching custom request data for:", flightRequestId);
 
       const response = await fetch(CUSTOM_REQUEST_API, {
          method: "POST",
@@ -2068,17 +2058,14 @@ async function initCustomRequest() {
       });
 
       const data = await response.json();
-      console.log("Custom Request API Response:", data);
 
       if (!data.response) {
-         console.error("API returned no response data.");
          window.location.href = "/aircraft#sc_result";
          return;
       }
 
       // Invalid flight request ID → empty arrays
       if (!data.response.flight_legs?.length) {
-         console.error("Invalid flight request ID — no flight legs found.");
          window.location.href = "/aircraft#sc_result";
          return;
       }
@@ -2143,7 +2130,6 @@ async function initCustomRequest() {
          });
       }
    } catch (error) {
-      console.error("Custom Request Error:", error);
    } finally {
       hideLoader();
    }
